@@ -38,9 +38,12 @@ Stage 4 每增加一组主题或采集源接口，同步增加测试台预置入
 - Actuator 健康状态为 `UP`。
 - 自定义 `X-Correlation-Id` 在响应头和统一响应体中均正确保留。
 - Markdown 相对链接和 Git diff 检查通过。
+- IDEA 请求文件使用明确的本机 URL，不依赖可能未启用的文件内变量替换。
 
 当前会话未提供浏览器交互控制工具，因此未执行自动点击和截图级视觉回归；页面路由、资源加载和接口交互基础条件已通过真实 HTTP 与集成测试验证。
 
 ## 7. Git 里程碑
 
-提交信息：`stage-3: 增加 Web 测试台与 IDEA 接口请求`。标签：`stage-3-testing-tooling`。
+- 功能提交：`stage-3: 增加 Web 测试台与 IDEA 接口请求`。
+- 兼容性修复：`fix: 修复 IDEA HTTP Client URI 变量解析`。
+- 标签：`stage-3-testing-tooling`，指向包含兼容性修复的最终状态。

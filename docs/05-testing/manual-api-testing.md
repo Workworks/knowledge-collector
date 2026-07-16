@@ -54,7 +54,9 @@ http/knowledge-collector.http
 2. 在 IDEA 中打开 `http/knowledge-collector.http`。
 3. 点击每个请求左侧的绿色运行图标。
 4. 在右侧响应窗口查看状态、响应头、响应体和测试结果。
-5. 需要切换端口时，修改文件顶部的 `baseUrl`。
+5. 需要切换端口时，批量替换文件中的 `http://127.0.0.1:8080`。
+
+请求文件有意使用完整 URL，不依赖 `{{baseUrl}}` 等变量替换，以兼容未启用变量解析的 IDEA HTTP Client 版本或配置。
 
 该请求集目前包含：
 
