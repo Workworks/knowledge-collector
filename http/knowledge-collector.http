@@ -1,0 +1,54 @@
+@baseUrl = http://127.0.0.1:8080
+@correlationId = idea-http-client-001
+
+### 系统状态：验证统一响应、H2、Flyway 和启动次数
+GET {{baseUrl}}/api/v1/system/status
+Accept: application/json
+X-Correlation-Id: {{correlationId}}
+
+> {%
+    client.test("系统状态接口返回 200", function () {
+        client.assert(response.status === 200, "期望 HTTP 200");
+    });
+    client.test("统一响应成功且数据库为 H2", function () {
+        client.assert(response.body.success === true, "success 应为 true");
+        client.assert(response.body.data.databaseProduct.toUpperCase().includes("H2"), "数据库应为 H2");
+        client.assert(response.body.correlationId === "idea-http-client-001", "应保留关联编号");
+    });
+%}
+
+### Actuator 健康检查
+GET {{baseUrl}}/actuator/health
+Accept: application/json
+X-Correlation-Id: {{correlationId}}
+
+> {%
+    client.test("应用健康状态为 UP", function () {
+        client.assert(response.status === 200, "期望 HTTP 200");
+        client.assert(response.body.status === "UP", "应用状态应为 UP");
+    });
+%}
+
+### Web 接口测试台
+GET {{baseUrl}}/test-console
+Accept: text/html
+X-Correlation-Id: {{correlationId}}
+
+> {%
+    client.test("测试台页面可访问", function () {
+        client.assert(response.status === 200, "期望 HTTP 200");
+        client.assert(response.body.includes("Web 接口测试台"), "页面应包含测试台标题");
+    });
+%}
+
+### 系统首页
+GET {{baseUrl}}/
+Accept: text/html
+X-Correlation-Id: {{correlationId}}
+
+> {%
+    client.test("系统首页可访问", function () {
+        client.assert(response.status === 200, "期望 HTTP 200");
+        client.assert(response.body.includes("资料收集与阅读管理系统"), "页面应包含系统标题");
+    });
+%}

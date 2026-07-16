@@ -70,7 +70,28 @@ class FoundationIntegrationTest {
 
         assertThat(html)
                 .contains("资料收集与阅读管理系统")
-                .contains("/api/v1/system/status");
+                .contains("/api/v1/system/status")
+                .contains("/test-console");
+    }
+
+    @Test
+    void rendersWebTestConsoleAndServesItsScript() {
+        String html = restTemplate.getForObject(
+                "http://127.0.0.1:" + port + "/test-console",
+                String.class
+        );
+        String script = restTemplate.getForObject(
+                "http://127.0.0.1:" + port + "/js/test-console.js",
+                String.class
+        );
+
+        assertThat(html)
+                .contains("Web 接口测试台")
+                .contains("http/knowledge-collector.http")
+                .contains("/js/test-console.js");
+        assertThat(script)
+                .contains("isSafeApplicationPath")
+                .contains("X-Correlation-Id");
     }
 
     private static Path createTestDataDirectory() {

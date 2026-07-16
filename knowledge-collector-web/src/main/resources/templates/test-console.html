@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>接口测试台 · Knowledge Collector</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <script defer th:src="@{/js/test-console.js}"></script>
+</head>
+<body>
+<main class="container test-console">
+    <header class="console-header">
+        <div>
+            <p class="eyebrow">TEST WORKBENCH</p>
+            <h1>Web 接口测试台</h1>
+            <p class="lead">在浏览器中快速发送当前应用接口请求，查看状态码、耗时、关联编号、响应头和响应体。</p>
+        </div>
+        <a class="button button-secondary back-link" href="/">返回系统首页</a>
+    </header>
+
+    <p class="notice" role="note">
+        当前测试台仅允许请求本系统的相对路径。IDEA 用户可同时运行
+        <code>http/knowledge-collector.http</code> 中的请求。
+    </p>
+
+    <div class="console-grid">
+        <section class="console-panel" aria-labelledby="request-title">
+            <h2 id="request-title">请求配置</h2>
+            <p class="panel-help">选择预置案例，或编辑方法、路径、关联编号及 JSON 请求体。</p>
+
+            <div class="preset-list" aria-label="预置请求">
+                <button class="preset-button" type="button" data-method="GET" data-path="/api/v1/system/status">
+                    系统状态
+                </button>
+                <button class="preset-button" type="button" data-method="GET" data-path="/actuator/health">
+                    健康检查
+                </button>
+                <button class="preset-button" type="button" data-method="GET" data-path="/">
+                    系统首页
+                </button>
+                <button class="preset-button" type="button" data-method="GET" data-path="/test-console">
+                    测试台页面
+                </button>
+            </div>
+
+            <form id="request-form" class="request-form">
+                <div class="request-line">
+                    <div class="form-field">
+                        <label for="request-method">HTTP 方法</label>
+                        <select id="request-method" name="method">
+                            <option>GET</option>
+                            <option>POST</option>
+                            <option>PUT</option>
+                            <option>PATCH</option>
+                            <option>DELETE</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label for="request-path">请求路径</label>
+                        <input id="request-path" name="path" value="/api/v1/system/status"
+                               autocomplete="off" spellcheck="false" required>
+                        <p class="field-help">必须以 <code>/</code> 开头，不允许完整外部网址。</p>
+                    </div>
+                </div>
+
+                <div class="form-field">
+                    <label for="correlation-id">X-Correlation-Id（可选）</label>
+                    <input id="correlation-id" name="correlationId" value="web-test-console-001"
+                           maxlength="64" autocomplete="off" spellcheck="false">
+                    <p class="field-help">允许 8—64 位字母、数字、下划线或连字符，便于关联应用日志。</p>
+                </div>
+
+                <div class="form-field">
+                    <label for="request-body">JSON 请求体</label>
+                    <textarea id="request-body" name="body" spellcheck="false"
+                              placeholder="{&#10;  &quot;example&quot;: true&#10;}"></textarea>
+                    <p class="field-help">GET 请求不会发送请求体；业务接口加入后可用于 POST、PUT 和 PATCH。</p>
+                </div>
+
+                <div class="action-row">
+                    <button id="send-request" class="button button-primary" type="submit">发送请求</button>
+                    <button id="clear-response" class="button button-secondary" type="button">清空响应</button>
+                </div>
+            </form>
+        </section>
+
+        <section class="console-panel" aria-labelledby="response-title" aria-live="polite">
+            <h2 id="response-title">响应结果</h2>
+            <p class="panel-help">响应体会自动格式化 JSON；HTML 与纯文本按原文显示。</p>
+
+            <div id="response-meta" class="response-meta">
+                <span class="empty-response">尚未发送请求</span>
+            </div>
+
+            <div class="response-tabs" role="tablist" aria-label="响应内容">
+                <button id="body-tab" class="response-tab" type="button" role="tab"
+                        aria-selected="true" aria-controls="response-output" data-view="body">响应体</button>
+                <button id="headers-tab" class="response-tab" type="button" role="tab"
+                        aria-selected="false" aria-controls="response-output" data-view="headers">响应头</button>
+            </div>
+            <pre id="response-output" class="response-output">选择一个预置请求，然后点击“发送请求”。</pre>
+        </section>
+    </div>
+</main>
+</body>
+</html>

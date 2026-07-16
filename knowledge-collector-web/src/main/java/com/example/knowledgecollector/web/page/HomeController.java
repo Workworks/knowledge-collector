@@ -19,4 +19,9 @@ public class HomeController {
         model.addAttribute("status", statusQuery.getStatus());
         return "index";
     }
+
+    @GetMapping("/test-console")
+    public String testConsole() {
+        return "test-console";
+    }
 }

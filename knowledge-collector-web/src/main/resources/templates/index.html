@@ -11,7 +11,11 @@
     <header>
         <p class="eyebrow">KNOWLEDGE COLLECTOR</p>
         <h1>资料收集与阅读管理系统</h1>
-        <p class="lead">Stage 3 基础工程已启动。主题、采集源和资料库将在后续阶段逐步开放。</p>
+        <p class="lead">基础工程已启动。主题、采集源和资料库将在后续阶段逐步开放。</p>
+        <nav class="header-actions" aria-label="快捷入口">
+            <a class="button button-primary" href="/test-console">打开 Web 接口测试台</a>
+            <a class="button button-secondary" href="/actuator/health">查看健康状态</a>
+        </nav>
     </header>
 
     <section class="status-grid" aria-label="系统状态">
@@ -40,6 +44,7 @@
             <div><dt>最近启动</dt><dd th:text="${status.lastStartedAt}">-</dd></div>
             <div><dt>状态 API</dt><dd><a href="/api/v1/system/status">/api/v1/system/status</a></dd></div>
             <div><dt>健康检查</dt><dd><a href="/actuator/health">/actuator/health</a></dd></div>
+            <div><dt>测试工具</dt><dd><a href="/test-console">Web 接口测试台</a></dd></div>
         </dl>
     </section>
 </main>

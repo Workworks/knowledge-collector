@@ -5,8 +5,10 @@ Knowledge Collector 是面向个人和小团队的本地资料采集与阅读管
 ## 当前可用能力
 
 - 中文基础首页：`http://127.0.0.1:8080/`
+- 页面测试人员使用的 Web 接口测试台：`/test-console`
 - 系统状态 API：`/api/v1/system/status`
 - Actuator 健康检查：`/actuator/health`
+- IDEA HTTP Client 请求集：`http/knowledge-collector.http`
 - H2 文件数据库与 Flyway V1 迁移
 - 启动次数持久化，用于验证重启后数据不丢失
 - 数据、正文、快照、导出和日志目录自动创建
@@ -94,6 +96,7 @@ data/
 - 需求：`docs/02-requirements`
 - 架构与设计：`docs/03-design`
 - 开发说明：`docs/04-development`
+- 页面与接口测试：`docs/05-testing/manual-api-testing.md`
 - 阶段报告：`docs/stages`
 
 ## 当前边界
