@@ -7,10 +7,12 @@ import java.util.List;
 
 public interface CrawlTaskGateway {
     CrawlTaskView create(CrawlSource source);
+    CrawlTaskView create(CrawlSource source, String triggerType, Long retryOfTaskId);
     void running(long id);
     SaveResult saveEntry(long taskId, CrawlSource source, ContentSourceProvider.ContentItem entry);
     void success(long id, int discovered, int created, int duplicates, long duration);
     void failure(long id, String code, String message, long duration);
+    boolean requestCancel(long id);
     CrawlTaskView get(long id);
     PageResult<CrawlTaskView> findPage(int page, int size);
     List<?> findItems(long taskId);

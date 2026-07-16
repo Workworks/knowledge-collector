@@ -31,13 +31,21 @@ public class JdbcCrawlTaskGateway implements CrawlTaskGateway {
     @Override
     @Transactional
     public CrawlTaskView create(CrawlSource source) {
+        return create(source, "MANUAL_SOURCE", null);
+    }
+
+    @Override
+    @Transactional
+    public CrawlTaskView create(CrawlSource source, String triggerType, Long retryOfTaskId) {
         String taskNo = "TASK-" + UUID.randomUUID().toString().substring(0, 12).toUpperCase();
         try {
             jdbc.sql("""
-                    insert into crawl_task(task_no,trigger_type,source_id,active_source_id,status,created_at)
-                    values(:taskNo,'MANUAL_SOURCE',:sourceId,:sourceId,'CREATED',:createdAt)
+                    insert into crawl_task(task_no,retry_of_task_id,trigger_type,source_id,active_source_id,status,created_at)
+                    values(:taskNo,:retryOfTaskId,:triggerType,:sourceId,:sourceId,'CREATED',:createdAt)
                     """)
                     .param("taskNo", taskNo)
+                    .param("retryOfTaskId", retryOfTaskId)
+                    .param("triggerType", triggerType)
                     .param("sourceId", source.id())
                     .param("createdAt", OffsetDateTime.now())
                     .update();
@@ -131,8 +139,18 @@ public class JdbcCrawlTaskGateway implements CrawlTaskGateway {
         complete(id, "FAILED", 0, 0, 0, code, message, durationMillis);
     }
 
+    @Override
+    public boolean requestCancel(long id) {
+        return jdbc.sql("""
+                update crawl_task set cancel_requested=true,status='CANCELED',
+                active_source_id=null,finished_at=:now
+                where id=:id and status='CREATED'
+                """).param("now", OffsetDateTime.now()).param("id", id).update() == 1;
+    }
+
     private void complete(long id, String status, int discovered, int created, int duplicate,
                           String errorCode, String errorMessage, long durationMillis) {
+        OffsetDateTime finishedAt = OffsetDateTime.now();
         jdbc.sql("""
                 update crawl_task set status=:status,active_source_id=null,discovered_count=:discovered,
                 created_count=:created,duplicate_count=:duplicate,error_code=:errorCode,
@@ -145,10 +163,22 @@ public class JdbcCrawlTaskGateway implements CrawlTaskGateway {
                 .param("duplicate", duplicate)
                 .param("errorCode", errorCode)
                 .param("errorMessage", errorMessage)
-                .param("finishedAt", OffsetDateTime.now())
+                .param("finishedAt", finishedAt)
                 .param("durationMillis", durationMillis)
                 .param("id", id)
                 .update();
+        if ("SUCCESS".equals(status)) {
+            jdbc.sql("""
+                    update crawl_source set last_success_at=:now,consecutive_failures=0,updated_at=:now
+                    where id=(select source_id from crawl_task where id=:id)
+                    """).param("now", finishedAt).param("id", id).update();
+        } else if ("FAILED".equals(status)) {
+            jdbc.sql("""
+                    update crawl_source set last_failure_at=:now,
+                    consecutive_failures=consecutive_failures+1,updated_at=:now
+                    where id=(select source_id from crawl_task where id=:id)
+                    """).param("now", finishedAt).param("id", id).update();
+        }
     }
 
     @Override
@@ -184,9 +214,12 @@ public class JdbcCrawlTaskGateway implements CrawlTaskGateway {
         return new CrawlTaskView(
                 resultSet.getLong("id"),
                 resultSet.getString("task_no"),
+                (Long) resultSet.getObject("retry_of_task_id"),
+                resultSet.getString("trigger_type"),
                 resultSet.getLong("source_id"),
                 resultSet.getString("source_name"),
                 resultSet.getString("status"),
+                resultSet.getBoolean("cancel_requested"),
                 resultSet.getInt("discovered_count"),
                 resultSet.getInt("created_count"),
                 resultSet.getInt("duplicate_count"),

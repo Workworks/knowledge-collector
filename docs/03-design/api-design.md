@@ -113,10 +113,10 @@
 
 ### 5.7 仪表盘与运维
 
-- `GET /dashboard/summary`
-- `GET /dashboard/recent-tasks`
-- `GET /dashboard/recent-articles`
-- `GET/PUT /settings`
+- `GET /dashboard`
+- `GET /operations/schedules`
+- `PUT /operations/schedules/{sourceId}`
+- `POST /operations/schedules/run-due`
 - `POST /operations/backups`
 - `GET /operations/backups`
 

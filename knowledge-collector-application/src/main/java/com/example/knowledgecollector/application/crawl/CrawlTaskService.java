@@ -36,12 +36,16 @@ public class CrawlTaskService {
     }
 
     public CrawlTaskView runSource(long sourceId) {
+        return runSource(sourceId, "MANUAL_SOURCE", null);
+    }
+
+    public CrawlTaskView runSource(long sourceId, String triggerType, Long retryOfTaskId) {
         CrawlSource source = sources.get(sourceId);
         if (!source.enabled()) {
             throw new BusinessRuleException("SOURCE-DISABLED", "采集源已停用");
         }
         ContentSourceProvider provider = provider(source.type());
-        CrawlTaskView task = gateway.create(source);
+        CrawlTaskView task = gateway.create(source, triggerType, retryOfTaskId);
         long started = System.currentTimeMillis();
         MDC.put("taskId", task.id().toString());
         MDC.put("sourceId", source.id().toString());
@@ -114,5 +118,21 @@ public class CrawlTaskService {
 
     public List<?> items(long id) {
         return gateway.findItems(id);
+    }
+
+    public CrawlTaskView retry(long id) {
+        CrawlTaskView original = get(id);
+        if (!"FAILED".equals(original.status())) {
+            throw new BusinessRuleException("TASK-RETRY-NOT-ALLOWED", "只有失败任务可以重试");
+        }
+        return runSource(original.sourceId(), "RETRY", original.id());
+    }
+
+    public CrawlTaskView cancel(long id) {
+        get(id);
+        if (!gateway.requestCancel(id)) {
+            throw new BusinessRuleException("TASK-CANCEL-NOT-ALLOWED", "只有尚未开始的任务可以取消");
+        }
+        return get(id);
     }
 }

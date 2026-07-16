@@ -78,6 +78,14 @@ http/stage-8-end-to-end.http
 请求之间通过 IDEA HTTP Client 全局变量传递 ID，不需要人工复制。演示采集员由 local
 Profile 内置固定 Provider 提供数据，不访问互联网，也不会绕过 URL 安全与 SSRF 防护。
 
+Stage 9 调度、仪表盘、任务重试/取消和备份请求位于：
+
+```text
+http/stage-9-operations.http
+```
+
+其中所有请求继续使用完整 URL。调度配置中的采集员 ID 和可选任务操作中的任务 ID，需要替换为当前数据库中的实际值。
+
 Stage 4 主题和采集源请求位于：
 
 ```text

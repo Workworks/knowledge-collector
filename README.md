@@ -1,6 +1,6 @@
 # Knowledge Collector
 
-Knowledge Collector 是面向个人和小团队的本地资料采集与阅读管理系统。当前完成至 Stage 8：采集、分类、质量控制、资料检索与阅读管理闭环已经可运行。
+Knowledge Collector 是面向个人和小团队的本地资料采集与阅读管理系统。当前完成至 Stage 9：采集、分类、质量控制、资料检索、阅读管理、调度与本地运维闭环已经可运行。
 
 ## 当前可用能力
 
@@ -19,9 +19,12 @@ Knowledge Collector 是面向个人和小团队的本地资料采集与阅读管
 - 资料库支持全文搜索、主题/来源/标签/状态/质量组合筛选
 - 阅读页支持收藏、已读/未读、归档、忽略、自定义标签和个人笔记
 - Stage 8 完整 IDEA 请求任务：`http/stage-8-end-to-end.http`
+- 调度与运维页面：`/operations`
+- Stage 9 IDEA 请求集：`http/stage-9-operations.http`
+- 固定周期调度、失败任务重试、待执行任务取消、运行仪表盘和本地备份
 - OpenAPI JSON 与 Swagger UI：`/v3/api-docs`、`/swagger-ui.html`
 - local Profile 测试工具：`/dev/tools`
-- H2 文件数据库与 Flyway V1—V6 迁移
+- H2 文件数据库与 Flyway V1—V7 迁移
 - 启动次数持久化，用于验证重启后数据不丢失
 - 数据、正文、快照、导出和日志目录自动创建
 - 全局异常响应、字段错误模型和请求关联编号
@@ -126,4 +129,4 @@ data/
 
 ## 当前边界
 
-当前支持 RSS、Atom 和基于 CSS Selector 的静态 HTML 采集。动态浏览器渲染、调度重试、AI、全文检索及外部通知仍属于后续阶段。系统未加入任何绕过登录、验证码、付费墙或 robots.txt 的能力。
+当前支持 RSS、Atom、基于 CSS Selector 的静态 HTML 采集、本地固定周期调度和 H2 资料检索。动态浏览器渲染、分布式调度、AI、专业搜索引擎及外部通知仍属于后续阶段。系统未加入任何绕过登录、验证码、付费墙或 robots.txt 的能力。

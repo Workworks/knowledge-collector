@@ -1,0 +1,19 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>调度与运维 · Knowledge Collector</title><link rel="stylesheet" href="/css/app.css">
+<script defer src="/js/admin-common.js"></script><script defer src="/js/operations.js"></script></head><body>
+<nav class="site-nav"><a class="brand" href="/">KC <span>Knowledge Collector</span></a><div class="nav-links">
+<a href="/topics">主题</a><a href="/sources">采集员</a><a href="/tasks">任务</a><a href="/articles">资料库</a><a class="active" href="/operations">运维</a></div></nav>
+<main class="container admin-container"><header class="page-hero compact-hero"><div><p class="eyebrow">SCHEDULING & OPERATIONS</p>
+<h1>调度与运维</h1><p class="lead">配置本地固定周期采集，查看下一次运行，并创建包含数据库和内容目录的备份。</p></div>
+<button id="run-due" class="button button-secondary">立即检查到期任务</button></header>
+<div id="page-message" class="page-message" hidden></div>
+<section class="console-panel"><div class="section-heading"><div><p class="eyebrow">SCHEDULES</p><h2>采集员调度</h2></div>
+<span class="muted">扫描器每 30 秒检查一次到期配置</span></div>
+<div class="table-wrap"><table><thead><tr><th>采集员</th><th>状态</th><th>周期</th><th>下次运行</th><th>上次运行</th><th>操作</th></tr></thead>
+<tbody id="schedule-rows"></tbody></table></div></section>
+<section class="console-panel"><div class="section-heading"><div><p class="eyebrow">LOCAL BACKUPS</p><h2>数据备份</h2></div>
+<button id="create-backup" class="button button-primary">创建备份</button></div>
+<p class="panel-help">备份包含 H2 在线备份、清洗正文、快照、导出目录和清单。恢复操作需停机执行。</p>
+<div class="table-wrap"><table><thead><tr><th>备份文件</th><th>大小</th><th>状态</th><th>创建时间</th></tr></thead>
+<tbody id="backup-rows"></tbody></table></div><div id="backup-empty" class="empty-state" hidden>尚未创建备份。</div></section>
+</main></body></html>

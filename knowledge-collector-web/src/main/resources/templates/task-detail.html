@@ -6,8 +6,9 @@
 <main class="container admin-container" data-task-id="" th:attr="data-task-id=${taskId}"
       xmlns:th="http://www.thymeleaf.org"><header class="page-hero compact-hero"><div><p class="eyebrow">TASK DETAIL</p>
 <h1 id="task-title">任务详情</h1><p class="lead">采集员：<span id="task-source">加载中</span></p></div>
-<a class="button button-secondary" href="/tasks">返回任务列表</a></header><div id="page-message" class="page-message" hidden></div>
-<section class="metric-grid"><article><span>状态</span><strong id="task-status">—</strong></article><article><span>发现</span><strong id="task-discovered">0</strong></article>
+<div class="header-actions"><button id="retry-task" class="button button-primary" hidden>重试失败任务</button>
+<a class="button button-secondary" href="/tasks">返回任务列表</a></div></header><div id="page-message" class="page-message" hidden></div>
+<section class="metric-grid"><article><span>状态</span><strong id="task-status">—</strong></article><article><span>触发方式</span><strong id="task-trigger">—</strong></article><article><span>发现</span><strong id="task-discovered">0</strong></article>
 <article><span>新增</span><strong id="task-created">0</strong></article><article><span>重复</span><strong id="task-duplicates">0</strong></article>
 <article><span>耗时</span><strong id="task-duration">—</strong></article></section>
 <section class="console-panel"><h2>任务项</h2><div class="table-wrap"><table><thead><tr><th>ID</th><th>结果</th><th>规范化地址</th><th>文章</th></tr></thead>

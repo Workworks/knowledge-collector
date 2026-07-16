@@ -1,0 +1,67 @@
+### Stage 9 调度与运维
+# 使用 local Profile 启动后按需执行。
+# 调度配置请求中的来源 ID 1 请替换为实际采集员 ID。
+
+### 1. 仪表盘汇总
+GET http://127.0.0.1:8080/api/v1/dashboard
+Accept: application/json
+X-Correlation-Id: idea-stage9-dashboard
+
+> {%
+client.test("仪表盘可用", function () {
+  client.assert(response.status === 200, "预期 HTTP 200");
+  client.assert(response.body.data.sourceCount >= 0, "应返回采集员数量");
+  client.assert(Array.isArray(response.body.data.recentTasks), "应返回最近任务");
+});
+%}
+
+### 2. 查询全部调度配置
+GET http://127.0.0.1:8080/api/v1/operations/schedules
+Accept: application/json
+X-Correlation-Id: idea-stage9-schedules
+
+### 3. 为采集员 1 启用每 60 分钟采集
+PUT http://127.0.0.1:8080/api/v1/operations/schedules/1
+Content-Type: application/json
+Accept: application/json
+X-Correlation-Id: idea-stage9-schedule-save
+
+{"enabled": true, "intervalMinutes": 60}
+
+### 4. 立即检查到期调度
+POST http://127.0.0.1:8080/api/v1/operations/schedules/run-due
+Accept: application/json
+X-Correlation-Id: idea-stage9-run-due
+
+### 5. 查询任务及触发方式
+GET http://127.0.0.1:8080/api/v1/tasks?page=0&size=20
+Accept: application/json
+X-Correlation-Id: idea-stage9-tasks
+
+### 6. 创建本地备份
+POST http://127.0.0.1:8080/api/v1/operations/backups
+Accept: application/json
+X-Correlation-Id: idea-stage9-backup
+
+> {%
+client.test("备份创建成功", function () {
+  client.assert(response.status === 200, "预期 HTTP 200");
+  client.assert(response.body.data.status === "SUCCESS", "备份状态应为 SUCCESS");
+  client.assert(response.body.data.sizeBytes > 0, "备份文件不应为空");
+});
+%}
+
+### 7. 查询备份记录
+GET http://127.0.0.1:8080/api/v1/operations/backups
+Accept: application/json
+X-Correlation-Id: idea-stage9-backups
+
+### 可选：失败任务重试（把 1 替换为 FAILED 任务 ID）
+POST http://127.0.0.1:8080/api/v1/tasks/1/retry
+Accept: application/json
+X-Correlation-Id: idea-stage9-retry
+
+### 可选：取消尚未开始的任务（把 1 替换为 CREATED 任务 ID）
+POST http://127.0.0.1:8080/api/v1/tasks/1/cancel
+Accept: application/json
+X-Correlation-Id: idea-stage9-cancel

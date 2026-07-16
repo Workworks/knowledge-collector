@@ -24,5 +24,11 @@ public class CrawlTaskController {
         return ApiResponse.success(service.get(id),cid(r));}
     @GetMapping("/{id}/items") public ApiResponse<?> items(@PathVariable long id,HttpServletRequest r){
         service.get(id);return ApiResponse.success(service.items(id),cid(r));}
+    @PostMapping("/{id}/retry") @Operation(summary="重试失败任务")
+    public ApiResponse<?> retry(@PathVariable long id,HttpServletRequest r){
+        return ApiResponse.success(service.retry(id),cid(r));}
+    @PostMapping("/{id}/cancel") @Operation(summary="取消尚未运行的任务")
+    public ApiResponse<?> cancel(@PathVariable long id,HttpServletRequest r){
+        return ApiResponse.success(service.cancel(id),cid(r));}
     private String cid(HttpServletRequest r){return(String)r.getAttribute(CorrelationIdFilter.ATTRIBUTE_NAME);}
 }
