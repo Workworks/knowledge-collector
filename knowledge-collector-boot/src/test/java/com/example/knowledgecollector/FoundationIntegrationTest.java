@@ -8,6 +8,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -17,6 +18,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ActiveProfiles("test")
 class FoundationIntegrationTest {
 
     private static final Path TEST_DATA = createTestDataDirectory();
@@ -24,9 +26,8 @@ class FoundationIntegrationTest {
     @DynamicPropertySource
     static void configureTestStorage(DynamicPropertyRegistry registry) {
         registry.add("knowledge-collector.storage.root", () -> TEST_DATA.toString());
-        registry.add("spring.datasource.url", () ->
-                "jdbc:h2:file:" + TEST_DATA.resolve("database/test-db").toAbsolutePath()
-                        + ";DB_CLOSE_ON_EXIT=FALSE");
+        registry.add("spring.datasource.url",
+                () -> "jdbc:h2:mem:foundation-test;DB_CLOSE_DELAY=-1");
     }
 
     @Autowired
@@ -46,7 +47,7 @@ class FoundationIntegrationTest {
         assertThat(response.path("data").path("applicationName").asText())
                 .isEqualTo("knowledge-collector");
         assertThat(response.path("data").path("databaseProduct").asText()).containsIgnoringCase("H2");
-        assertThat(response.path("data").path("flywayMigrationCount").asInt()).isEqualTo(1);
+        assertThat(response.path("data").path("flywayMigrationCount").asInt()).isEqualTo(2);
         assertThat(response.path("data").path("startupCount").asLong()).isGreaterThanOrEqualTo(1);
         assertThat(response.path("correlationId").asText()).isNotBlank();
     }
@@ -92,6 +93,15 @@ class FoundationIntegrationTest {
         assertThat(script)
                 .contains("isSafeApplicationPath")
                 .contains("X-Correlation-Id");
+    }
+
+    @Test
+    void exposesOpenApiDocumentation() {
+        JsonNode document = restTemplate.getForObject(
+                "http://127.0.0.1:" + port + "/v3/api-docs", JsonNode.class);
+        assertThat(document.path("openapi").asText()).startsWith("3.");
+        assertThat(document.path("paths").has("/api/v1/topics")).isTrue();
+        assertThat(document.path("paths").has("/api/v1/sources")).isTrue();
     }
 
     private static Path createTestDataDirectory() {

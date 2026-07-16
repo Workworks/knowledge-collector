@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>主题管理 · Knowledge Collector</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <script defer th:src="@{/js/admin-common.js}"></script>
+    <script defer th:src="@{/js/topics.js}"></script>
+</head>
+<body>
+<main class="container admin-container">
+    <header class="console-header">
+        <div><p class="eyebrow">ADMIN / TOPICS</p><h1>主题管理</h1>
+            <p class="lead">维护主题、关键词、排除关键词和展示属性。</p></div>
+        <nav class="header-actions"><a class="button button-secondary" href="/">首页</a>
+            <a class="button button-secondary" href="/sources">采集源</a></nav>
+    </header>
+    <div id="page-message" class="page-message" hidden></div>
+    <section class="console-panel">
+        <div class="toolbar">
+            <div class="form-field grow"><label for="topic-keyword">搜索</label>
+                <input id="topic-keyword" placeholder="名称或编码"></div>
+            <div class="form-field"><label for="topic-enabled-filter">状态</label>
+                <select id="topic-enabled-filter"><option value="">全部</option><option value="true">启用</option>
+                    <option value="false">停用</option></select></div>
+            <button id="topic-search" class="button button-secondary" type="button">查询</button>
+            <button id="topic-new" class="button button-primary" type="button">新建主题</button>
+        </div>
+        <div class="table-wrap"><table><caption>主题列表</caption><thead><tr><th>主题</th><th>关键词</th>
+            <th>语言</th><th>排序</th><th>状态</th><th>操作</th></tr></thead><tbody id="topic-rows"></tbody></table></div>
+        <div id="topic-empty" class="empty-state" hidden>尚未创建主题，请点击“新建主题”。</div>
+        <div class="pagination"><button id="topic-prev" class="button button-secondary">上一页</button>
+            <span id="topic-page">第 1 页</span><button id="topic-next" class="button button-secondary">下一页</button></div>
+    </section>
+    <section id="topic-editor" class="console-panel editor-panel" hidden>
+        <h2 id="topic-editor-title">新建主题</h2>
+        <form id="topic-form" class="admin-form">
+            <input id="topic-id" type="hidden">
+            <div class="form-grid">
+                <div class="form-field"><label for="topic-code">编码 *</label><input id="topic-code" required maxlength="64" pattern="[A-Za-z0-9_-]+"></div>
+                <div class="form-field"><label for="topic-name">名称 *</label><input id="topic-name" required maxlength="128"></div>
+                <div class="form-field"><label for="topic-color">颜色 *</label><input id="topic-color" type="color" value="#2563EB" required></div>
+                <div class="form-field"><label for="topic-icon">图标名称</label><input id="topic-icon" maxlength="64" placeholder="例如 book"></div>
+                <div class="form-field"><label for="topic-language">默认语言 *</label><input id="topic-language" value="zh-CN" required maxlength="16"></div>
+                <div class="form-field"><label for="topic-sort-order">排序</label><input id="topic-sort-order" type="number" value="0" min="-9999" max="9999"></div>
+            </div>
+            <div class="form-field"><label for="topic-description">描述</label><textarea id="topic-description" maxlength="1000"></textarea></div>
+            <div class="form-grid">
+                <div class="form-field"><label for="topic-keywords">关键词</label><textarea id="topic-keywords" placeholder="每行或逗号分隔"></textarea></div>
+                <div class="form-field"><label for="topic-excluded">排除关键词</label><textarea id="topic-excluded" placeholder="每行或逗号分隔"></textarea></div>
+            </div>
+            <label class="check-field"><input id="topic-enabled" type="checkbox" checked> 启用主题</label>
+            <div class="action-row"><button class="button button-primary" type="submit">保存主题</button>
+                <button id="topic-cancel" class="button button-secondary" type="button">取消</button></div>
+        </form>
+    </section>
+</main>
+</body>
+</html>

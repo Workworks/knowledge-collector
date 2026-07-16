@@ -1,0 +1,16 @@
+### 健康检查
+GET http://127.0.0.1:8080/actuator/health
+Accept: application/json
+X-Correlation-Id: idea-health-check
+
+> {%
+    client.test("健康状态为 UP", function () {
+        client.assert(response.status === 200, "期望 HTTP 200");
+        client.assert(response.body.status === "UP", "期望状态 UP");
+    });
+%}
+
+### OpenAPI 文档
+GET http://127.0.0.1:8080/v3/api-docs
+Accept: application/json
+X-Correlation-Id: idea-openapi-check

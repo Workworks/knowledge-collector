@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>采集源管理 · Knowledge Collector</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <script defer th:src="@{/js/admin-common.js}"></script>
+    <script defer th:src="@{/js/sources.js}"></script>
+</head>
+<body>
+<main class="container admin-container">
+    <header class="console-header"><div><p class="eyebrow">ADMIN / SOURCES</p><h1>采集源管理</h1>
+        <p class="lead">配置来源类型、地址、访问限制、内容策略和所属主题。</p></div>
+        <nav class="header-actions"><a class="button button-secondary" href="/">首页</a>
+            <a class="button button-secondary" href="/topics">主题</a></nav></header>
+    <div id="page-message" class="page-message" hidden></div>
+    <section class="console-panel">
+        <div class="toolbar">
+            <div class="form-field grow"><label for="source-keyword">搜索</label><input id="source-keyword" placeholder="名称或编码"></div>
+            <div class="form-field"><label for="source-type-filter">类型</label><select id="source-type-filter">
+                <option value="">全部</option><option>RSS</option><option>ATOM</option><option>HTML_LIST</option>
+                <option>JSON_API</option><option>MANUAL_URL</option></select></div>
+            <div class="form-field"><label for="source-enabled-filter">状态</label><select id="source-enabled-filter">
+                <option value="">全部</option><option value="true">启用</option><option value="false">停用</option></select></div>
+            <button id="source-search" class="button button-secondary" type="button">查询</button>
+            <button id="source-new" class="button button-primary" type="button">新建采集源</button>
+        </div>
+        <div class="table-wrap"><table><caption>采集源列表</caption><thead><tr><th>采集源</th><th>类型</th>
+            <th>主题</th><th>请求策略</th><th>状态</th><th>操作</th></tr></thead><tbody id="source-rows"></tbody></table></div>
+        <div id="source-empty" class="empty-state" hidden>尚未创建采集源，请点击“新建采集源”。</div>
+        <div class="pagination"><button id="source-prev" class="button button-secondary">上一页</button>
+            <span id="source-page">第 1 页</span><button id="source-next" class="button button-secondary">下一页</button></div>
+    </section>
+    <section id="source-editor" class="console-panel editor-panel" hidden>
+        <h2 id="source-editor-title">新建采集源</h2>
+        <form id="source-form" class="admin-form"><input id="source-id" type="hidden">
+            <div class="form-grid">
+                <div class="form-field"><label for="source-code">编码 *</label><input id="source-code" required maxlength="64" pattern="[A-Za-z0-9_-]+"></div>
+                <div class="form-field"><label for="source-name">名称 *</label><input id="source-name" required maxlength="128"></div>
+                <div class="form-field"><label for="source-type">类型 *</label><select id="source-type" required><option>RSS</option><option>ATOM</option>
+                    <option>HTML_LIST</option><option>JSON_API</option><option>MANUAL_URL</option></select></div>
+                <div class="form-field"><label for="source-topics">所属主题</label><select id="source-topics" multiple size="5"></select></div>
+                <div class="form-field"><label for="source-home-url">首页地址</label><input id="source-home-url" type="url" maxlength="2048"></div>
+                <div class="form-field"><label for="source-feed-url">订阅/API 地址</label><input id="source-feed-url" type="url" maxlength="2048"></div>
+                <div class="form-field"><label for="source-language">语言</label><input id="source-language" value="zh-CN" required></div>
+                <div class="form-field"><label for="source-charset">字符集</label><input id="source-charset" value="UTF-8" required></div>
+                <div class="form-field"><label for="source-timeout">超时（秒）</label><input id="source-timeout" type="number" min="1" max="120" value="15" required></div>
+                <div class="form-field"><label for="source-retries">最大重试</label><input id="source-retries" type="number" min="0" max="10" value="2" required></div>
+                <div class="form-field"><label for="source-interval">请求间隔（毫秒）</label><input id="source-interval" type="number" min="0" max="3600000" value="2000" required></div>
+            </div>
+            <div class="form-field"><label for="source-user-agent">User-Agent *</label><input id="source-user-agent" value="KnowledgeCollector/1.0 (+local-admin)" required maxlength="256"></div>
+            <div class="form-field"><label for="source-notes">备注</label><textarea id="source-notes" maxlength="2000"></textarea></div>
+            <div class="check-grid"><label class="check-field"><input id="source-obey-robots" type="checkbox" checked> 遵守 robots.txt</label>
+                <label class="check-field"><input id="source-full-content" type="checkbox" checked> 允许采集正文</label>
+                <label class="check-field"><input id="source-summary-only" type="checkbox"> 只保存摘要</label>
+                <label class="check-field"><input id="source-snapshot" type="checkbox"> 保存快照</label>
+                <label class="check-field"><input id="source-enabled" type="checkbox" checked> 启用采集源</label></div>
+            <div class="action-row"><button class="button button-primary" type="submit">保存采集源</button>
+                <button id="source-cancel" class="button button-secondary" type="button">取消</button></div>
+        </form>
+    </section>
+</main>
+</body>
+</html>

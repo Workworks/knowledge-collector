@@ -1,0 +1,22 @@
+### 正常：来源分页
+GET http://127.0.0.1:8080/api/v1/sources?page=0&size=20
+Accept: application/json
+X-Correlation-Id: idea-sources-normal
+
+### 参数错误：危险协议与越界参数
+POST http://127.0.0.1:8080/api/v1/sources
+Content-Type: application/json
+Accept: application/json
+X-Correlation-Id: idea-sources-invalid
+
+{"code":"BAD_SOURCE","name":"错误来源","type":"RSS","homeUrl":"file:///etc/passwd","language":"zh-CN","charset":"UTF-8","userAgent":"test","timeoutSeconds":0,"maxRetries":99,"requestIntervalMillis":-1,"obeyRobots":true,"fetchFullContent":true,"summaryOnly":false,"saveSnapshot":false,"enabled":true,"topicIds":[]}
+
+### 记录不存在
+GET http://127.0.0.1:8080/api/v1/sources/999999
+Accept: application/json
+X-Correlation-Id: idea-sources-not-found
+
+### Stage 4 来源测试边界
+POST http://127.0.0.1:8080/api/v1/sources/1/test
+Accept: application/json
+X-Correlation-Id: idea-sources-test-boundary

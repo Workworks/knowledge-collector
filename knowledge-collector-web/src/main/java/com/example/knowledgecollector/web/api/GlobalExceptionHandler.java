@@ -1,6 +1,7 @@
 package com.example.knowledgecollector.web.api;
 
 import com.example.knowledgecollector.application.exception.BusinessRuleException;
+import com.example.knowledgecollector.application.exception.ConflictException;
 import com.example.knowledgecollector.application.exception.ResourceNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
@@ -34,6 +35,15 @@ public class GlobalExceptionHandler {
             HttpServletRequest request
     ) {
         return failure(HttpStatus.UNPROCESSABLE_ENTITY, exception.getCode(),
+                exception.getMessage(), List.of(), request);
+    }
+
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<ApiResponse<Void>> handleConflict(
+            ConflictException exception,
+            HttpServletRequest request
+    ) {
+        return failure(HttpStatus.CONFLICT, exception.getCode(),
                 exception.getMessage(), List.of(), request);
     }
 

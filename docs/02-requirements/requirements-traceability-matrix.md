@@ -53,3 +53,17 @@
 
 Stage 3 尚未宣称完成主题、来源、任务和文章相关功能需求。
 
+## 6. Stage 4 实现进度
+
+| 需求 | 状态 | 证据 |
+| --- | --- | --- |
+| FR-001—FR-003 | 已实现 | 主题、采集源及其多对多关系具备 CRUD、启停、分页筛选、REST API 和中文管理页面 |
+| FR-004—FR-005 | 未实现 | 采集规则版本和预览仍按计划在 Stage 6 完成 |
+| FR-022 | 部分实现 | `/api/v1/topics`、`/api/v1/sources` 契约、统一响应、校验和冲突状态已落地 |
+| NFR-009 | 部分实现 | 主题和采集源页面包含表单校验、成功/错误提示、删除确认、空状态、分页和筛选保留 |
+| NFR-010 | 持续满足 | README、测试指南、用户指南和 Stage 4 报告同步更新 |
+| SEC-001—SEC-003 | 部分实现 | 来源仅接受 HTTP/HTTPS，保留 robots、限速、超时、重试和 User-Agent 配置；未实现绕过能力 |
+| SEC-007—SEC-009 | 部分实现 | 默认本机访问；关联主题禁止直接删除；来源删除清理关系但不伪造未来文章删除策略 |
+| DATA-001—DATA-004 | 部分实现 | Flyway V2 创建 `topic`、`crawl_source`、`topic_source_rel`，使用 OffsetDateTime 与乐观锁 |
+
+来源真实连通性测试需要 Stage 5 Provider，本阶段接口明确返回 `SOURCE-TEST-NOT-AVAILABLE`，不记录虚假成功。

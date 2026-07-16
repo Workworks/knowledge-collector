@@ -1,0 +1,22 @@
+### 正常：主题分页
+GET http://127.0.0.1:8080/api/v1/topics?page=0&size=20
+Accept: application/json
+X-Correlation-Id: idea-topics-normal
+
+### 参数错误：非法编码和颜色
+POST http://127.0.0.1:8080/api/v1/topics
+Content-Type: application/json
+Accept: application/json
+X-Correlation-Id: idea-topics-invalid
+
+{"code":"非法 编码","name":"","color":"blue","language":"zh-CN","enabled":true,"sortOrder":0}
+
+### 记录不存在
+GET http://127.0.0.1:8080/api/v1/topics/999999
+Accept: application/json
+X-Correlation-Id: idea-topics-not-found
+
+### 状态冲突：删除已关联来源的主题（替换 ID）
+DELETE http://127.0.0.1:8080/api/v1/topics/1
+Accept: application/json
+X-Correlation-Id: idea-topics-conflict

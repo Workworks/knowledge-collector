@@ -1,0 +1,9 @@
+### 主题页大小越界
+GET http://127.0.0.1:8080/api/v1/topics?page=-1&size=101
+Accept: application/json
+X-Correlation-Id: idea-error-pagination
+
+### 未知资源
+GET http://127.0.0.1:8080/api/v1/topics/999999
+Accept: application/json
+X-Correlation-Id: idea-error-not-found

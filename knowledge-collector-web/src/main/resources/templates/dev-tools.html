@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>本地测试工具 · Knowledge Collector</title><link rel="stylesheet" th:href="@{/css/app.css}"></head>
+<body><main class="container"><header><p class="eyebrow">LOCAL PROFILE ONLY</p><h1>本地测试辅助工具</h1>
+    <p class="lead">该页面只在 local Profile 加载，production 不会注册路由。</p></header>
+    <section class="details"><h2>运行状态</h2><dl>
+        <div><dt>激活 Profile</dt><dd th:text="${profiles}">local</dd></div>
+        <div><dt>数据目录</dt><dd th:text="${status.dataDirectory}">./data</dd></div>
+        <div><dt>健康检查</dt><dd><a href="/actuator/health">/actuator/health</a></dd></div>
+        <div><dt>OpenAPI</dt><dd><a href="/swagger-ui.html">Swagger UI</a></dd></div>
+    </dl><div class="header-actions"><button class="button button-primary" onclick="demo('/api/v1/dev/demo/initialize')">初始化演示主题和来源</button>
+        <button class="button button-secondary" onclick="demo('/api/v1/dev/demo/clear')">清空演示主题和来源</button>
+        <a class="button button-secondary" href="/topics">查看主题</a><a class="button button-secondary" href="/sources">查看来源</a></div>
+        <p id="result" class="notice" hidden></p></section></main>
+<script>async function demo(url){const r=await fetch(url,{method:"POST",headers:{"X-Correlation-Id":"local-dev-tools"}});const j=await r.json();const e=document.querySelector("#result");e.hidden=false;e.textContent=j.data||j.error?.message;}</script>
+</body></html>

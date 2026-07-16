@@ -48,3 +48,10 @@ knowledge-collector:
 
 logging:
   config: classpath:logback-spring.xml
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html

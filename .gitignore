@@ -30,12 +30,11 @@ data/logs/*
 # Local configuration and secrets
 .env
 .env.*
-application-local.yml
 application-local.yaml
 application-local.properties
+http/http-client.private.env.json
 
 # Temporary files
 *.tmp
 *.swp
 ~$*
-

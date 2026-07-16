@@ -1,0 +1,16 @@
+spring:
+  thymeleaf:
+    cache: false
+
+management:
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,flyway
+
+logging:
+  level:
+    com.example.knowledgecollector: DEBUG

@@ -1,0 +1,90 @@
+### 主题列表
+GET http://127.0.0.1:8080/api/v1/topics?page=0&size=20
+Accept: application/json
+X-Correlation-Id: idea-stage4-topic-list
+
+### 创建主题（重复执行前请修改 code 和 name）
+POST http://127.0.0.1:8080/api/v1/topics
+Content-Type: application/json
+Accept: application/json
+X-Correlation-Id: idea-stage4-topic-create
+
+{
+  "code": "IDEA_AI",
+  "name": "IDEA 人工智能",
+  "description": "通过 IDEA HTTP Client 创建的测试主题",
+  "keywords": "人工智能,AI,大模型",
+  "excludedKeywords": "广告",
+  "color": "#2563EB",
+  "icon": "cpu",
+  "language": "zh-CN",
+  "enabled": true,
+  "sortOrder": 10
+}
+
+### 查询主题详情（将 1 替换为真实主题 ID）
+GET http://127.0.0.1:8080/api/v1/topics/1
+Accept: application/json
+X-Correlation-Id: idea-stage4-topic-detail
+
+### 停用主题（将 1 替换为真实主题 ID）
+PATCH http://127.0.0.1:8080/api/v1/topics/1/enabled
+Content-Type: application/json
+Accept: application/json
+X-Correlation-Id: idea-stage4-topic-disable
+
+{
+  "enabled": false
+}
+
+### 采集源列表
+GET http://127.0.0.1:8080/api/v1/sources?page=0&size=20
+Accept: application/json
+X-Correlation-Id: idea-stage4-source-list
+
+### 创建采集源（topicIds 替换为真实主题 ID）
+POST http://127.0.0.1:8080/api/v1/sources
+Content-Type: application/json
+Accept: application/json
+X-Correlation-Id: idea-stage4-source-create
+
+{
+  "code": "IDEA_EXAMPLE_RSS",
+  "name": "IDEA 示例 RSS",
+  "type": "RSS",
+  "homeUrl": "https://example.com",
+  "feedUrl": "https://example.com/feed.xml",
+  "language": "zh-CN",
+  "charset": "UTF-8",
+  "userAgent": "KnowledgeCollector/1.0 (+local-admin)",
+  "timeoutSeconds": 15,
+  "maxRetries": 2,
+  "requestIntervalMillis": 2000,
+  "obeyRobots": true,
+  "fetchFullContent": true,
+  "summaryOnly": false,
+  "saveSnapshot": false,
+  "enabled": true,
+  "notes": "IDEA HTTP Client 测试数据",
+  "topicIds": [1]
+}
+
+### 查询采集源详情（将 1 替换为真实来源 ID）
+GET http://127.0.0.1:8080/api/v1/sources/1
+Accept: application/json
+X-Correlation-Id: idea-stage4-source-detail
+
+### 测试来源边界（Stage 4 预期返回 422 和 SOURCE-TEST-NOT-AVAILABLE）
+POST http://127.0.0.1:8080/api/v1/sources/1/test
+Accept: application/json
+X-Correlation-Id: idea-stage4-source-test
+
+### 删除采集源（将 1 替换为真实来源 ID）
+DELETE http://127.0.0.1:8080/api/v1/sources/1
+Accept: application/json
+X-Correlation-Id: idea-stage4-source-delete
+
+### 删除主题（必须先删除或解除关联来源）
+DELETE http://127.0.0.1:8080/api/v1/topics/1
+Accept: application/json
+X-Correlation-Id: idea-stage4-topic-delete

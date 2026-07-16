@@ -11,4 +11,8 @@
 *.css text eol=lf
 *.js text eol=lf
 *.http text eol=lf
+*.json text eol=lf
+*.properties text eol=lf
+/mvnw text eol=lf
 *.bat text eol=crlf
+*.cmd text eol=crlf

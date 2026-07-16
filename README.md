@@ -1,6 +1,6 @@
 # Knowledge Collector
 
-Knowledge Collector 是面向个人和小团队的本地资料采集与阅读管理系统。当前完成至 Stage 3：基础 Spring Boot 应用、H2 文件数据库、Flyway、日志、统一 API 响应、本地目录和启动脚本已经可运行；主题、采集源和文章业务将在后续阶段实现。
+Knowledge Collector 是面向个人和小团队的本地资料采集与阅读管理系统。当前完成至 Stage 4：基础工程、主题管理、采集源管理、主题与来源关联、管理页面和 REST API 已经可运行。
 
 ## 当前可用能力
 
@@ -9,6 +9,11 @@ Knowledge Collector 是面向个人和小团队的本地资料采集与阅读管
 - 系统状态 API：`/api/v1/system/status`
 - Actuator 健康检查：`/actuator/health`
 - IDEA HTTP Client 请求集：`http/knowledge-collector.http`
+- Stage 4 管理接口请求集：`http/stage-4-management.http`
+- 主题管理页面：`/topics`
+- 采集源管理页面：`/sources`
+- OpenAPI JSON 与 Swagger UI：`/v3/api-docs`、`/swagger-ui.html`
+- local Profile 测试工具：`/dev/tools`
 - H2 文件数据库与 Flyway V1 迁移
 - 启动次数持久化，用于验证重启后数据不丢失
 - 数据、正文、快照、导出和日志目录自动创建
@@ -26,8 +31,7 @@ Knowledge Collector 是面向个人和小团队的本地资料采集与阅读管
 ## 构建
 
 ```bash
-mvn clean test
-mvn clean package
+./mvnw clean verify
 ```
 
 可执行文件：
@@ -61,6 +65,12 @@ java -jar knowledge-collector-boot/target/knowledge-collector.jar
 
 按 `Ctrl+C` 正常停止。
 
+local Profile（自动初始化演示主题与来源）：
+
+```bash
+./mvnw spring-boot:run -pl knowledge-collector-boot -am -Dspring-boot.run.profiles=local
+```
+
 ## 配置
 
 | 环境变量 | 默认值 | 说明 |
@@ -68,6 +78,12 @@ java -jar knowledge-collector-boot/target/knowledge-collector.jar
 | `KNOWLEDGE_COLLECTOR_DATA_DIR` | `./data` | 数据根目录 |
 | `KNOWLEDGE_COLLECTOR_SERVER_ADDRESS` | `127.0.0.1` | 监听地址 |
 | `KNOWLEDGE_COLLECTOR_SERVER_PORT` | `8080` | HTTP 端口 |
+
+Profile 分工：
+
+- `local`：演示主题/来源、`/dev/tools`、更多诊断详情。
+- `test`：自动化测试、内存 H2、禁止真实网络配置。
+- `production`：关闭测试工具与 OpenAPI，严格限制 Actuator。
 
 第一版没有登录，默认只监听本机。请勿在未增加访问控制的情况下绑定公网地址。
 
@@ -101,4 +117,4 @@ data/
 
 ## 当前边界
 
-当前首页是基础状态页，不代表完整产品 UI。尚未实现主题、来源、采集任务、文章资料库和调度功能，也未加入任何绕过登录、验证码、付费墙或 robots.txt 的能力。
+当前首页仍是基础状态入口。Stage 4 已实现主题和采集源配置；真实来源连通性测试、采集规则、采集任务、文章资料库和调度将在后续阶段实现。系统未加入任何绕过登录、验证码、付费墙或 robots.txt 的能力。
