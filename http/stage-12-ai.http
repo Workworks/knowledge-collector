@@ -1,0 +1,29 @@
+### Stage 12：AI Provider 与文章分析
+
+@articleId = 1
+
+### 查询 Ollama 状态
+GET http://127.0.0.1:8080/api/v1/ai/providers
+Accept: application/json
+
+> {%
+client.test("AI Provider 状态接口正常", function () {
+  client.assert(response.status === 200, "预期 200");
+  client.assert(response.body.data.length >= 1, "至少应有一个 Provider");
+});
+%}
+
+### 使用 Ollama 分析文章
+POST http://127.0.0.1:8080/api/v1/articles/{{articleId}}/ai/analyze?provider=ollama
+Accept: application/json
+
+> {%
+client.test("AI 分析成功", function () {
+  client.assert(response.status === 200, "预期 200");
+  client.assert(response.body.data.status === "SUCCESS", "分析状态应为 SUCCESS");
+});
+%}
+
+### 读取持久化结果
+GET http://127.0.0.1:8080/api/v1/articles/{{articleId}}/ai
+Accept: application/json

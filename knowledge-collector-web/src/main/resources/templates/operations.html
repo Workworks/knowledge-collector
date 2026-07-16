@@ -8,6 +8,10 @@
 <div class="header-actions"><button id="recover-stale" class="button button-secondary">回收超时任务</button>
 <button id="run-due" class="button button-secondary">立即检查到期任务</button></div></header>
 <div id="page-message" class="page-message" hidden></div>
+<section class="console-panel ai-provider-panel"><div class="section-heading"><div><p class="eyebrow">AI PROVIDERS</p>
+<h2>内容智能服务</h2></div><button id="refresh-ai" class="button button-secondary">刷新状态</button></div>
+<p class="panel-help">当前默认使用本地 Ollama。业务层只依赖通用 Provider 接口，后续可增加 OpenAI、DeepSeek 等实现。</p>
+<div id="ai-provider-grid" class="provider-grid"></div></section>
 <section class="console-panel"><div class="section-heading"><div><p class="eyebrow">SCHEDULES</p><h2>采集员调度</h2></div>
 <span class="muted">扫描器每 30 秒检查一次到期配置</span></div>
 <div class="table-wrap"><table><thead><tr><th>采集员</th><th>状态</th><th>周期</th><th>下次运行</th><th>上次运行</th><th>操作</th></tr></thead>

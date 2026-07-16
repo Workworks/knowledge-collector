@@ -4,6 +4,10 @@ import java.util.Map;
 import java.util.Set;
 
 public interface ContentIntelligenceProvider {
+    String id();
+
+    ProviderStatus status();
+
     AnalysisResult analyze(AnalysisRequest request);
 
     enum Capability {
@@ -15,5 +19,9 @@ public interface ContentIntelligenceProvider {
     }
 
     record AnalysisResult(Map<String, Object> values, String provider) {
+    }
+
+    record ProviderStatus(String id, boolean enabled, boolean available, String model,
+                          String endpoint, String message) {
     }
 }

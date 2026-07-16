@@ -11,7 +11,7 @@
 - `JdkWebContentProvider`：受限 HTTP 客户端；
 - `DefaultUrlSecurityValidator`：协议、DNS 和私有地址校验。
 
-应用层只依赖 `ContentSourceProvider` 等能力接口，通过 Spring 注入可用实现。后续 arXiv、Crossref、PubMed、GDELT、Ollama、OpenAI、Webhook、Lucene 或 S3 实现应放在 Provider 模块或拆分后的独立 Provider 子模块中。
+应用层只依赖 `ContentSourceProvider` 等能力接口，通过 Spring 注入可用实现。Stage 12 已实现 Ollama；后续 arXiv、Crossref、PubMed、GDELT、OpenAI、DeepSeek、Webhook、Lucene 或 S3 实现应放在 Provider 模块或拆分后的独立 Provider 子模块中。
 
 ## 已预留接口
 

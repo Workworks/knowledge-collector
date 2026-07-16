@@ -29,6 +29,17 @@
             <a th:href="${article.originalUrl}" target="_blank" rel="noopener noreferrer">查看原文 ↗</a></footer>
     </article>
     <aside class="reading-sidebar">
+        <section class="side-card ai-card"><div class="ai-card-heading"><div><p class="eyebrow">LOCAL AI</p>
+            <h2>AI 阅读助手</h2></div><span id="ai-status" class="component-status">未分析</span></div>
+            <p id="ai-summary" class="muted">使用本机 Ollama 生成摘要、核心观点、关键词和阅读价值。</p>
+            <div id="ai-result" hidden>
+                <h3>核心观点</h3><ul id="ai-key-points" class="ai-points"></ul>
+                <div id="ai-keywords" class="tag-list"></div>
+                <p class="muted">分类：<strong id="ai-category"></strong> · 阅读价值 <strong id="ai-value"></strong>/100</p>
+                <p id="ai-meta" class="ai-meta"></p>
+            </div>
+            <button id="ai-analyze" class="button button-primary button-block" type="button">使用默认 AI 分析</button>
+        </section>
         <section class="side-card"><p class="eyebrow">READING ACTIONS</p><h2>阅读操作</h2>
             <p>当前状态：<strong id="reading-status" th:text="${reading.readingStatus}"></strong></p>
             <button id="favorite-button" class="button button-primary button-block" type="button"

@@ -604,6 +604,17 @@ th:last-child { border-radius: 0 10px 10px 0; }
 .tag { padding: 5px 9px; border-radius: 999px; color: #475467; background: #eef2f6; font-size: 12px; font-weight: 700; }
 .tag-topic { color: #5637c7; background: #eee9ff; }
 .warning-list { padding-left: 18px; color: #8a4b00; font-size: 13px; }
+.ai-card { border-color: #cfc5ff; background: linear-gradient(155deg, #fff, #f5f2ff); }
+.ai-card-heading { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
+.ai-card-heading h2 { margin-top:2px; }.ai-points { padding-left:20px; color:#3f4655; font-size:13px; line-height:1.65; }
+.ai-points li { margin-bottom:7px; }.tag-ai { color:#5b3fc0; background:#ebe6ff; }
+.ai-meta { color:#8b91a0; font-size:11px; overflow-wrap:anywhere; }
+.provider-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
+.provider-card { padding:18px; border:1px solid var(--line); border-radius:16px; background:#faf9ff; }
+.provider-card > div { display:flex; align-items:center; gap:10px; }.provider-card > .status { float:right; margin-top:-35px; }
+.provider-card strong,.provider-card small { display:block; }.provider-card small,.provider-card p,.provider-card code { color:var(--muted); }
+.provider-card p { margin:16px 0 8px; font-size:13px; }.provider-card code { font-size:11px; overflow-wrap:anywhere; }
+.provider-mark { display:grid; width:38px; height:38px; place-items:center; border-radius:12px; color:white; background:linear-gradient(135deg,#6d4aff,#30a4c8); font-weight:900; }
 
 .metric-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 22px; }
 .metric-grid article { padding: 18px; }
@@ -681,7 +692,7 @@ th:last-child { border-radius: 0 10px 10px 0; }
     .nav-links { max-width: calc(100vw - 80px); overflow-x: auto; }
     .page-hero, .compact-hero { align-items: stretch; flex-direction: column; }
     .hero-stat { min-width: 0; }
-    .library-grid, .library-filters, .reading-sidebar, .metric-grid { grid-template-columns: 1fr; }
+    .library-grid, .library-filters, .reading-sidebar, .metric-grid, .provider-grid { grid-template-columns: 1fr; }
     .search-field { grid-column: auto; }
     .reading-main { padding: 24px; }
     .source-footer { flex-direction: column; }

@@ -100,6 +100,9 @@
 | --- | --- | --- |
 | GET | `/articles` | 搜索、筛选、分页 |
 | GET | `/articles/{id}` | 详情与安全正文 |
+| GET | `/ai/providers` | AI Provider 状态 |
+| GET | `/articles/{id}/ai` | 最近一次 AI 分析 |
+| POST | `/articles/{id}/ai/analyze` | 使用指定 Provider 分析文章 |
 | PUT | `/articles/{id}/reading-status` | 设置阅读状态 |
 | PUT | `/articles/{id}/favorite` | 设置收藏状态 |
 | PUT | `/articles/{id}/topics` | 人工调整主题 |

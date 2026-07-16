@@ -136,6 +136,12 @@ Stage 10 的 V8 为 `crawl_task` 增加 `heartbeat_at`。活动任务使用
 
 detail_json 不得包含 Token、完整 Cookie 或正文。
 
+### 4.14 article_ai_analysis
+
+`article_id, provider, model, status, result_json CLOB, error_message, analyzed_at, updated_at`
+
+一篇文章保存最近一次 AI 分析。结构化结果包含摘要、核心观点、关键词、标签、分类、阅读价值、Token 和耗时。
+
 ## 5. 枚举
 
 - SourceType：RSS、ATOM、HTML_LIST、JSON_API、MANUAL_URL。

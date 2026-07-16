@@ -20,6 +20,14 @@ window.addEventListener("DOMContentLoaded", async () => {
             <td><span class="status on">${item.status}</span></td><td>${item.createdAt}</td></tr>`).join("");
         $("backup-empty").hidden = backups.length > 0;
     }
+    async function loadAiProviders() {
+        const providers = await A.request("/api/v1/ai/providers");
+        $("ai-provider-grid").innerHTML = providers.map(item => `<article class="provider-card">
+            <div><span class="provider-mark">AI</span><div><strong>${A.escape(item.id)}</strong>
+            <small>${A.escape(item.model || "未配置模型")}</small></div></div>
+            <span class="status ${item.available ? "on" : "off"}">${item.available ? "可用" : item.enabled ? "不可用" : "已禁用"}</span>
+            <p>${A.escape(item.message)}</p><code>${A.escape(item.endpoint)}</code></article>`).join("");
+    }
 
     $("schedule-rows").onclick = async event => {
         const button = event.target.closest("button");
@@ -52,5 +60,10 @@ window.addEventListener("DOMContentLoaded", async () => {
         } catch (error) { A.message(error.message, true); }
         finally { event.currentTarget.disabled = false; }
     };
-    try { await Promise.all([loadSchedules(), loadBackups()]); } catch (error) { A.message(error.message, true); }
+    $("refresh-ai").onclick = async () => {
+        try { await loadAiProviders(); A.message("AI Provider 状态已刷新"); }
+        catch (error) { A.message(error.message, true); }
+    };
+    try { await Promise.all([loadSchedules(), loadBackups(), loadAiProviders()]); }
+    catch (error) { A.message(error.message, true); }
 });

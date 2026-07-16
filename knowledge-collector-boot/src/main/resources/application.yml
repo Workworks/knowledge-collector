@@ -51,6 +51,14 @@ knowledge-collector:
     enabled: true
     trust-system-store: ${KNOWLEDGE_COLLECTOR_TRUST_SYSTEM_STORE:true}
     additional-ca-file: ${KNOWLEDGE_COLLECTOR_ADDITIONAL_CA_FILE:}
+  ai:
+    provider: ${KNOWLEDGE_COLLECTOR_AI_PROVIDER:ollama}
+    max-content-chars: ${KNOWLEDGE_COLLECTOR_AI_MAX_CONTENT_CHARS:24000}
+    ollama:
+      enabled: ${KNOWLEDGE_COLLECTOR_OLLAMA_ENABLED:true}
+      base-url: ${KNOWLEDGE_COLLECTOR_OLLAMA_BASE_URL:http://127.0.0.1:11434}
+      model: ${KNOWLEDGE_COLLECTOR_OLLAMA_MODEL:qwen3:4b}
+      timeout: ${KNOWLEDGE_COLLECTOR_OLLAMA_TIMEOUT:PT2M}
 
 logging:
   config: classpath:logback-spring.xml

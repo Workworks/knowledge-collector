@@ -1,0 +1,38 @@
+services:
+  app:
+    build:
+      context: .
+    image: knowledge-collector:stage-12
+    restart: unless-stopped
+    ports:
+      - "${KNOWLEDGE_COLLECTOR_PORT:-8080}:8080"
+    environment:
+      KNOWLEDGE_COLLECTOR_OLLAMA_ENABLED: "true"
+      KNOWLEDGE_COLLECTOR_OLLAMA_BASE_URL: "http://ollama:11434"
+      KNOWLEDGE_COLLECTOR_OLLAMA_MODEL: "${OLLAMA_MODEL:-qwen3:4b}"
+    volumes:
+      - knowledge_data:/data
+    depends_on:
+      ollama:
+        condition: service_started
+
+  ollama:
+    image: ollama/ollama:latest
+    restart: unless-stopped
+    volumes:
+      - ollama_models:/root/.ollama
+
+  ollama-init:
+    image: ollama/ollama:latest
+    restart: "no"
+    environment:
+      OLLAMA_HOST: "http://ollama:11434"
+    entrypoint: ["/bin/sh", "-c"]
+    command: ["sleep 5 && ollama pull ${OLLAMA_MODEL:-qwen3:4b}"]
+    depends_on:
+      ollama:
+        condition: service_started
+
+volumes:
+  knowledge_data:
+  ollama_models:

@@ -1,0 +1,8 @@
+.git
+.idea
+**/target
+data
+.env*
+mobile-offline/.gradle
+mobile-offline/app/build
+*.log

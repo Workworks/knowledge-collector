@@ -3,6 +3,9 @@ target/
 **/target/
 *.class
 *.jar
+.gradle/
+**/.gradle/
+**/build/
 
 # IDE and OS files
 .idea/

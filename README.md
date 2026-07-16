@@ -1,6 +1,6 @@
 # Knowledge Collector
 
-Knowledge Collector 是面向个人和小团队的本地资料采集与阅读管理系统。当前完成至 Stage 11：第一版本交付后进入来源兼容与内容质量维护迭代。
+Knowledge Collector 是面向个人和小团队的本地资料采集与阅读管理系统。当前完成至 Stage 12：支持本地 Ollama 内容理解、容器部署和 Android 离线资料包。
 
 ## 当前可用能力
 
@@ -24,10 +24,12 @@ Knowledge Collector 是面向个人和小团队的本地资料采集与阅读管
 - 固定周期调度、失败任务重试、待执行任务取消、运行仪表盘和本地备份
 - OpenAPI JSON 与 Swagger UI：`/v3/api-docs`、`/swagger-ui.html`
 - local Profile 测试工具：`/dev/tools`
-- H2 文件数据库与 Flyway V1—V8 迁移
+- H2 文件数据库与 Flyway V1—V9 迁移
 - 任务总请求超时、心跳租约与超时任务自动回收
 - JDK、Windows 系统根证书和可选 PEM CA 的组合 TLS 信任
 - RSS/Atom 支持内嵌全文和文章详情页正文提取、安全清洗及空正文回填
+- 本地 Ollama 文章摘要、核心观点、关键词、标签、分类和阅读价值
+- Docker Compose 一键部署与 Android SQLite 离线阅读包
 - 启动次数持久化，用于验证重启后数据不丢失
 - 数据、正文、快照、导出和日志目录自动创建
 - 全局异常响应、字段错误模型和请求关联编号
@@ -94,6 +96,10 @@ local Profile（自动初始化演示主题与来源）：
 | `KNOWLEDGE_COLLECTOR_TASK_STALE_TIMEOUT` | `PT10M` | 任务最大无心跳时间 |
 | `KNOWLEDGE_COLLECTOR_TRUST_SYSTEM_STORE` | `true` | Windows 合并系统根证书 |
 | `KNOWLEDGE_COLLECTOR_ADDITIONAL_CA_FILE` | 空 | 额外可信 PEM CA 文件 |
+| `KNOWLEDGE_COLLECTOR_OLLAMA_ENABLED` | `true` | 启用 Ollama Provider |
+| `KNOWLEDGE_COLLECTOR_OLLAMA_BASE_URL` | `http://127.0.0.1:11434` | Ollama 地址 |
+| `KNOWLEDGE_COLLECTOR_OLLAMA_MODEL` | `qwen3:4b` | 默认模型 |
+| `KNOWLEDGE_COLLECTOR_OLLAMA_TIMEOUT` | `PT2M` | 单次分析超时 |
 
 Profile 分工：
 
@@ -135,4 +141,4 @@ data/
 
 ## 当前边界
 
-当前支持 RSS、Atom、RSS 文章详情页通用正文抽取、基于 CSS Selector 的静态 HTML 采集、本地固定周期调度和 H2 资料检索。动态浏览器渲染、分布式调度、AI、专业搜索引擎及外部通知仍属于后续阶段。系统未加入任何绕过登录、验证码、付费墙或 robots.txt 的能力。
+当前支持 RSS、Atom、RSS 文章详情页通用正文抽取、基于 CSS Selector 的静态 HTML 采集、本地固定周期调度、H2 资料检索和 Ollama 内容分析。动态浏览器渲染、分布式调度、云端 AI Provider、专业搜索引擎及外部通知仍属于后续阶段。系统未加入任何绕过登录、验证码、付费墙或 robots.txt 的能力。
