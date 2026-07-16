@@ -65,6 +65,13 @@ class Stage6HtmlCollectionIntegrationTest {
 
     @Test
     void versionsTestsAndRunsHtmlRuleWithSanitizedContent() {
+        JsonNode topic = post("/api/v1/topics", Map.of(
+                "code", "stage7_cognition", "name", "Stage 7 Cognition",
+                "description", "assessment topic", "keywords", "memory,sleep,learning",
+                "excludedKeywords", "advertisement", "color", "#2563EB", "icon", "brain",
+                "language", "en", "enabled", true, "sortOrder", 10
+        ), 201);
+        long topicId = topic.path("data").path("id").asLong();
         JsonNode source = post("/api/v1/sources", Map.ofEntries(
                 Map.entry("code", "stage6_html"), Map.entry("name", "Stage 6 HTML"),
                 Map.entry("type", "HTML_LIST"), Map.entry("homeUrl", SITE.baseUrl()),
@@ -74,7 +81,7 @@ class Stage6HtmlCollectionIntegrationTest {
                 Map.entry("requestIntervalMillis", 0), Map.entry("obeyRobots", true),
                 Map.entry("fetchFullContent", true), Map.entry("summaryOnly", false),
                 Map.entry("saveSnapshot", false), Map.entry("enabled", true),
-                Map.entry("notes", "html fixture"), Map.entry("topicIds", new long[]{})
+                Map.entry("notes", "html fixture"), Map.entry("topicIds", new long[]{topicId})
         ), 201);
         long sourceId = source.path("data").path("id").asLong();
 
@@ -100,9 +107,16 @@ class Stage6HtmlCollectionIntegrationTest {
         assertThat(detail.path("data").path("contentText").asText()).isNotBlank();
         assertThat(detail.path("data").path("contentHtml").asText())
                 .doesNotContain("<script", "Advertisement");
+        JsonNode assessment = getJson("/api/v1/articles/" + first.path("id").asLong() + "/assessment");
+        assertThat(assessment.path("data").path("qualityScore").asInt()).isGreaterThanOrEqualTo(60);
+        assertThat(assessment.path("data").path("reviewStatus").asText()).isEqualTo("AUTO_ACCEPTED");
+        assertThat(assessment.path("data").path("topics").get(0).path("topicId").asLong()).isEqualTo(topicId);
+        assertThat(assessment.path("data").path("contentFingerprint").asText()).hasSize(64);
 
         String page = restTemplate.getForObject(url("/sources/" + sourceId + "/rules"), String.class);
         assertThat(page).contains("HTML 采集规则", "/js/source-rules.js");
+        assertThat(restTemplate.getForObject(url("/articles/" + first.path("id").asLong()), String.class))
+                .contains("质量评分", "来源等级", "主题匹配");
     }
 
     private static void html(String path, String resource) throws IOException {

@@ -10,6 +10,14 @@
 <dt>摘要</dt><dd th:text="${article.summary} ?: '-'"></dd>
 <dt>字数 / 阅读时长</dt><dd><span th:text="${article.wordCount}"></span> 字 /
 <span th:text="${article.readingMinutes}"></span> 分钟</dd>
+<dt>质量评分</dt><dd><span th:text="${assessment.qualityScore}"></span> / 100
+（<span th:text="${assessment.reviewStatus}"></span>）</dd>
+<dt>来源等级</dt><dd th:text="${assessment.sourceLevel}"></dd>
+<dt>证据项</dt><dd th:text="${assessment.evidenceCount}"></dd>
+<dt>主题匹配</dt><dd><ul><li th:each="topic : ${assessment.topics}">
+<span th:text="${topic.topicName}"></span>：<span th:text="${topic.score}"></span>
+<small th:text="${topic.reason}"></small></li></ul><span th:if="${#lists.isEmpty(assessment.topics)}">待人工审核</span></dd>
+<dt>提示</dt><dd><ul><li th:each="warning : ${assessment.warnings}" th:text="${warning}"></li></ul></dd>
 <dt>规范化 URL</dt><dd th:text="${article.normalizedUrl}"></dd></dl>
 <article class="console-panel" th:if="${article.contentHtml != null}"
          th:utext="${article.contentHtml}"></article>

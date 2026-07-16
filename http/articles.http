@@ -17,3 +17,52 @@ Accept: application/json
 ### 不存在的文章
 GET http://127.0.0.1:8080/api/v1/articles/999999
 Accept: application/json
+
+### 待审核文章
+GET http://127.0.0.1:8080/api/v1/articles?reviewStatus=PENDING_REVIEW&page=0&size=20
+Accept: application/json
+X-Correlation-Id: idea-stage7-review
+
+> {%
+client.test("待审核文章查询成功", function () {
+  client.assert(response.status === 200, "预期 HTTP 200");
+  client.assert(response.body.success === true, "success 应为 true");
+  client.assert(Array.isArray(response.body.data.content), "data.content 应为数组");
+});
+%}
+
+### 按最低质量分筛选
+GET http://127.0.0.1:8080/api/v1/articles?minQuality=60&page=0&size=20
+Accept: application/json
+
+> {%
+client.test("质量分筛选结果满足阈值", function () {
+  client.assert(response.status === 200, "预期 HTTP 200");
+  response.body.data.content.forEach(function (article) {
+    client.assert(article.qualityScore >= 60, "文章质量分应大于等于 60");
+  });
+});
+%}
+
+### 按主题筛选（将 1 替换为实际主题 ID）
+GET http://127.0.0.1:8080/api/v1/articles?topicId=1&page=0&size=20
+Accept: application/json
+
+### 查询文章评估（将 1 替换为实际文章 ID）
+GET http://127.0.0.1:8080/api/v1/articles/1/assessment
+Accept: application/json
+X-Correlation-Id: idea-stage7-assessment
+
+> {%
+client.test("文章评估包含 Stage 7 字段", function () {
+  client.assert(response.status === 200, "预期 HTTP 200");
+  client.assert(response.body.data.qualityScore >= 0, "应返回质量分");
+  client.assert(response.body.data.contentFingerprint.length === 64, "内容指纹应为 SHA-256");
+  client.assert(Array.isArray(response.body.data.topics), "应返回主题匹配列表");
+  client.assert(Array.isArray(response.body.data.warnings), "应返回评估提示列表");
+});
+%}
+
+### 重新评估文章（将 1 替换为实际文章 ID）
+POST http://127.0.0.1:8080/api/v1/articles/1/assessment
+Accept: application/json

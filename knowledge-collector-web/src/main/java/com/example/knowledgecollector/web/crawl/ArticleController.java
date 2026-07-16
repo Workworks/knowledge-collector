@@ -30,10 +30,14 @@ public class ArticleController {
     @Operation(summary = "分页查询文章")
     public ApiResponse<?> list(@RequestParam(required = false) String keyword,
                                @RequestParam(required = false) Long sourceId,
+                               @RequestParam(required = false) String reviewStatus,
+                               @RequestParam(required = false) @Min(0) @Max(100) Integer minQuality,
+                               @RequestParam(required = false) Long topicId,
                                @RequestParam(defaultValue = "0") @Min(0) int page,
                                @RequestParam(defaultValue = "20") @Min(1) @Max(100) int size,
                                HttpServletRequest request) {
-        return ApiResponse.success(service.findPage(keyword, sourceId, page, size), correlationId(request));
+        return ApiResponse.success(service.findPage(keyword, sourceId, reviewStatus,
+                minQuality, topicId, page, size), correlationId(request));
     }
 
     @GetMapping("/{id}")

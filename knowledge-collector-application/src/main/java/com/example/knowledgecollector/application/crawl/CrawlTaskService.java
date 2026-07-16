@@ -1,5 +1,6 @@
 package com.example.knowledgecollector.application.crawl;
 
+import com.example.knowledgecollector.application.assessment.ArticleAssessmentService;
 import com.example.knowledgecollector.application.common.PageResult;
 import com.example.knowledgecollector.application.exception.BusinessRuleException;
 import com.example.knowledgecollector.application.rule.SourceRuleService;
@@ -21,13 +22,16 @@ public class CrawlTaskService {
     private final CrawlSourceService sources;
     private final SourceRuleService rules;
     private final CrawlTaskGateway gateway;
+    private final ArticleAssessmentService assessments;
     private final List<ContentSourceProvider> providers;
 
     public CrawlTaskService(CrawlSourceService sources, SourceRuleService rules,
-                            CrawlTaskGateway gateway, List<ContentSourceProvider> providers) {
+                            CrawlTaskGateway gateway, ArticleAssessmentService assessments,
+                            List<ContentSourceProvider> providers) {
         this.sources = sources;
         this.rules = rules;
         this.gateway = gateway;
+        this.assessments = assessments;
         this.providers = providers;
     }
 
@@ -54,6 +58,8 @@ public class CrawlTaskService {
                 log.debug("stage={} articleId={}", saved.created() ? "SAVE" : "DEDUPLICATE", saved.articleId());
                 MDC.remove("articleId");
                 if (saved.created()) {
+                    log.debug("stage=CLASSIFY articleId={}", saved.articleId());
+                    assessments.assess(saved.articleId());
                     created++;
                 } else {
                     duplicates++;

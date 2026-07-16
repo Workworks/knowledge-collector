@@ -17,6 +17,11 @@ public class ArticleService {
         return gateway.findPage(keyword, sourceId, page, size);
     }
 
+    public PageResult<ArticleView> findPage(String keyword, Long sourceId, String reviewStatus,
+                                            Integer minQuality, Long topicId, int page, int size) {
+        return gateway.findPage(keyword, sourceId, reviewStatus, minQuality, topicId, page, size);
+    }
+
     public ArticleView get(long id) {
         return gateway.get(id);
     }

@@ -24,6 +24,12 @@ public class JdbcArticleGateway implements ArticleGateway {
 
     @Override
     public PageResult<ArticleView> findPage(String keyword, Long sourceId, int page, int size) {
+        return findPage(keyword, sourceId, null, null, null, page, size);
+    }
+
+    @Override
+    public PageResult<ArticleView> findPage(String keyword, Long sourceId, String reviewStatus,
+                                            Integer minQuality, Long topicId, int page, int size) {
         StringBuilder where = new StringBuilder(" where 1=1");
         Map<String, Object> params = new HashMap<>();
         if (keyword != null && !keyword.isBlank()) {
@@ -33,6 +39,18 @@ public class JdbcArticleGateway implements ArticleGateway {
         if (sourceId != null) {
             where.append(" and a.source_id=:sourceId");
             params.put("sourceId", sourceId);
+        }
+        if (reviewStatus != null && !reviewStatus.isBlank()) {
+            where.append(" and a.review_status=:reviewStatus");
+            params.put("reviewStatus", reviewStatus);
+        }
+        if (minQuality != null) {
+            where.append(" and a.quality_score>=:minQuality");
+            params.put("minQuality", minQuality);
+        }
+        if (topicId != null) {
+            where.append(" and exists(select 1 from article_topic_rel atr where atr.article_id=a.id and atr.topic_id=:topicId)");
+            params.put("topicId", topicId);
         }
         long total = jdbc.sql("select count(*) from article a" + where).params(params).query(Long.class).single();
         params.put("size", size);
@@ -58,6 +76,8 @@ public class JdbcArticleGateway implements ArticleGateway {
                 resultSet.getBoolean("publish_time_inferred"),
                 resultSet.getString("content_html"), resultSet.getString("content_text"),
                 resultSet.getInt("word_count"), resultSet.getInt("reading_minutes"),
+                resultSet.getInt("quality_score"), resultSet.getString("review_status"),
+                resultSet.getString("source_level"),
                 resultSet.getObject("first_collected_at", OffsetDateTime.class),
                 resultSet.getObject("last_collected_at", OffsetDateTime.class)
         );

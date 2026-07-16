@@ -147,14 +147,19 @@
 文章查询：
 
 ```text
-GET /api/v1/articles?q=spring&topicId=1&readingStatus=UNREAD&minQuality=60&page=0&size=20&sort=publishTime,desc
+GET /api/v1/articles?keyword=spring&topicId=1&reviewStatus=AUTO_ACCEPTED&minQuality=60&page=0&size=20
 ```
 
-设置状态：
+文章质量评估：
 
-```json
-{"readingStatus": "READ"}
+```text
+GET  /api/v1/articles/{articleId}/assessment
+POST /api/v1/articles/{articleId}/assessment
 ```
+
+评估响应包含 `qualityScore`、`reviewStatus`、`sourceLevel`、`evidenceCount`、
+`hasDoi`、`contentFingerprint`、`warnings` 和多主题匹配结果。采集入库后自动执行首次评估；
+主题规则变化后可通过 POST 接口重新评估。排除词命中时优先阻止自动接收。
 
 ## 7. 页面 Controller
 

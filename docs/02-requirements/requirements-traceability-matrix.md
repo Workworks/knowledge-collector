@@ -67,3 +67,15 @@ Stage 3 尚未宣称完成主题、来源、任务和文章相关功能需求。
 | DATA-001—DATA-004 | 部分实现 | Flyway V2 创建 `topic`、`crawl_source`、`topic_source_rel`，使用 OffsetDateTime 与乐观锁 |
 
 来源真实连通性测试需要 Stage 5 Provider，本阶段接口明确返回 `SOURCE-TEST-NOT-AVAILABLE`，不记录虚假成功。
+
+## 7. Stage 7 实现进度
+
+| 需求 | 状态 | 证据 |
+| --- | --- | --- |
+| FR-009—FR-013 | 已实现当前阶段范围 | 采集后生成 SHA-256 内容指纹，已有 URL 标准化、正文抽取、清洗和入库流程继续通过回归测试 |
+| FR-014—FR-015 | 已实现 | 支持主题关键词、排除词优先、多主题匹配、质量评分、来源等级、证据数和待审核状态 |
+| FR-022 | 部分实现 | 新增文章评估查询/重评接口，以及按审核状态、最低质量分和主题过滤文章的 API |
+| NFR-006 | 持续满足 | 主题和质量规则使用固定输入与 WireMock HTML 夹具测试，不依赖实时外部网络 |
+| NFR-009 | 部分实现 | 文章列表展示质量与审核状态，详情展示评估依据，并提供 `/articles/review` 待审核入口 |
+| NFR-010 | 持续满足 | README、API 设计、IDEA HTTP Client 请求和 Stage 7 报告同步更新 |
+| DATA-001—DATA-004 | 部分实现 | Flyway V5 扩展文章评估字段并创建 `article_topic_rel`，增加质量、审核状态和指纹索引 |

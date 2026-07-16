@@ -47,7 +47,7 @@ class FoundationIntegrationTest {
         assertThat(response.path("data").path("applicationName").asText())
                 .isEqualTo("knowledge-collector");
         assertThat(response.path("data").path("databaseProduct").asText()).containsIgnoringCase("H2");
-        assertThat(response.path("data").path("flywayMigrationCount").asInt()).isEqualTo(4);
+        assertThat(response.path("data").path("flywayMigrationCount").asInt()).isEqualTo(5);
         assertThat(response.path("data").path("startupCount").asLong()).isGreaterThanOrEqualTo(1);
         assertThat(response.path("correlationId").asText()).isNotBlank();
     }
@@ -102,6 +102,15 @@ class FoundationIntegrationTest {
         assertThat(document.path("openapi").asText()).startsWith("3.");
         assertThat(document.path("paths").has("/api/v1/topics")).isTrue();
         assertThat(document.path("paths").has("/api/v1/sources")).isTrue();
+    }
+
+    @Test
+    void servesFaviconWithoutStaticResourceError() {
+        var response = restTemplate.getForEntity(
+                "http://127.0.0.1:" + port + "/favicon.ico", byte[].class);
+        assertThat(response.getStatusCode().is2xxSuccessful()).isTrue();
+        assertThat(response.getHeaders().getContentType().toString()).isEqualTo("image/svg+xml");
+        assertThat(response.getBody()).isNotEmpty();
     }
 
     private static Path createTestDataDirectory() {

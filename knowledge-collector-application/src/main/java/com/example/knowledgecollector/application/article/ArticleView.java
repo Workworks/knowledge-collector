@@ -7,6 +7,7 @@ public record ArticleView(
         String originalUrl, String normalizedUrl, String language, OffsetDateTime publishTime,
         boolean publishTimeInferred, String contentHtml, String contentText,
         int wordCount, int readingMinutes,
+        int qualityScore, String reviewStatus, String sourceLevel,
         OffsetDateTime firstCollectedAt, OffsetDateTime lastCollectedAt
 ) {
 }

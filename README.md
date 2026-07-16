@@ -1,6 +1,6 @@
 # Knowledge Collector
 
-Knowledge Collector 是面向个人和小团队的本地资料采集与阅读管理系统。当前完成至 Stage 6：RSS/Atom、HTML 规则采集、文章入库与可插拔能力接口已经可运行。
+Knowledge Collector 是面向个人和小团队的本地资料采集与阅读管理系统。当前完成至 Stage 7：RSS/Atom、HTML 规则采集、文章入库、主题匹配与质量控制已经可运行。
 
 ## 当前可用能力
 
@@ -14,9 +14,11 @@ Knowledge Collector 是面向个人和小团队的本地资料采集与阅读管
 - 采集源管理页面：`/sources`
 - HTML 规则工作台：`/sources/{id}/rules`
 - 采集任务与文章库：`/tasks`、`/articles`
+- 待审核文章页面：`/articles/review`
+- 文章质量评估 API：`/api/v1/articles/{articleId}/assessment`
 - OpenAPI JSON 与 Swagger UI：`/v3/api-docs`、`/swagger-ui.html`
 - local Profile 测试工具：`/dev/tools`
-- H2 文件数据库与 Flyway V1 迁移
+- H2 文件数据库与 Flyway V1—V5 迁移
 - 启动次数持久化，用于验证重启后数据不丢失
 - 数据、正文、快照、导出和日志目录自动创建
 - 全局异常响应、字段错误模型和请求关联编号
