@@ -1,7 +1,12 @@
-<!doctype html><html lang="zh-CN" xmlns:th="http://www.thymeleaf.org"><head><meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1"><title>采集任务</title>
-<link rel="stylesheet" th:href="@{/css/app.css}"></head><body><main class="container admin-container">
-<header><p class="eyebrow">CRAWL TASKS</p><h1>采集任务</h1><p class="lead">查看 RSS/Atom 手动采集结果与错误。</p>
-<nav class="header-actions"><a class="button button-secondary" href="/sources">采集源</a><a class="button button-secondary" href="/">首页</a></nav></header>
-<section class="console-panel"><div class="table-wrap"><table><thead><tr><th>任务号</th><th>来源</th><th>状态</th><th>发现</th><th>新增</th><th>重复</th><th>耗时</th></tr></thead><tbody id="rows"></tbody></table></div></section>
-</main><script>fetch("/api/v1/tasks").then(r=>r.json()).then(j=>{document.querySelector("#rows").innerHTML=j.data.content.map(t=>`<tr><td><a href="/tasks/${t.id}">${t.taskNo}</a></td><td>${t.sourceName}</td><td>${t.status}</td><td>${t.discoveredCount}</td><td>${t.createdCount}</td><td>${t.duplicateCount}</td><td>${t.durationMillis??"-"}ms</td></tr>`).join("")})</script></body></html>
+<!doctype html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>采集任务 · Knowledge Collector</title><link rel="stylesheet" href="/css/app.css">
+<script defer src="/js/admin-common.js"></script><script defer src="/js/tasks.js"></script></head><body>
+<nav class="site-nav"><a class="brand" href="/">KC <span>Knowledge Collector</span></a><div class="nav-links">
+<a href="/topics">主题</a><a href="/sources">采集员</a><a class="active" href="/tasks">任务</a><a href="/articles">资料库</a></div></nav>
+<main class="container admin-container"><header class="page-hero compact-hero"><div><p class="eyebrow">COLLECTION RUNS</p>
+<h1>采集任务</h1><p class="lead">跟踪每次采集的发现、新增、重复与执行耗时。</p></div>
+<div class="hero-stat"><strong id="task-count">0 个任务</strong><span>历史执行记录</span></div></header>
+<div id="page-message" class="page-message" hidden></div>
+<section class="console-panel"><div class="table-wrap"><table><thead><tr><th>任务号</th><th>采集员</th><th>状态</th>
+<th>新增 / 发现</th><th>重复</th><th>耗时</th><th>操作</th></tr></thead><tbody id="task-rows"></tbody></table></div>
+<div id="task-empty" class="empty-state" hidden>尚无任务，请前往采集员管理页面执行采集。</div></section></main></body></html>

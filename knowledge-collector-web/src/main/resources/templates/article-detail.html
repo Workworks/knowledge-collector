@@ -1,26 +1,54 @@
 <!doctype html>
 <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>文章详情</title><link rel="stylesheet" href="/css/app.css"></head>
-<body><main class="container"><h1 th:text="${article.title}"></h1>
-<dl><dt>ID</dt><dd th:text="${article.id}"></dd>
-<dt>采集源</dt><dd th:text="${article.sourceName}"></dd>
-<dt>作者</dt><dd th:text="${article.author} ?: '-'"></dd>
-<dt>发布时间</dt><dd th:text="${article.publishTime}"></dd>
-<dt>摘要</dt><dd th:text="${article.summary} ?: '-'"></dd>
-<dt>字数 / 阅读时长</dt><dd><span th:text="${article.wordCount}"></span> 字 /
-<span th:text="${article.readingMinutes}"></span> 分钟</dd>
-<dt>质量评分</dt><dd><span th:text="${assessment.qualityScore}"></span> / 100
-（<span th:text="${assessment.reviewStatus}"></span>）</dd>
-<dt>来源等级</dt><dd th:text="${assessment.sourceLevel}"></dd>
-<dt>证据项</dt><dd th:text="${assessment.evidenceCount}"></dd>
-<dt>主题匹配</dt><dd><ul><li th:each="topic : ${assessment.topics}">
-<span th:text="${topic.topicName}"></span>：<span th:text="${topic.score}"></span>
-<small th:text="${topic.reason}"></small></li></ul><span th:if="${#lists.isEmpty(assessment.topics)}">待人工审核</span></dd>
-<dt>提示</dt><dd><ul><li th:each="warning : ${assessment.warnings}" th:text="${warning}"></li></ul></dd>
-<dt>规范化 URL</dt><dd th:text="${article.normalizedUrl}"></dd></dl>
-<article class="console-panel" th:if="${article.contentHtml != null}"
-         th:utext="${article.contentHtml}"></article>
-<a class="button" th:href="${article.originalUrl}" target="_blank" rel="noopener noreferrer">打开原文</a>
-<a class="button button-secondary" href="/articles">返回文章库</a>
-</main></body></html>
+    <title th:text="${article.title + ' · Knowledge Collector'}">文章详情</title>
+    <link rel="stylesheet" href="/css/app.css">
+    <script defer src="/js/admin-common.js"></script><script defer src="/js/article-detail.js"></script></head>
+<body>
+<nav class="site-nav"><a class="brand" href="/">KC <span>Knowledge Collector</span></a><div class="nav-links">
+    <a href="/topics">主题</a><a href="/sources">采集员</a><a href="/tasks">任务</a><a class="active" href="/articles">资料库</a></div></nav>
+<main class="container reading-layout" th:attr="data-article-id=${article.id}">
+    <div id="page-message" class="page-message" hidden></div>
+    <article class="reading-main">
+        <header class="article-header"><div class="article-kicker"><span th:text="${article.sourceName}"></span>
+            <span th:text="${article.readingMinutes + ' 分钟阅读'}"></span><span th:text="${article.qualityScore + ' 分'}"></span></div>
+            <h1 th:text="${article.title}"></h1>
+            <p class="article-deck" th:text="${article.summary} ?: '暂无摘要'"></p>
+            <div class="article-byline"><span th:text="${article.author} ?: '未知作者'"></span>
+                <span th:text="${article.publishTime}"></span></div>
+        </header>
+        <section class="reader-content" th:if="${article.contentHtml != null}" th:utext="${article.contentHtml}"></section>
+        <section class="reader-content" th:if="${article.contentHtml == null && article.contentText != null}">
+            <p th:text="${article.contentText}"></p></section>
+        <footer class="source-footer"><span>内容来自公开来源，页面仅展示经过安全清洗的正文。</span>
+            <a th:href="${article.originalUrl}" target="_blank" rel="noopener noreferrer">查看原文 ↗</a></footer>
+    </article>
+    <aside class="reading-sidebar">
+        <section class="side-card"><p class="eyebrow">READING ACTIONS</p><h2>阅读操作</h2>
+            <p>当前状态：<strong id="reading-status" th:text="${reading.readingStatus}"></strong></p>
+            <button id="favorite-button" class="button button-primary button-block" type="button"
+                    th:attr="data-value=${!reading.favorite}" th:text="${reading.favorite ? '★ 取消收藏' : '☆ 收藏'}"></button>
+            <div class="action-stack"><button class="button button-secondary" data-reading-status="READ">标记已读</button>
+                <button class="button button-secondary" data-reading-status="UNREAD">标记未读</button>
+                <button class="button button-secondary" data-reading-status="ARCHIVED">归档</button>
+                <button class="button button-ghost" data-reading-status="IGNORED">忽略</button></div>
+        </section>
+        <section class="side-card"><h2>主题与质量</h2>
+            <div class="score-ring" th:text="${assessment.qualityScore}">80</div>
+            <p class="muted">质量评分 <span th:text="${assessment.qualityScore}"></span> / 100</p>
+            <p class="muted">来源等级 <span th:text="${assessment.sourceLevel}"></span> · <span th:text="${assessment.evidenceCount}"></span> 项证据</p>
+            <p class="muted">主题匹配</p>
+            <div class="tag-list"><span class="tag tag-topic" th:each="topic : ${assessment.topics}" th:text="${topic.topicName}"></span></div>
+            <ul class="warning-list"><li th:each="warning : ${assessment.warnings}" th:text="${warning}"></li></ul>
+        </section>
+        <section class="side-card"><h2>自定义标签</h2><div id="tag-list" class="tag-list">
+            <span class="tag" th:each="tag : ${reading.tags}" th:text="${tag.name}"></span></div>
+            <form id="tag-form" class="compact-form"><input id="article-tags" th:value="${#strings.listJoin(reading.tags.![name], ',')}"
+                    placeholder="逗号分隔，例如：精读,认知"><button class="button button-secondary" type="submit">保存标签</button></form>
+        </section>
+        <section class="side-card"><h2>个人笔记</h2><form id="note-form" class="compact-form">
+            <textarea id="article-note" maxlength="10000" placeholder="记录观点、问题与后续行动…" th:text="${reading.note}"></textarea>
+            <button class="button button-secondary" type="submit">保存笔记</button></form></section>
+    </aside>
+</main>
+</body></html>

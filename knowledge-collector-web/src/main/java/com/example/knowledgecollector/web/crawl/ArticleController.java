@@ -1,6 +1,7 @@
 package com.example.knowledgecollector.web.crawl;
 
 import com.example.knowledgecollector.application.article.ArticleService;
+import com.example.knowledgecollector.application.article.ArticleSearchCriteria;
 import com.example.knowledgecollector.web.api.ApiResponse;
 import com.example.knowledgecollector.web.api.CorrelationIdFilter;
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,11 +34,17 @@ public class ArticleController {
                                @RequestParam(required = false) String reviewStatus,
                                @RequestParam(required = false) @Min(0) @Max(100) Integer minQuality,
                                @RequestParam(required = false) Long topicId,
+                               @RequestParam(required = false) String readingStatus,
+                               @RequestParam(required = false) Boolean favorite,
+                               @RequestParam(required = false) Boolean archived,
+                               @RequestParam(required = false) Long tagId,
+                               @RequestParam(defaultValue = "publishTime,desc") String sort,
                                @RequestParam(defaultValue = "0") @Min(0) int page,
                                @RequestParam(defaultValue = "20") @Min(1) @Max(100) int size,
                                HttpServletRequest request) {
-        return ApiResponse.success(service.findPage(keyword, sourceId, reviewStatus,
-                minQuality, topicId, page, size), correlationId(request));
+        return ApiResponse.success(service.findPage(new ArticleSearchCriteria(
+                keyword, sourceId, reviewStatus, minQuality, topicId, readingStatus,
+                favorite, archived, tagId, sort, page, size)), correlationId(request));
     }
 
     @GetMapping("/{id}")

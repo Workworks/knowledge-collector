@@ -2,6 +2,7 @@ package com.example.knowledgecollector.web.page;
 
 import com.example.knowledgecollector.application.article.ArticleService;
 import com.example.knowledgecollector.application.assessment.ArticleAssessmentService;
+import com.example.knowledgecollector.application.reading.ArticleReadingService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,10 +12,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 public class AdminPageController {
     private final ArticleService articles;
     private final ArticleAssessmentService assessments;
+    private final ArticleReadingService reading;
 
-    public AdminPageController(ArticleService articles, ArticleAssessmentService assessments) {
+    public AdminPageController(ArticleService articles, ArticleAssessmentService assessments,
+                               ArticleReadingService reading) {
         this.articles = articles;
         this.assessments = assessments;
+        this.reading = reading;
     }
 
     @GetMapping("/topics")
@@ -45,20 +49,19 @@ public class AdminPageController {
     }
 
     @GetMapping("/tasks/{id}")
-    public String taskDetail() {
+    public String taskDetail(@PathVariable long id, Model model) {
+        model.addAttribute("taskId", id);
         return "task-detail";
     }
 
     @GetMapping("/articles")
     public String articles(Model model) {
-        model.addAttribute("articles", articles.findPage(null, null, 0, 100).content());
+        model.addAttribute("reviewMode", false);
         return "articles";
     }
 
     @GetMapping("/articles/review")
     public String reviewArticles(Model model) {
-        model.addAttribute("articles",
-                articles.findPage(null, null, "PENDING_REVIEW", null, null, 0, 100).content());
         model.addAttribute("reviewMode", true);
         return "articles";
     }
@@ -67,6 +70,7 @@ public class AdminPageController {
     public String articleDetail(@PathVariable long id, Model model) {
         model.addAttribute("article", articles.get(id));
         model.addAttribute("assessment", assessments.get(id));
+        model.addAttribute("reading", reading.get(id));
         return "article-detail";
     }
 }

@@ -14,12 +14,18 @@ public class ArticleService {
     }
 
     public PageResult<ArticleView> findPage(String keyword, Long sourceId, int page, int size) {
-        return gateway.findPage(keyword, sourceId, page, size);
+        return gateway.findPage(ArticleSearchCriteria.basic(keyword, sourceId, page, size));
     }
 
     public PageResult<ArticleView> findPage(String keyword, Long sourceId, String reviewStatus,
                                             Integer minQuality, Long topicId, int page, int size) {
-        return gateway.findPage(keyword, sourceId, reviewStatus, minQuality, topicId, page, size);
+        return gateway.findPage(new ArticleSearchCriteria(keyword, sourceId, reviewStatus,
+                minQuality, topicId, null, null, null, null,
+                "publishTime,desc", page, size));
+    }
+
+    public PageResult<ArticleView> findPage(ArticleSearchCriteria criteria) {
+        return gateway.findPage(criteria);
     }
 
     public ArticleView get(long id) {

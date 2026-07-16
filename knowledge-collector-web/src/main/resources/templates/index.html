@@ -8,19 +8,21 @@
     <link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
 <body>
+<nav class="site-nav"><a class="brand" href="/">KC <span>Knowledge Collector</span></a><div class="nav-links">
+    <a href="/topics">主题</a><a href="/sources">采集员</a><a href="/tasks">任务</a>
+    <a href="/articles">资料库</a><a href="/test-console">接口测试</a></div></nav>
 <main class="container">
-    <header>
+    <header class="page-hero">
+        <div>
         <p class="eyebrow">KNOWLEDGE COLLECTOR</p>
-        <h1>资料收集与阅读管理系统</h1>
-        <p class="lead">基础工程已启动。主题、采集源和资料库将在后续阶段逐步开放。</p>
+        <h1>把信息流，变成你的知识库。</h1>
+        <p class="lead">从主题规划、采集员执行、质量筛选到阅读笔记，在一个本地工作台里完成。</p>
         <nav class="header-actions" aria-label="快捷入口">
-            <a class="button button-primary" href="/topics">主题管理</a>
-            <a class="button button-primary" href="/sources">采集源管理</a>
-            <a class="button button-primary" href="/tasks">采集任务</a>
-            <a class="button button-primary" href="/articles">文章库</a>
-            <a class="button button-primary" href="/test-console">打开 Web 接口测试台</a>
-            <a class="button button-secondary" href="/actuator/health">查看健康状态</a>
+            <a class="button button-primary" href="/articles">进入资料库</a>
+            <a class="button button-secondary" href="/sources">管理采集员</a>
         </nav>
+        </div>
+        <div class="hero-stat"><strong>Stage 8</strong><span>资料库与阅读闭环</span></div>
     </header>
 
     <section class="status-grid" aria-label="系统状态">

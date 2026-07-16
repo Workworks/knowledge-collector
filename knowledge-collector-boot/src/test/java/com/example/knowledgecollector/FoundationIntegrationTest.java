@@ -47,7 +47,7 @@ class FoundationIntegrationTest {
         assertThat(response.path("data").path("applicationName").asText())
                 .isEqualTo("knowledge-collector");
         assertThat(response.path("data").path("databaseProduct").asText()).containsIgnoringCase("H2");
-        assertThat(response.path("data").path("flywayMigrationCount").asInt()).isEqualTo(5);
+        assertThat(response.path("data").path("flywayMigrationCount").asInt()).isEqualTo(6);
         assertThat(response.path("data").path("startupCount").asLong()).isGreaterThanOrEqualTo(1);
         assertThat(response.path("correlationId").asText()).isNotBlank();
     }
@@ -70,7 +70,7 @@ class FoundationIntegrationTest {
         );
 
         assertThat(html)
-                .contains("资料收集与阅读管理系统")
+                .contains("把信息流，变成你的知识库")
                 .contains("/api/v1/system/status")
                 .contains("/test-console");
     }

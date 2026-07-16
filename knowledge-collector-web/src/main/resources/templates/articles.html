@@ -1,18 +1,45 @@
 <!doctype html>
 <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>文章库</title><link rel="stylesheet" href="/css/app.css"></head>
-<body><main class="container"><h1 th:text="${reviewMode == true ? '待审核文章' : '文章库'}">文章库</h1>
-<p class="notice">这里展示 RSS/Atom 采集形成的文章元数据，数据直接来自数据库。</p>
-<table><thead><tr><th>ID</th><th>标题</th><th>采集源</th><th>质量</th><th>审核状态</th><th>发布时间</th></tr></thead>
-<tbody><tr th:each="article : ${articles}">
-<td th:text="${article.id}"></td>
-<td><a th:href="@{/articles/{id}(id=${article.id})}" th:text="${article.title}"></a></td>
-<td th:text="${article.sourceName}"></td><td th:text="${article.qualityScore}"></td>
-<td th:text="${article.reviewStatus}"></td><td th:text="${article.publishTime}"></td>
-</tr></tbody></table>
-<p th:if="${#lists.isEmpty(articles)}">暂无文章，请先到采集源页面执行一次采集。</p>
-<a class="button button-secondary" href="/sources">采集源</a>
-<a class="button button-secondary" href="/tasks">采集任务</a>
-<a class="button button-secondary" href="/articles/review">待审核队列</a>
-</main></body></html>
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+    <title th:text="${reviewMode ? '待审核资料 · Knowledge Collector' : '资料库 · Knowledge Collector'}">资料库</title>
+    <link rel="stylesheet" href="/css/app.css">
+    <script defer src="/js/admin-common.js"></script><script defer src="/js/articles.js"></script>
+</head>
+<body>
+<nav class="site-nav"><a class="brand" href="/">KC <span>Knowledge Collector</span></a><div class="nav-links">
+    <a href="/topics">主题</a><a href="/sources">采集员</a><a href="/tasks">任务</a>
+    <a class="active" href="/articles">资料库</a><a href="/test-console">接口测试</a></div></nav>
+<main class="container admin-container" th:attr="data-review-mode=${reviewMode}">
+    <header class="page-hero compact-hero"><div><p class="eyebrow" th:text="${reviewMode ? 'QUALITY REVIEW' : 'KNOWLEDGE LIBRARY'}"></p>
+        <h1 th:text="${reviewMode ? '待审核资料' : '你的资料库'}">你的资料库</h1>
+        <p class="lead" th:text="${reviewMode ? '集中处理未匹配主题或质量不足的资料。' : '搜索、筛选、收藏并沉淀真正值得阅读的内容。'}"></p></div>
+        <div class="hero-stat"><strong id="article-count">0 篇资料</strong><span>当前筛选结果</span></div>
+    </header>
+    <div id="page-message" class="page-message" hidden></div>
+    <section class="filter-card">
+        <form id="article-filter" class="library-filters">
+            <div class="form-field search-field"><label for="article-keyword">全文搜索</label>
+                <input id="article-keyword" placeholder="标题、摘要、正文、来源或标签"></div>
+            <div class="form-field"><label for="article-topic">主题</label><select id="article-topic"><option value="">全部主题</option></select></div>
+            <div class="form-field"><label for="article-source">采集员</label><select id="article-source"><option value="">全部来源</option></select></div>
+            <div class="form-field"><label for="article-status">阅读状态</label><select id="article-status"><option value="">全部状态</option>
+                <option value="UNREAD">未读</option><option value="READ">已读</option><option value="IGNORED">已忽略</option></select></div>
+            <div class="form-field"><label for="article-tag">标签</label><select id="article-tag"><option value="">全部标签</option></select></div>
+            <div class="form-field"><label for="article-quality">最低质量</label><select id="article-quality">
+                <option value="">不限</option><option value="40">40+</option><option value="60">60+</option><option value="80">80+</option></select></div>
+            <div class="form-field"><label for="article-sort">排序</label><select id="article-sort">
+                <option value="publishTime,desc">最新发布</option><option value="quality,desc">质量最高</option>
+                <option value="quality,asc">质量最低</option><option value="collected,desc">最近采集</option></select></div>
+            <label class="check-field filter-check"><input id="article-favorite" type="checkbox"> 仅收藏</label>
+            <label class="check-field filter-check"><input id="article-archived" type="checkbox"> 查看归档</label>
+            <div class="filter-actions"><button id="article-search" class="button button-primary" type="button">应用筛选</button>
+                <button id="article-reset" class="button button-secondary" type="button">重置</button></div>
+        </form>
+    </section>
+    <section id="article-grid" class="library-grid" aria-live="polite"></section>
+    <div id="article-empty" class="empty-state empty-card" hidden><strong>没有找到资料</strong><span>调整筛选条件，或先前往采集员页面执行一次采集。</span></div>
+    <div class="pagination"><button id="article-prev" class="button button-secondary">上一页</button>
+        <span id="article-page">第 1 页</span><button id="article-next" class="button button-secondary">下一页</button></div>
+</main>
+</body></html>

@@ -1,0 +1,152 @@
+### Stage 8 端到端任务
+# 启动方式：
+# ./mvnw spring-boot:run -pl knowledge-collector-boot -am -Dspring-boot.run.profiles=local
+# 按文件顺序执行。脚本会自动保存 topicId、sourceId、taskId 和 articleId。
+
+### 1. 创建主题
+POST http://127.0.0.1:8080/api/v1/topics
+Content-Type: application/json
+Accept: application/json
+X-Correlation-Id: idea-stage8-topic
+
+{
+  "code": "COGNITION_{{$uuid}}",
+  "name": "认知与学习 {{$timestamp}}",
+  "description": "验证从主题创建到采集任务和阅读管理的完整流程",
+  "keywords": "记忆,睡眠,主动回忆,间隔重复",
+  "excludedKeywords": "广告,软文",
+  "color": "#7C3AED",
+  "icon": "brain",
+  "language": "zh-CN",
+  "enabled": true,
+  "sortOrder": 10
+}
+
+> {%
+client.test("主题创建成功", function () {
+  client.assert(response.status === 201, "预期 HTTP 201");
+  client.assert(response.body.data.id > 0, "应返回主题 ID");
+});
+client.global.set("stage8TopicId", response.body.data.id);
+%}
+
+### 2. 创建并关联本地演示采集员
+POST http://127.0.0.1:8080/api/v1/sources
+Content-Type: application/json
+Accept: application/json
+X-Correlation-Id: idea-stage8-source
+
+{
+  "code": "LOCAL_COLLECTOR_{{$uuid}}",
+  "name": "本地认知资料采集员 {{$timestamp}}",
+  "type": "JSON_API",
+  "homeUrl": "https://fixture.knowledge-collector.local",
+  "feedUrl": "https://fixture.knowledge-collector.local/articles/{{$uuid}}",
+  "language": "zh-CN",
+  "charset": "UTF-8",
+  "userAgent": "KnowledgeCollector-IDEA-Stage8/1.0",
+  "timeoutSeconds": 15,
+  "maxRetries": 1,
+  "requestIntervalMillis": 0,
+  "obeyRobots": true,
+  "fetchFullContent": true,
+  "summaryOnly": false,
+  "saveSnapshot": false,
+  "enabled": true,
+  "notes": "local Profile 内置固定数据，不访问外部网络",
+  "topicIds": [{{stage8TopicId}}]
+}
+
+> {%
+client.test("采集员创建并关联主题", function () {
+  client.assert(response.status === 201, "预期 HTTP 201");
+  client.assert(response.body.data.topicIds.includes(Number(client.global.get("stage8TopicId"))),
+      "采集员应关联刚创建的主题");
+});
+client.global.set("stage8SourceId", response.body.data.id);
+%}
+
+### 3. 测试采集员
+POST http://127.0.0.1:8080/api/v1/sources/{{stage8SourceId}}/test
+Accept: application/json
+X-Correlation-Id: idea-stage8-source-test
+
+> {%
+client.test("本地采集员测试成功", function () {
+  client.assert(response.status === 200, "预期 HTTP 200");
+  client.assert(response.body.data.entryCount === 1, "固定数据应返回 1 篇资料");
+});
+%}
+
+### 4. 执行采集任务
+POST http://127.0.0.1:8080/api/v1/sources/{{stage8SourceId}}/crawl
+Accept: application/json
+X-Correlation-Id: idea-stage8-crawl
+
+> {%
+client.test("采集任务成功", function () {
+  client.assert(response.status === 200, "预期 HTTP 200");
+  client.assert(response.body.data.status === "SUCCESS", "任务状态应为 SUCCESS");
+  client.assert(response.body.data.createdCount === 1, "应新增 1 篇文章");
+});
+client.global.set("stage8TaskId", response.body.data.id);
+%}
+
+### 5. 查询任务项并保存文章 ID
+GET http://127.0.0.1:8080/api/v1/tasks/{{stage8TaskId}}/items
+Accept: application/json
+X-Correlation-Id: idea-stage8-task-items
+
+> {%
+client.test("任务项已关联文章", function () {
+  client.assert(response.status === 200, "预期 HTTP 200");
+  client.assert(response.body.data.length === 1, "应有 1 个任务项");
+  client.assert(response.body.data[0].ARTICLE_ID > 0, "任务项应关联文章");
+});
+client.global.set("stage8ArticleId", response.body.data[0].ARTICLE_ID);
+%}
+
+### 6. 收藏并标记已读
+PATCH http://127.0.0.1:8080/api/v1/articles/{{stage8ArticleId}}/reading/state
+Content-Type: application/json
+Accept: application/json
+
+{"readingStatus":"READ","favorite":true,"archived":false}
+
+### 7. 添加标签
+PUT http://127.0.0.1:8080/api/v1/articles/{{stage8ArticleId}}/reading/tags
+Content-Type: application/json
+Accept: application/json
+
+{"tagNames":"认知科学,待读精华,睡眠"}
+
+### 8. 保存个人笔记
+PUT http://127.0.0.1:8080/api/v1/articles/{{stage8ArticleId}}/reading/note
+Content-Type: application/json
+Accept: application/json
+
+{"content":"重点复核主动回忆、间隔重复和睡眠之间的关系。"}
+
+### 9. 验证阅读闭环
+GET http://127.0.0.1:8080/api/v1/articles/{{stage8ArticleId}}/reading
+Accept: application/json
+
+> {%
+client.test("阅读状态、收藏、标签和笔记均已保存", function () {
+  client.assert(response.body.data.readingStatus === "READ", "应为已读");
+  client.assert(response.body.data.favorite === true, "应已收藏");
+  client.assert(response.body.data.tags.length === 3, "应有 3 个标签");
+  client.assert(response.body.data.note.includes("主动回忆"), "笔记应已保存");
+});
+%}
+
+### 10. 使用组合筛选查询文章
+GET http://127.0.0.1:8080/api/v1/articles?topicId={{stage8TopicId}}&sourceId={{stage8SourceId}}&readingStatus=READ&favorite=true&archived=false&minQuality=60&page=0&size=20
+Accept: application/json
+
+> {%
+client.test("组合筛选找到采集文章", function () {
+  client.assert(response.status === 200, "预期 HTTP 200");
+  client.assert(response.body.data.totalElements === 1, "应找到 1 篇文章");
+});
+%}

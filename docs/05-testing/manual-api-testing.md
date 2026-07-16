@@ -67,6 +67,17 @@ http/knowledge-collector.http
 
 后续新增主题、来源、任务和文章接口时，应在同一目录按业务模块增加 `.http` 文件，并为关键字段添加响应断言。
 
+Stage 8 提供可按顺序直接执行的完整任务：
+
+```text
+http/stage-8-end-to-end.http
+```
+
+先使用 `local` Profile 启动应用。该请求集会自动创建主题和本地演示采集员，测试采集员、
+执行采集任务、提取任务和文章 ID，并继续验证收藏、已读、标签、笔记与组合筛选。
+请求之间通过 IDEA HTTP Client 全局变量传递 ID，不需要人工复制。演示采集员由 local
+Profile 内置固定 Provider 提供数据，不访问互联网，也不会绕过 URL 安全与 SSRF 防护。
+
 Stage 4 主题和采集源请求位于：
 
 ```text

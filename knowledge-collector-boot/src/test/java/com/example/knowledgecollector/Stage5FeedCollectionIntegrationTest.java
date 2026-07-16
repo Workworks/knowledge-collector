@@ -103,7 +103,8 @@ class Stage5FeedCollectionIntegrationTest {
         assertThat(fetch("/api/v1/articles/" + articleId).path("data").path("title").asText()).isNotBlank();
         assertThat(fetch("/api/v1/tasks").path("data").path("totalElements").asInt()).isEqualTo(2);
 
-        assertThat(restTemplate.getForEntity(url("/articles"), String.class).getBody()).contains("First article");
+        assertThat(restTemplate.getForEntity(url("/articles"), String.class).getBody())
+                .contains("你的资料库", "全文搜索");
         assertThat(restTemplate.getForEntity(url("/articles/" + articleId), String.class).getStatusCode().is2xxSuccessful())
                 .isTrue();
     }
