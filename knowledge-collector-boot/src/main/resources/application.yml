@@ -45,6 +45,12 @@ management:
 knowledge-collector:
   storage:
     root: ${KNOWLEDGE_COLLECTOR_DATA_DIR:./data}
+  tasks:
+    stale-timeout: ${KNOWLEDGE_COLLECTOR_TASK_STALE_TIMEOUT:PT10M}
+  network:
+    enabled: true
+    trust-system-store: ${KNOWLEDGE_COLLECTOR_TRUST_SYSTEM_STORE:true}
+    additional-ca-file: ${KNOWLEDGE_COLLECTOR_ADDITIONAL_CA_FILE:}
 
 logging:
   config: classpath:logback-spring.xml

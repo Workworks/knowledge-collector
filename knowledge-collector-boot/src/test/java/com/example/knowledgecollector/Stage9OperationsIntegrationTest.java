@@ -22,9 +22,11 @@ import org.springframework.test.context.DynamicPropertySource;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.sql.DriverManager;
 import java.time.OffsetDateTime;
 import java.util.Map;
 import java.util.UUID;
+import java.util.zip.ZipFile;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -81,6 +83,21 @@ class Stage9OperationsIntegrationTest {
         assertThat(scheduledTasks.path("data").path("content").get(0).path("triggerType").asText())
                 .isEqualTo("SCHEDULED");
 
+        CrawlTaskView stale = tasks.create(sources.get(sourceId));
+        tasks.running(stale.id());
+        jdbc.sql("update crawl_task set heartbeat_at=:expired where id=:id")
+                .param("expired", OffsetDateTime.now().minusMinutes(20))
+                .param("id", stale.id()).update();
+        JsonNode recovered = exchange(HttpMethod.POST,
+                "/api/v1/operations/tasks/recover-stale", null).getBody();
+        assertThat(recovered.path("data").asInt()).isEqualTo(1);
+        JsonNode expiredTask = exchange(HttpMethod.GET, "/api/v1/tasks/" + stale.id(), null).getBody();
+        assertThat(expiredTask.path("data").path("status").asText()).isEqualTo("FAILED");
+        assertThat(expiredTask.path("data").path("errorCode").asText()).isEqualTo("TASK-TIMEOUT");
+        JsonNode afterRecovery = exchange(HttpMethod.POST,
+                "/api/v1/sources/" + sourceId + "/crawl", null).getBody();
+        assertThat(afterRecovery.path("data").path("status").asText()).isEqualTo("SUCCESS");
+
         CrawlTaskView pending = tasks.create(sources.get(sourceId));
         JsonNode canceled = exchange(HttpMethod.POST, "/api/v1/tasks/" + pending.id() + "/cancel", null).getBody();
         assertThat(canceled.path("data").path("status").asText()).isEqualTo("CANCELED");
@@ -103,7 +120,9 @@ class Stage9OperationsIntegrationTest {
         String relativePath = backup.path("data").path("relativePath").asText();
         assertThat(backup.path("data").path("status").asText()).isEqualTo("SUCCESS");
         assertThat(backup.path("data").path("sizeBytes").asLong()).isGreaterThan(0);
-        assertThat(TEST_DATA.resolve(relativePath)).isRegularFile();
+        Path backupFile = TEST_DATA.resolve(relativePath);
+        assertThat(backupFile).isRegularFile();
+        verifyDatabaseCanBeRestored(backupFile);
 
         assertThat(rest.getForEntity(url("/operations"), String.class).getBody())
                 .contains("SCHEDULING & OPERATIONS", "/js/operations.js");
@@ -132,6 +151,37 @@ class Stage9OperationsIntegrationTest {
             return directory;
         } catch (IOException exception) {
             throw new ExceptionInInitializerError(exception);
+        }
+    }
+
+    private void verifyDatabaseCanBeRestored(Path backupFile) {
+        try {
+            Path restoreRoot = Files.createTempDirectory("knowledge-collector-restore-");
+            Path h2Backup = restoreRoot.resolve("h2-backup.zip");
+            try (ZipFile zip = new ZipFile(backupFile.toFile())) {
+                Files.copy(zip.getInputStream(zip.getEntry("database/h2-backup.zip")), h2Backup);
+            }
+            Path databaseDirectory = restoreRoot.resolve("database");
+            Files.createDirectories(databaseDirectory);
+            Class<?> restore = Class.forName("org.h2.tools.Restore");
+            restore.getMethod("execute", String.class, String.class, String.class)
+                    .invoke(null, h2Backup.toString(), databaseDirectory.toString(), null);
+            Path databaseFile;
+            try (var files = Files.list(databaseDirectory)) {
+                databaseFile = files.filter(path -> path.getFileName().toString().endsWith(".mv.db"))
+                        .findFirst().orElseThrow();
+            }
+            String databasePath = databaseFile.toString()
+                    .substring(0, databaseFile.toString().length() - ".mv.db".length())
+                    .replace("\\", "/");
+            try (var connection = DriverManager.getConnection("jdbc:h2:file:" + databasePath, "sa", "");
+                 var statement = connection.createStatement();
+                 var result = statement.executeQuery("select count(*) from article")) {
+                assertThat(result.next()).isTrue();
+                assertThat(result.getLong(1)).isGreaterThanOrEqualTo(1);
+            }
+        } catch (Exception exception) {
+            throw new IllegalStateException("备份恢复验证失败", exception);
         }
     }
 }

@@ -117,6 +117,7 @@
 - `GET /operations/schedules`
 - `PUT /operations/schedules/{sourceId}`
 - `POST /operations/schedules/run-due`
+- `POST /operations/tasks/recover-stale`
 - `POST /operations/backups`
 - `GET /operations/backups`
 

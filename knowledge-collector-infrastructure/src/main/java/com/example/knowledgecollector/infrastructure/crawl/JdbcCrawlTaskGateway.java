@@ -12,7 +12,9 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.beans.factory.annotation.Value;
 
+import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -23,9 +25,12 @@ public class JdbcCrawlTaskGateway implements CrawlTaskGateway {
             "select t.*,s.source_name from crawl_task t join crawl_source s on s.id=t.source_id";
 
     private final JdbcClient jdbc;
+    private final Duration staleTimeout;
 
-    public JdbcCrawlTaskGateway(JdbcClient jdbc) {
+    public JdbcCrawlTaskGateway(JdbcClient jdbc,
+            @Value("${knowledge-collector.tasks.stale-timeout:PT10M}") Duration staleTimeout) {
         this.jdbc = jdbc;
+        this.staleTimeout = staleTimeout;
     }
 
     @Override
@@ -37,6 +42,7 @@ public class JdbcCrawlTaskGateway implements CrawlTaskGateway {
     @Override
     @Transactional
     public CrawlTaskView create(CrawlSource source, String triggerType, Long retryOfTaskId) {
+        expireStale(OffsetDateTime.now().minus(staleTimeout));
         String taskNo = "TASK-" + UUID.randomUUID().toString().substring(0, 12).toUpperCase();
         try {
             jdbc.sql("""
@@ -61,15 +67,66 @@ public class JdbcCrawlTaskGateway implements CrawlTaskGateway {
 
     @Override
     public void running(long id) {
-        jdbc.sql("update crawl_task set status='RUNNING',started_at=:now where id=:id")
+        jdbc.sql("""
+                update crawl_task set status='RUNNING',started_at=:now,heartbeat_at=:now
+                where id=:id and status='CREATED'
+                """)
                 .param("now", OffsetDateTime.now())
                 .param("id", id)
                 .update();
     }
 
     @Override
+    public void heartbeat(long id) {
+        int updated = jdbc.sql("""
+                update crawl_task set heartbeat_at=:now
+                where id=:id and status='RUNNING' and active_source_id is not null
+                """).param("now", OffsetDateTime.now()).param("id", id).update();
+        if (updated != 1) {
+            throw new IllegalStateException("TASK-NOT-RUNNING: 任务已结束或租约已被回收");
+        }
+    }
+
+    @Override
+    @Transactional
+    public int expireStale(OffsetDateTime cutoff) {
+        List<StaleTask> staleTasks = jdbc.sql("""
+                select id,source_id from crawl_task
+                where active_source_id is not null and status in ('CREATED','RUNNING')
+                and coalesce(heartbeat_at,started_at,created_at)<:cutoff
+                """).param("cutoff", cutoff).query((rs, row) ->
+                new StaleTask(rs.getLong("id"), rs.getLong("source_id"))).list();
+        if (staleTasks.isEmpty()) {
+            return 0;
+        }
+        OffsetDateTime now = OffsetDateTime.now();
+        int expired = 0;
+        for (StaleTask task : staleTasks) {
+            int updated = jdbc.sql("""
+                    update crawl_task set status='FAILED',active_source_id=null,
+                    error_code='TASK-TIMEOUT',
+                    error_message='任务超过最大无心跳时间，系统已自动结束并释放采集源',
+                    finished_at=:now,
+                    duration_millis=datediff('MILLISECOND',coalesce(started_at,created_at),:now)
+                    where id=:id and active_source_id is not null
+                    and status in ('CREATED','RUNNING')
+                    and coalesce(heartbeat_at,started_at,created_at)<:cutoff
+                    """).param("now", now).param("id", task.id()).param("cutoff", cutoff).update();
+            if (updated == 1) {
+                expired++;
+                jdbc.sql("""
+                        update crawl_source set last_failure_at=:now,
+                        consecutive_failures=consecutive_failures+1,updated_at=:now where id=:sourceId
+                        """).param("now", now).param("sourceId", task.sourceId()).update();
+            }
+        }
+        return expired;
+    }
+
+    @Override
     @Transactional
     public SaveResult saveEntry(long taskId, CrawlSource source, ContentSourceProvider.ContentItem entry) {
+        heartbeat(taskId);
         var normalized = UrlNormalizer.normalize(entry.url(), source.feedUrl());
         var existing = jdbc.sql("select id from article where url_hash=:hash")
                 .param("hash", normalized.hash())
@@ -151,11 +208,11 @@ public class JdbcCrawlTaskGateway implements CrawlTaskGateway {
     private void complete(long id, String status, int discovered, int created, int duplicate,
                           String errorCode, String errorMessage, long durationMillis) {
         OffsetDateTime finishedAt = OffsetDateTime.now();
-        jdbc.sql("""
+        int updated = jdbc.sql("""
                 update crawl_task set status=:status,active_source_id=null,discovered_count=:discovered,
                 created_count=:created,duplicate_count=:duplicate,error_code=:errorCode,
                 error_message=:errorMessage,finished_at=:finishedAt,duration_millis=:durationMillis
-                where id=:id
+                where id=:id and status='RUNNING' and active_source_id is not null
                 """)
                 .param("status", status)
                 .param("discovered", discovered)
@@ -167,6 +224,9 @@ public class JdbcCrawlTaskGateway implements CrawlTaskGateway {
                 .param("durationMillis", durationMillis)
                 .param("id", id)
                 .update();
+        if (updated != 1) {
+            return;
+        }
         if ("SUCCESS".equals(status)) {
             jdbc.sql("""
                     update crawl_source set last_success_at=:now,consecutive_failures=0,updated_at=:now
@@ -243,5 +303,8 @@ public class JdbcCrawlTaskGateway implements CrawlTaskGateway {
     private int readingMinutes(String text) {
         int words = wordCount(text);
         return words == 0 ? 0 : Math.max(1, (int) Math.ceil(words / 250.0));
+    }
+
+    private record StaleTask(long id, long sourceId) {
     }
 }

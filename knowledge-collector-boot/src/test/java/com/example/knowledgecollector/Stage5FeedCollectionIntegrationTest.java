@@ -64,6 +64,11 @@ class Stage5FeedCollectionIntegrationTest {
                         <description>Second summary</description></item>
                         </channel></rss>
                         """)));
+        FEED_SERVER.stubFor(get(urlEqualTo("/slow.xml")).willReturn(aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/rss+xml")
+                .withFixedDelay(2500)
+                .withBody("<rss version=\"2.0\"><channel><title>slow</title></channel></rss>")));
     }
 
     @AfterAll
@@ -107,6 +112,31 @@ class Stage5FeedCollectionIntegrationTest {
                 .contains("你的资料库", "全文搜索");
         assertThat(restTemplate.getForEntity(url("/articles/" + articleId), String.class).getStatusCode().is2xxSuccessful())
                 .isTrue();
+    }
+
+    @Test
+    void timesOutWholeResponseAndReleasesSourceForNextTask() {
+        JsonNode source = post("/api/v1/sources", Map.ofEntries(
+                Map.entry("code", "stage5_slow"), Map.entry("name", "Stage 5 Slow RSS"),
+                Map.entry("type", "RSS"), Map.entry("homeUrl", FEED_SERVER.baseUrl()),
+                Map.entry("feedUrl", FEED_SERVER.baseUrl() + "/slow.xml"),
+                Map.entry("language", "zh-CN"), Map.entry("charset", "UTF-8"),
+                Map.entry("userAgent", "KnowledgeCollector-Test/1.0"),
+                Map.entry("timeoutSeconds", 1), Map.entry("maxRetries", 0),
+                Map.entry("requestIntervalMillis", 0), Map.entry("obeyRobots", true),
+                Map.entry("fetchFullContent", false), Map.entry("summaryOnly", true),
+                Map.entry("saveSnapshot", false), Map.entry("enabled", true),
+                Map.entry("notes", "timeout fixture"), Map.entry("topicIds", new long[]{})
+        ));
+        long sourceId = source.path("data").path("id").asLong();
+
+        JsonNode first = post("/api/v1/sources/" + sourceId + "/crawl", null);
+        assertThat(first.path("data").path("status").asText()).isEqualTo("FAILED");
+        assertThat(first.path("data").path("errorMessage").asText()).contains("HTTP-REQUEST-TIMEOUT");
+
+        JsonNode second = post("/api/v1/sources/" + sourceId + "/crawl", null);
+        assertThat(second.path("data").path("id").asLong()).isNotEqualTo(first.path("data").path("id").asLong());
+        assertThat(second.path("data").path("status").asText()).isEqualTo("FAILED");
     }
 
     private JsonNode fetch(String path) {

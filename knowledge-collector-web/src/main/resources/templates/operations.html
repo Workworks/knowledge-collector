@@ -5,7 +5,8 @@
 <a href="/topics">主题</a><a href="/sources">采集员</a><a href="/tasks">任务</a><a href="/articles">资料库</a><a class="active" href="/operations">运维</a></div></nav>
 <main class="container admin-container"><header class="page-hero compact-hero"><div><p class="eyebrow">SCHEDULING & OPERATIONS</p>
 <h1>调度与运维</h1><p class="lead">配置本地固定周期采集，查看下一次运行，并创建包含数据库和内容目录的备份。</p></div>
-<button id="run-due" class="button button-secondary">立即检查到期任务</button></header>
+<div class="header-actions"><button id="recover-stale" class="button button-secondary">回收超时任务</button>
+<button id="run-due" class="button button-secondary">立即检查到期任务</button></div></header>
 <div id="page-message" class="page-message" hidden></div>
 <section class="console-panel"><div class="section-heading"><div><p class="eyebrow">SCHEDULES</p><h2>采集员调度</h2></div>
 <span class="muted">扫描器每 30 秒检查一次到期配置</span></div>

@@ -15,15 +15,20 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Value;
+import java.time.Duration;
 
 @Validated
 @RestController
 @RequestMapping("/api/v1")
 public class OperationsController {
     private final OperationsService service;
+    private final Duration staleTimeout;
 
-    public OperationsController(OperationsService service) {
+    public OperationsController(OperationsService service,
+            @Value("${knowledge-collector.tasks.stale-timeout:PT10M}") Duration staleTimeout) {
         this.service = service;
+        this.staleTimeout = staleTimeout;
     }
 
     @GetMapping("/dashboard")
@@ -58,6 +63,11 @@ public class OperationsController {
     @PostMapping("/operations/backups")
     public ApiResponse<?> createBackup(HttpServletRequest request) {
         return ApiResponse.success(service.createBackup(), correlationId(request));
+    }
+
+    @PostMapping("/operations/tasks/recover-stale")
+    public ApiResponse<?> recoverStaleTasks(HttpServletRequest request) {
+        return ApiResponse.success(service.recoverStaleTasks(staleTimeout), correlationId(request));
     }
 
     public record ScheduleRequest(boolean enabled,

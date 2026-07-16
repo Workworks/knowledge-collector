@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
+import java.time.Duration;
 import java.util.List;
 
 @Service
@@ -56,5 +57,9 @@ public class OperationsService {
 
     public List<BackupView> backups() {
         return gateway.backups();
+    }
+
+    public int recoverStaleTasks(Duration staleTimeout) {
+        return tasks.recoverStaleTasks(OffsetDateTime.now().minus(staleTimeout));
     }
 }

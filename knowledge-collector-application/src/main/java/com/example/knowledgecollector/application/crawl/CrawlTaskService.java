@@ -51,11 +51,13 @@ public class CrawlTaskService {
         MDC.put("sourceId", source.id().toString());
         try {
             gateway.running(task.id());
+            gateway.heartbeat(task.id());
             log.info("stage=DISCOVER provider={} task started", provider.getClass().getSimpleName());
             var result = provider.fetch(request(source));
             int created = 0;
             int duplicates = 0;
             for (var entry : result.items()) {
+                gateway.heartbeat(task.id());
                 log.debug("stage=PARSE url={}", entry.url());
                 CrawlTaskGateway.SaveResult saved = gateway.saveEntry(task.id(), source, entry);
                 MDC.put("articleId", saved.articleId().toString());
@@ -134,5 +136,9 @@ public class CrawlTaskService {
             throw new BusinessRuleException("TASK-CANCEL-NOT-ALLOWED", "只有尚未开始的任务可以取消");
         }
         return get(id);
+    }
+
+    public int recoverStaleTasks(java.time.OffsetDateTime cutoff) {
+        return gateway.expireStale(cutoff);
     }
 }

@@ -1,6 +1,6 @@
 # Knowledge Collector
 
-Knowledge Collector 是面向个人和小团队的本地资料采集与阅读管理系统。当前完成至 Stage 9：采集、分类、质量控制、资料检索、阅读管理、调度与本地运维闭环已经可运行。
+Knowledge Collector 是面向个人和小团队的本地资料采集与阅读管理系统。当前完成至 Stage 10：第一版本功能、测试、部署和验收资料已经收口。
 
 ## 当前可用能力
 
@@ -24,7 +24,9 @@ Knowledge Collector 是面向个人和小团队的本地资料采集与阅读管
 - 固定周期调度、失败任务重试、待执行任务取消、运行仪表盘和本地备份
 - OpenAPI JSON 与 Swagger UI：`/v3/api-docs`、`/swagger-ui.html`
 - local Profile 测试工具：`/dev/tools`
-- H2 文件数据库与 Flyway V1—V7 迁移
+- H2 文件数据库与 Flyway V1—V8 迁移
+- 任务总请求超时、心跳租约与超时任务自动回收
+- JDK、Windows 系统根证书和可选 PEM CA 的组合 TLS 信任
 - 启动次数持久化，用于验证重启后数据不丢失
 - 数据、正文、快照、导出和日志目录自动创建
 - 全局异常响应、字段错误模型和请求关联编号
@@ -88,6 +90,9 @@ local Profile（自动初始化演示主题与来源）：
 | `KNOWLEDGE_COLLECTOR_DATA_DIR` | `./data` | 数据根目录 |
 | `KNOWLEDGE_COLLECTOR_SERVER_ADDRESS` | `127.0.0.1` | 监听地址 |
 | `KNOWLEDGE_COLLECTOR_SERVER_PORT` | `8080` | HTTP 端口 |
+| `KNOWLEDGE_COLLECTOR_TASK_STALE_TIMEOUT` | `PT10M` | 任务最大无心跳时间 |
+| `KNOWLEDGE_COLLECTOR_TRUST_SYSTEM_STORE` | `true` | Windows 合并系统根证书 |
+| `KNOWLEDGE_COLLECTOR_ADDITIONAL_CA_FILE` | 空 | 额外可信 PEM CA 文件 |
 
 Profile 分工：
 

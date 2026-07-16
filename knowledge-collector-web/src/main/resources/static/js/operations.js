@@ -39,6 +39,12 @@ window.addEventListener("DOMContentLoaded", async () => {
         await A.request("/api/v1/operations/schedules/run-due", {method:"POST"});
         A.message("到期调度检查完成"); await loadSchedules();
     };
+    $("recover-stale").onclick = async () => {
+        try {
+            const count = await A.request("/api/v1/operations/tasks/recover-stale", {method:"POST"});
+            A.message(count > 0 ? `已回收 ${count} 个超时任务` : "没有需要回收的超时任务");
+        } catch (error) { A.message(error.message, true); }
+    };
     $("create-backup").onclick = async event => {
         event.currentTarget.disabled = true;
         try { await A.request("/api/v1/operations/backups", {method:"POST"});

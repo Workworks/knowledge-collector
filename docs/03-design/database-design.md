@@ -81,6 +81,9 @@ erDiagram
 
 `id, task_id, original_url, normalized_url, url_hash, status, article_id, retry_count, error_code, error_message, started_at, finished_at, created_at`
 
+Stage 10 的 V8 为 `crawl_task` 增加 `heartbeat_at`。活动任务使用
+`active_source_id` 唯一约束防止同源并发，并按心跳租约回收异常中断任务。
+
 - 唯一建议：`uk_task_item_url(task_id, url_hash)`。
 - 索引：任务/状态、文章 ID。
 
@@ -168,4 +171,3 @@ detail_json 不得包含 Token、完整 Cookie 或正文。
 ## 10. 清理策略
 
 清理使用批次和上限，记录审计；不在同一事务删除大量 CLOB/文件。文件删除前验证规范化路径在数据根目录内，并处理数据库与文件操作失败的补偿。
-

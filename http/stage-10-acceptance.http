@@ -1,0 +1,28 @@
+### Stage 10 验收请求
+
+### 系统状态与 Flyway V8
+GET http://127.0.0.1:8080/api/v1/system/status
+Accept: application/json
+
+> {%
+client.test("系统状态正常", function () {
+  client.assert(response.status === 200, "预期 200");
+  client.assert(response.body.data.flywayMigrationCount === 8, "Flyway 应为 8 个迁移");
+});
+%}
+
+### 健康检查
+GET http://127.0.0.1:8080/actuator/health
+Accept: application/json
+
+### 回收超时任务
+POST http://127.0.0.1:8080/api/v1/operations/tasks/recover-stale
+Accept: application/json
+
+### 仪表盘
+GET http://127.0.0.1:8080/api/v1/dashboard
+Accept: application/json
+
+### 备份记录
+GET http://127.0.0.1:8080/api/v1/operations/backups
+Accept: application/json
