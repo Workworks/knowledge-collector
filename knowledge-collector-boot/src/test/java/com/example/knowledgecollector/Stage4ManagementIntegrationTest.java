@@ -84,7 +84,7 @@ class Stage4ManagementIntegrationTest {
                 HttpMethod.POST, null);
         assertThat(sourceTest.getStatusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
         assertThat(sourceTest.getBody().path("error").path("code").asText())
-                .isEqualTo("SOURCE-TEST-NOT-AVAILABLE");
+                .isEqualTo("NETWORK-DISABLED");
 
         assertThat(exchange("/api/v1/sources/" + sourceId, HttpMethod.DELETE, null).getStatusCode())
                 .isEqualTo(HttpStatus.NO_CONTENT);

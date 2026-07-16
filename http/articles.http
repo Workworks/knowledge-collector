@@ -1,1 +1,19 @@
-# Stage 5 建立文章基础入库、Stage 8 建立资料库 API 后补充请求。
+### 文章分页
+GET http://127.0.0.1:8080/api/v1/articles?page=0&size=20
+Accept: application/json
+
+### 按来源过滤
+GET http://127.0.0.1:8080/api/v1/articles?sourceId=1&page=0&size=20
+Accept: application/json
+
+### 按标题或作者搜索
+GET http://127.0.0.1:8080/api/v1/articles?keyword=Java&page=0&size=20
+Accept: application/json
+
+### 文章详情
+GET http://127.0.0.1:8080/api/v1/articles/1
+Accept: application/json
+
+### 不存在的文章
+GET http://127.0.0.1:8080/api/v1/articles/999999
+Accept: application/json

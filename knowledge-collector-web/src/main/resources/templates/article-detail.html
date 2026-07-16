@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>文章详情</title><link rel="stylesheet" href="/css/app.css"></head>
+<body><main class="container"><h1 th:text="${article.title}"></h1>
+<dl><dt>ID</dt><dd th:text="${article.id}"></dd>
+<dt>采集源</dt><dd th:text="${article.sourceName}"></dd>
+<dt>作者</dt><dd th:text="${article.author} ?: '-'"></dd>
+<dt>发布时间</dt><dd th:text="${article.publishTime}"></dd>
+<dt>摘要</dt><dd th:text="${article.summary} ?: '-'"></dd>
+<dt>规范化 URL</dt><dd th:text="${article.normalizedUrl}"></dd></dl>
+<a class="button" th:href="${article.originalUrl}" target="_blank" rel="noopener noreferrer">打开原文</a>
+<a class="button button-secondary" href="/articles">返回文章库</a>
+</main></body></html>

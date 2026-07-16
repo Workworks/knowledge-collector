@@ -1,6 +1,7 @@
 package com.example.knowledgecollector.web.source;
 
 import com.example.knowledgecollector.application.source.CrawlSourceService;
+import com.example.knowledgecollector.application.crawl.CrawlTaskService;
 import com.example.knowledgecollector.domain.source.SourceType;
 import com.example.knowledgecollector.web.api.ApiResponse;
 import com.example.knowledgecollector.web.api.CorrelationIdFilter;
@@ -32,9 +33,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class CrawlSourceController {
 
     private final CrawlSourceService service;
+    private final CrawlTaskService crawlTasks;
 
-    public CrawlSourceController(CrawlSourceService service) {
+    public CrawlSourceController(CrawlSourceService service, CrawlTaskService crawlTasks) {
         this.service = service;
+        this.crawlTasks = crawlTasks;
     }
 
     @GetMapping
@@ -79,8 +82,14 @@ public class CrawlSourceController {
     @PostMapping("/{id}/test")
     @Operation(summary = "测试采集源", description = "Stage 4 返回 422；Stage 5 接入 Provider")
     public ApiResponse<?> test(@PathVariable long id, HttpServletRequest request) {
-        service.assertTestingAvailable(id);
-        return ApiResponse.success(null, correlationId(request));
+        return ApiResponse.success(java.util.Map.of("entryCount", crawlTasks.testSource(id)),
+                correlationId(request));
+    }
+
+    @PostMapping("/{id}/crawl")
+    @Operation(summary = "立即采集 RSS/Atom 来源")
+    public ApiResponse<?> crawl(@PathVariable long id, HttpServletRequest request) {
+        return ApiResponse.success(crawlTasks.runSource(id), correlationId(request));
     }
 
     @DeleteMapping("/{id}")

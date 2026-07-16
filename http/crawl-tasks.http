@@ -1,1 +1,25 @@
-# Stage 5 创建采集任务 API 后补充正常、冲突、重试和错误请求。
+### 手动采集：将 sourceId 改为现有且已启用的 RSS/Atom 来源
+POST http://127.0.0.1:8080/api/v1/sources/1/crawl
+Accept: application/json
+X-Correlation-Id: idea-stage5-crawl
+
+### 来源连通性与 Feed 解析测试（不保存文章）
+POST http://127.0.0.1:8080/api/v1/sources/1/test
+Accept: application/json
+X-Correlation-Id: idea-stage5-source-test
+
+### 任务分页
+GET http://127.0.0.1:8080/api/v1/tasks?page=0&size=20
+Accept: application/json
+
+### 任务详情
+GET http://127.0.0.1:8080/api/v1/tasks/1
+Accept: application/json
+
+### 任务明细
+GET http://127.0.0.1:8080/api/v1/tasks/1/items
+Accept: application/json
+
+### 不存在的任务
+GET http://127.0.0.1:8080/api/v1/tasks/999999
+Accept: application/json

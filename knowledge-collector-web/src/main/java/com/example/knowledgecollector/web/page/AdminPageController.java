@@ -1,10 +1,18 @@
 package com.example.knowledgecollector.web.page;
 
+import com.example.knowledgecollector.application.article.ArticleService;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 public class AdminPageController {
+    private final ArticleService articles;
+
+    public AdminPageController(ArticleService articles) {
+        this.articles = articles;
+    }
 
     @GetMapping("/topics")
     public String topics() {
@@ -14,5 +22,27 @@ public class AdminPageController {
     @GetMapping("/sources")
     public String sources() {
         return "sources";
+    }
+
+    @GetMapping("/tasks")
+    public String tasks() {
+        return "tasks";
+    }
+
+    @GetMapping("/tasks/{id}")
+    public String taskDetail() {
+        return "task-detail";
+    }
+
+    @GetMapping("/articles")
+    public String articles(Model model) {
+        model.addAttribute("articles", articles.findPage(null, null, 0, 100).content());
+        return "articles";
+    }
+
+    @GetMapping("/articles/{id}")
+    public String articleDetail(@PathVariable long id, Model model) {
+        model.addAttribute("article", articles.get(id));
+        return "article-detail";
     }
 }

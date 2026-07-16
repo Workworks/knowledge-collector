@@ -9,7 +9,7 @@ window.addEventListener("DOMContentLoaded", async () => {
         <td>${[...s.topicIds].map(id=>A.escape(topicMap.get(id)||id)).join("、")||"—"}</td>
         <td>${s.timeoutSeconds}s / ${s.maxRetries} 次 / ${s.requestIntervalMillis}ms</td>
         <td><span class="status ${s.enabled?"on":"off"}">${s.enabled?"启用":"停用"}</span></td><td class="row-actions">
-        <button data-edit="${s.id}">编辑</button><button data-test="${s.id}">测试</button>
+        <button data-edit="${s.id}">编辑</button><button data-test="${s.id}">测试</button><button data-crawl="${s.id}">立即采集</button>
         <button data-toggle="${s.id}" data-enabled="${!s.enabled}">${s.enabled?"停用":"启用"}</button>
         <button class="danger-link" data-delete="${s.id}">删除</button></td></tr>`).join("");
         $("source-empty").hidden=data.content.length>0;$("source-page").textContent=`第 ${page+1} 页 / 共 ${Math.max(totalPages,1)} 页`;
@@ -33,6 +33,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     $("source-rows").addEventListener("click",async e=>{const b=e.target.closest("button");if(!b)return;try{
         if(b.dataset.edit)edit(await A.request(`/api/v1/sources/${b.dataset.edit}`));
         if(b.dataset.test)await A.request(`/api/v1/sources/${b.dataset.test}/test`,{method:"POST"});
+        if(b.dataset.crawl){const task=await A.request(`/api/v1/sources/${b.dataset.crawl}/crawl`,{method:"POST"});location.href=`/tasks/${task.id}`;}
         if(b.dataset.toggle){await A.request(`/api/v1/sources/${b.dataset.toggle}/enabled`,{method:"PATCH",body:JSON.stringify({enabled:b.dataset.enabled==="true"})});await load();}
         if(b.dataset.delete&&confirm("确定删除该采集源？")){await A.request(`/api/v1/sources/${b.dataset.delete}`,{method:"DELETE"});await load();}
     }catch(err){A.message(err.message,true);}});

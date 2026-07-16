@@ -1,0 +1,7 @@
+<!doctype html><html lang="zh-CN" xmlns:th="http://www.thymeleaf.org"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>采集任务</title>
+<link rel="stylesheet" th:href="@{/css/app.css}"></head><body><main class="container admin-container">
+<header><p class="eyebrow">CRAWL TASKS</p><h1>采集任务</h1><p class="lead">查看 RSS/Atom 手动采集结果与错误。</p>
+<nav class="header-actions"><a class="button button-secondary" href="/sources">采集源</a><a class="button button-secondary" href="/">首页</a></nav></header>
+<section class="console-panel"><div class="table-wrap"><table><thead><tr><th>任务号</th><th>来源</th><th>状态</th><th>发现</th><th>新增</th><th>重复</th><th>耗时</th></tr></thead><tbody id="rows"></tbody></table></div></section>
+</main><script>fetch("/api/v1/tasks").then(r=>r.json()).then(j=>{document.querySelector("#rows").innerHTML=j.data.content.map(t=>`<tr><td><a href="/tasks/${t.id}">${t.taskNo}</a></td><td>${t.sourceName}</td><td>${t.status}</td><td>${t.discoveredCount}</td><td>${t.createdCount}</td><td>${t.duplicateCount}</td><td>${t.durationMillis??"-"}ms</td></tr>`).join("")})</script></body></html>

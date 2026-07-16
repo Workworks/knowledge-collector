@@ -1,0 +1,4 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>任务详情</title><link rel="stylesheet" href="/css/app.css"></head><body><main class="container"><h1>任务详情</h1>
+<section class="details"><pre id="task">加载中</pre><h2>任务项</h2><pre id="items">加载中</pre></section></main>
+<script>const id=location.pathname.split("/").pop();Promise.all([fetch(`/api/v1/tasks/${id}`).then(r=>r.json()),fetch(`/api/v1/tasks/${id}/items`).then(r=>r.json())]).then(([t,i])=>{task.textContent=JSON.stringify(t.data,null,2);items.textContent=JSON.stringify(i.data,null,2)})</script></body></html>

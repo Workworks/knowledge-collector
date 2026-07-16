@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -45,6 +46,15 @@ public class GlobalExceptionHandler {
     ) {
         return failure(HttpStatus.CONFLICT, exception.getCode(),
                 exception.getMessage(), List.of(), request);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ApiResponse<Void>> handleDataIntegrity(
+            DataIntegrityViolationException exception,
+            HttpServletRequest request
+    ) {
+        return failure(HttpStatus.CONFLICT, "DATA-IN-USE",
+                "记录已被任务或文章引用，不能删除", List.of(), request);
     }
 
     @ExceptionHandler({MethodArgumentNotValidException.class, BindException.class})
