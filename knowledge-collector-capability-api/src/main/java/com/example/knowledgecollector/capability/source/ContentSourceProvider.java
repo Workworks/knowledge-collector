@@ -11,7 +11,8 @@ public interface ContentSourceProvider {
 
     record FetchRequest(
             String sourceType, String homeUrl, String entryUrl, String language, String charset,
-            String userAgent, int timeoutSeconds, Map<String, String> options
+            String userAgent, int timeoutSeconds, boolean fetchFullContent, boolean summaryOnly,
+            Map<String, String> options
     ) {
     }
 

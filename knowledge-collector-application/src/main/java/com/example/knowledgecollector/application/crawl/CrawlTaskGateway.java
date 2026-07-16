@@ -19,5 +19,5 @@ public interface CrawlTaskGateway {
     CrawlTaskView get(long id);
     PageResult<CrawlTaskView> findPage(int page, int size);
     List<?> findItems(long taskId);
-    record SaveResult(boolean created, Long articleId) {}
+    record SaveResult(boolean created, boolean contentUpdated, Long articleId) {}
 }

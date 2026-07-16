@@ -1,0 +1,39 @@
+### Stage 11：RSS 正文补全人工验收
+### 先在采集员页面准备 RSS/Atom 来源，并把下面的 ID 替换为实际值
+
+@sourceId = 1
+@articleId = 1
+
+### 确认采集员已开启 fetchFullContent，且 summaryOnly 为 false
+GET http://127.0.0.1:8080/api/v1/sources/{{sourceId}}
+Accept: application/json
+
+> {%
+client.test("采集员允许采集正文", function () {
+  client.assert(response.status === 200, "预期 200");
+  client.assert(response.body.data.fetchFullContent === true, "应开启 fetchFullContent");
+  client.assert(response.body.data.summaryOnly === false, "应关闭 summaryOnly");
+});
+%}
+
+### 重新采集；已有空正文文章会按 URL 去重并补写正文
+POST http://127.0.0.1:8080/api/v1/sources/{{sourceId}}/crawl
+Accept: application/json
+
+> {%
+client.test("采集任务正常结束", function () {
+  client.assert(response.status === 200, "预期 200");
+  client.assert(response.body.data.status === "SUCCESS", "任务应成功");
+});
+%}
+
+### 检查正文
+GET http://127.0.0.1:8080/api/v1/articles/{{articleId}}
+Accept: application/json
+
+> {%
+client.test("文章详情响应正常", function () {
+  client.assert(response.status === 200, "预期 200");
+  client.assert(response.body.data.title, "标题不能为空");
+});
+%}

@@ -128,12 +128,18 @@ public class JdbcCrawlTaskGateway implements CrawlTaskGateway {
     public SaveResult saveEntry(long taskId, CrawlSource source, ContentSourceProvider.ContentItem entry) {
         heartbeat(taskId);
         var normalized = UrlNormalizer.normalize(entry.url(), source.feedUrl());
-        var existing = jdbc.sql("select id from article where url_hash=:hash")
+        var existing = jdbc.sql("""
+                        select id,case when content_text is not null
+                        and char_length(trim(content_text))>0 then true else false end as has_content
+                        from article where url_hash=:hash
+                        """)
                 .param("hash", normalized.hash())
-                .query(Long.class)
+                .query((rs, row) -> new ExistingArticle(
+                        rs.getLong("id"), rs.getBoolean("has_content")))
                 .optional();
         Long articleId;
         boolean created = existing.isEmpty();
+        boolean contentUpdated = false;
         OffsetDateTime now = OffsetDateTime.now();
         if (created) {
             jdbc.sql("""
@@ -165,8 +171,36 @@ public class JdbcCrawlTaskGateway implements CrawlTaskGateway {
                     .query(Long.class)
                     .single();
         } else {
-            articleId = existing.get();
-            jdbc.sql("update article set last_collected_at=:now,updated_at=:now where id=:id")
+            ExistingArticle current = existing.get();
+            articleId = current.id();
+            contentUpdated = !current.hasContent()
+                    && entry.contentText() != null && !entry.contentText().isBlank();
+            jdbc.sql("""
+                    update article set
+                    title=case when title is null or trim(title)='' then :title else title end,
+                    author=case when author is null or trim(author)='' then :author else author end,
+                    summary=case when summary is null or trim(cast(summary as varchar))='' then :summary else summary end,
+                    content_html=case
+                        when content_html is null or trim(cast(content_html as varchar))='' then :contentHtml
+                        else content_html end,
+                    content_text=case
+                        when content_text is null or trim(cast(content_text as varchar))='' then :contentText
+                        else content_text end,
+                    word_count=case
+                        when content_text is null or trim(cast(content_text as varchar))='' then :wordCount
+                        else word_count end,
+                    reading_minutes=case
+                        when content_text is null or trim(cast(content_text as varchar))='' then :readingMinutes
+                        else reading_minutes end,
+                    last_collected_at=:now,updated_at=:now where id=:id
+                    """)
+                    .param("title", entry.title())
+                    .param("author", entry.author())
+                    .param("summary", entry.summary())
+                    .param("contentHtml", entry.contentHtml())
+                    .param("contentText", entry.contentText())
+                    .param("wordCount", wordCount(entry.contentText()))
+                    .param("readingMinutes", readingMinutes(entry.contentText()))
                     .param("now", now)
                     .param("id", articleId)
                     .update();
@@ -183,7 +217,7 @@ public class JdbcCrawlTaskGateway implements CrawlTaskGateway {
                 .param("articleId", articleId)
                 .param("now", now)
                 .update();
-        return new SaveResult(created, articleId);
+        return new SaveResult(created, contentUpdated, articleId);
     }
 
     @Override
@@ -306,5 +340,8 @@ public class JdbcCrawlTaskGateway implements CrawlTaskGateway {
     }
 
     private record StaleTask(long id, long sourceId) {
+    }
+
+    private record ExistingArticle(long id, boolean hasContent) {
     }
 }

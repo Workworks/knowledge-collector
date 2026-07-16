@@ -20,6 +20,11 @@
         <section class="reader-content" th:if="${article.contentHtml != null}" th:utext="${article.contentHtml}"></section>
         <section class="reader-content" th:if="${article.contentHtml == null && article.contentText != null}">
             <p th:text="${article.contentText}"></p></section>
+        <section class="reader-content reader-empty"
+                 th:if="${article.contentHtml == null && article.contentText == null}">
+            <h2>暂未采集到正文</h2>
+            <p>该来源目前只提供摘要，或文章页面未包含可安全提取的静态正文。可以确认采集员已开启“允许采集正文”，然后重新执行采集任务补全正文。</p>
+        </section>
         <footer class="source-footer"><span>内容来自公开来源，页面仅展示经过安全清洗的正文。</span>
             <a th:href="${article.originalUrl}" target="_blank" rel="noopener noreferrer">查看原文 ↗</a></footer>
     </article>

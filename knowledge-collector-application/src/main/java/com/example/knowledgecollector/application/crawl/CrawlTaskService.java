@@ -63,9 +63,11 @@ public class CrawlTaskService {
                 MDC.put("articleId", saved.articleId().toString());
                 log.debug("stage={} articleId={}", saved.created() ? "SAVE" : "DEDUPLICATE", saved.articleId());
                 MDC.remove("articleId");
-                if (saved.created()) {
+                if (saved.created() || saved.contentUpdated()) {
                     log.debug("stage=CLASSIFY articleId={}", saved.articleId());
                     assessments.assess(saved.articleId());
+                }
+                if (saved.created()) {
                     created++;
                 } else {
                     duplicates++;
@@ -101,7 +103,8 @@ public class CrawlTaskService {
                 ? rules.active(source.id()).options() : Map.of();
         return new ContentSourceProvider.FetchRequest(
                 source.type().name(), source.homeUrl(), source.feedUrl(), source.language(),
-                source.charset(), source.userAgent(), source.timeoutSeconds(), options);
+                source.charset(), source.userAgent(), source.timeoutSeconds(),
+                source.fetchFullContent(), source.summaryOnly(), options);
     }
 
     private ContentSourceProvider provider(SourceType type) {

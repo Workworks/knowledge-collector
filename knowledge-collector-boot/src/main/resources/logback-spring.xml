@@ -7,11 +7,12 @@
 
     <property name="CONSOLE_PATTERN"
               value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] [%X{correlationId:-}] %logger{36} - %msg%n"/>
+    <property name="CONSOLE_CHARSET" value="${file.encoding}"/>
 
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>${CONSOLE_PATTERN}</pattern>
-            <charset>UTF-8</charset>
+            <charset>${CONSOLE_CHARSET}</charset>
         </encoder>
     </appender>
 
