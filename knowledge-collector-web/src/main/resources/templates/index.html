@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Knowledge Collector</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<main class="container">
+    <header>
+        <p class="eyebrow">KNOWLEDGE COLLECTOR</p>
+        <h1>资料收集与阅读管理系统</h1>
+        <p class="lead">Stage 3 基础工程已启动。主题、采集源和资料库将在后续阶段逐步开放。</p>
+    </header>
+
+    <section class="status-grid" aria-label="系统状态">
+        <article>
+            <h2>应用版本</h2>
+            <p th:text="${status.applicationVersion}">1.0.0</p>
+        </article>
+        <article>
+            <h2>数据库</h2>
+            <p th:text="${status.databaseProduct + ' ' + status.databaseVersion}">H2</p>
+        </article>
+        <article>
+            <h2>Flyway 迁移</h2>
+            <p th:text="${status.flywayMigrationCount}">1</p>
+        </article>
+        <article>
+            <h2>累计启动</h2>
+            <p th:text="${status.startupCount}">1</p>
+        </article>
+    </section>
+
+    <section class="details">
+        <h2>基础设施状态</h2>
+        <dl>
+            <div><dt>数据目录</dt><dd th:text="${status.dataDirectory}">./data</dd></div>
+            <div><dt>最近启动</dt><dd th:text="${status.lastStartedAt}">-</dd></div>
+            <div><dt>状态 API</dt><dd><a href="/api/v1/system/status">/api/v1/system/status</a></dd></div>
+            <div><dt>健康检查</dt><dd><a href="/actuator/health">/actuator/health</a></dd></div>
+        </dl>
+    </section>
+</main>
+</body>
+</html>

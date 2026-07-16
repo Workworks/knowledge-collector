@@ -1,0 +1,50 @@
+spring:
+  application:
+    name: knowledge-collector
+  datasource:
+    url: jdbc:h2:file:${KNOWLEDGE_COLLECTOR_DATA_DIR:./data}/database/knowledge-collector;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    validate-on-migrate: true
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: false
+  h2:
+    console:
+      enabled: false
+  thymeleaf:
+    cache: false
+  mvc:
+    problemdetails:
+      enabled: false
+
+server:
+  address: ${KNOWLEDGE_COLLECTOR_SERVER_ADDRESS:127.0.0.1}
+  port: ${KNOWLEDGE_COLLECTOR_SERVER_PORT:8080}
+  error:
+    include-message: never
+    include-stacktrace: never
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: never
+
+knowledge-collector:
+  storage:
+    root: ${KNOWLEDGE_COLLECTOR_DATA_DIR:./data}
+
+logging:
+  config: classpath:logback-spring.xml
