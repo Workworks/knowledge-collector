@@ -1,0 +1,41 @@
+# Build output
+target/
+**/target/
+*.class
+*.jar
+
+# IDE and OS files
+.idea/
+.vscode/
+*.iml
+.project
+.classpath
+.settings/
+.DS_Store
+Thumbs.db
+
+# Runtime data (keep directory placeholders)
+data/database/*
+!data/database/.gitkeep
+data/article-content/*
+!data/article-content/.gitkeep
+data/snapshots/*
+!data/snapshots/.gitkeep
+data/exports/*
+!data/exports/.gitkeep
+data/logs/*
+!data/logs/.gitkeep
+*.log
+
+# Local configuration and secrets
+.env
+.env.*
+application-local.yml
+application-local.yaml
+application-local.properties
+
+# Temporary files
+*.tmp
+*.swp
+~$*
+
