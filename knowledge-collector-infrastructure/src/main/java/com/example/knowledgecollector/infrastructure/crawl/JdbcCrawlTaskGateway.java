@@ -3,7 +3,7 @@ package com.example.knowledgecollector.infrastructure.crawl;
 import com.example.knowledgecollector.application.common.PageResult;
 import com.example.knowledgecollector.application.crawl.CrawlTaskGateway;
 import com.example.knowledgecollector.application.crawl.CrawlTaskView;
-import com.example.knowledgecollector.application.crawl.FeedEntry;
+import com.example.knowledgecollector.capability.source.ContentSourceProvider;
 import com.example.knowledgecollector.application.exception.ResourceNotFoundException;
 import com.example.knowledgecollector.application.exception.ConflictException;
 import com.example.knowledgecollector.domain.crawler.UrlNormalizer;
@@ -61,7 +61,7 @@ public class JdbcCrawlTaskGateway implements CrawlTaskGateway {
 
     @Override
     @Transactional
-    public SaveResult saveEntry(long taskId, CrawlSource source, FeedEntry entry) {
+    public SaveResult saveEntry(long taskId, CrawlSource source, ContentSourceProvider.ContentItem entry) {
         var normalized = UrlNormalizer.normalize(entry.url(), source.feedUrl());
         var existing = jdbc.sql("select id from article where url_hash=:hash")
                 .param("hash", normalized.hash())
@@ -73,9 +73,11 @@ public class JdbcCrawlTaskGateway implements CrawlTaskGateway {
         if (created) {
             jdbc.sql("""
                     insert into article(source_id,title,author,summary,original_url,normalized_url,url_hash,language,
-                    publish_time,publish_time_inferred,first_collected_at,last_collected_at,created_at,updated_at)
+                    publish_time,publish_time_inferred,content_html,content_text,word_count,reading_minutes,
+                    first_collected_at,last_collected_at,created_at,updated_at)
                     values(:sourceId,:title,:author,:summary,:originalUrl,:normalizedUrl,:urlHash,:language,
-                    :publishTime,:publishTimeInferred,:now,:now,:now,:now)
+                    :publishTime,:publishTimeInferred,:contentHtml,:contentText,:wordCount,:readingMinutes,
+                    :now,:now,:now,:now)
                     """)
                     .param("sourceId", source.id())
                     .param("title", entry.title())
@@ -87,6 +89,10 @@ public class JdbcCrawlTaskGateway implements CrawlTaskGateway {
                     .param("language", source.language())
                     .param("publishTime", entry.publishedAt() == null ? now : entry.publishedAt())
                     .param("publishTimeInferred", entry.publishedAt() == null)
+                    .param("contentHtml", entry.contentHtml())
+                    .param("contentText", entry.contentText())
+                    .param("wordCount", wordCount(entry.contentText()))
+                    .param("readingMinutes", readingMinutes(entry.contentText()))
                     .param("now", now)
                     .update();
             articleId = jdbc.sql("select id from article where url_hash=:hash")
@@ -192,5 +198,17 @@ public class JdbcCrawlTaskGateway implements CrawlTaskGateway {
                 (Long) resultSet.getObject("duration_millis"),
                 resultSet.getObject("created_at", OffsetDateTime.class)
         );
+    }
+
+    private int wordCount(String text) {
+        if (text == null || text.isBlank()) {
+            return 0;
+        }
+        return text.trim().split("\\s+").length;
+    }
+
+    private int readingMinutes(String text) {
+        int words = wordCount(text);
+        return words == 0 ? 0 : Math.max(1, (int) Math.ceil(words / 250.0));
     }
 }

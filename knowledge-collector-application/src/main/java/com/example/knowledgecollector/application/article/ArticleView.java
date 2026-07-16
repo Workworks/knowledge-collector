@@ -5,6 +5,8 @@ import java.time.OffsetDateTime;
 public record ArticleView(
         Long id, Long sourceId, String sourceName, String title, String author, String summary,
         String originalUrl, String normalizedUrl, String language, OffsetDateTime publishTime,
-        boolean publishTimeInferred, OffsetDateTime firstCollectedAt, OffsetDateTime lastCollectedAt
+        boolean publishTimeInferred, String contentHtml, String contentText,
+        int wordCount, int readingMinutes,
+        OffsetDateTime firstCollectedAt, OffsetDateTime lastCollectedAt
 ) {
 }

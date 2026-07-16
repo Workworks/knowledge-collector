@@ -1,6 +1,6 @@
 # Knowledge Collector
 
-Knowledge Collector 是面向个人和小团队的本地资料采集与阅读管理系统。当前完成至 Stage 4：基础工程、主题管理、采集源管理、主题与来源关联、管理页面和 REST API 已经可运行。
+Knowledge Collector 是面向个人和小团队的本地资料采集与阅读管理系统。当前完成至 Stage 6：RSS/Atom、HTML 规则采集、文章入库与可插拔能力接口已经可运行。
 
 ## 当前可用能力
 
@@ -12,6 +12,8 @@ Knowledge Collector 是面向个人和小团队的本地资料采集与阅读管
 - Stage 4 管理接口请求集：`http/stage-4-management.http`
 - 主题管理页面：`/topics`
 - 采集源管理页面：`/sources`
+- HTML 规则工作台：`/sources/{id}/rules`
+- 采集任务与文章库：`/tasks`、`/articles`
 - OpenAPI JSON 与 Swagger UI：`/v3/api-docs`、`/swagger-ui.html`
 - local Profile 测试工具：`/dev/tools`
 - H2 文件数据库与 Flyway V1 迁移
@@ -101,6 +103,8 @@ data/
 ## 模块
 
 - `knowledge-collector-domain`：领域模型与端口。
+- `knowledge-collector-capability-api`：第三方数据源、AI、搜索、通知、存储和安全能力接口。
+- `knowledge-collector-capability-provider`：RSS/Atom、Jsoup HTML、JDK HTTP 和 URL 安全默认实现。
 - `knowledge-collector-application`：应用用例和查询接口。
 - `knowledge-collector-infrastructure`：数据库、Flyway、存储等适配器。
 - `knowledge-collector-web`：MVC、REST、模板和静态资源。
@@ -117,4 +121,4 @@ data/
 
 ## 当前边界
 
-当前首页仍是基础状态入口。Stage 4 已实现主题和采集源配置；真实来源连通性测试、采集规则、采集任务、文章资料库和调度将在后续阶段实现。系统未加入任何绕过登录、验证码、付费墙或 robots.txt 的能力。
+当前支持 RSS、Atom 和基于 CSS Selector 的静态 HTML 采集。动态浏览器渲染、调度重试、AI、全文检索及外部通知仍属于后续阶段。系统未加入任何绕过登录、验证码、付费墙或 robots.txt 的能力。

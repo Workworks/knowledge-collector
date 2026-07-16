@@ -1,13 +1,14 @@
 package com.example.knowledgecollector.application.crawl;
 
 import com.example.knowledgecollector.application.common.PageResult;
+import com.example.knowledgecollector.capability.source.ContentSourceProvider;
 import com.example.knowledgecollector.domain.source.CrawlSource;
 import java.util.List;
 
 public interface CrawlTaskGateway {
     CrawlTaskView create(CrawlSource source);
     void running(long id);
-    SaveResult saveEntry(long taskId, CrawlSource source, FeedEntry entry);
+    SaveResult saveEntry(long taskId, CrawlSource source, ContentSourceProvider.ContentItem entry);
     void success(long id, int discovered, int created, int duplicates, long duration);
     void failure(long id, String code, String message, long duration);
     CrawlTaskView get(long id);

@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HTML 采集规则</title><link rel="stylesheet" href="/css/app.css">
+<script defer src="/js/admin-common.js"></script><script defer src="/js/source-rules.js"></script></head>
+<body><main class="container admin-container" th:attr="data-source-id=${sourceId}">
+<header class="console-header"><div><p class="eyebrow">ADMIN / SOURCE RULE</p><h1>HTML 采集规则</h1>
+<p class="lead">使用 CSS Selector 配置列表发现、详情正文提取和清洗规则。每次保存都会创建新版本。</p></div>
+<nav class="header-actions"><a class="button button-secondary" href="/sources">返回采集源</a></nav></header>
+<div id="page-message" class="page-message" hidden></div>
+<section class="console-panel"><form id="rule-form" class="admin-form">
+<div class="form-grid">
+<div class="form-field"><label>列表项 *</label><input id="list-selector" required placeholder=".article-item"></div>
+<div class="form-field"><label>详情链接 *</label><input id="link-selector" required placeholder="a.title"></div>
+<div class="form-field"><label>标题 *</label><input id="title-selector" required placeholder="h1"></div>
+<div class="form-field"><label>正文 *</label><input id="content-selector" required placeholder="article .content"></div>
+<div class="form-field"><label>作者</label><input id="author-selector" placeholder=".author"></div>
+<div class="form-field"><label>发布时间</label><input id="time-selector" placeholder="time"></div>
+<div class="form-field"><label>时间格式</label><input id="date-pattern" placeholder="yyyy-MM-dd'T'HH:mm:ssXXX"></div>
+</div>
+<div class="form-field"><label>正文内移除的选择器（每行一个）</label>
+<textarea id="remove-selectors" placeholder=".advertisement&#10;.related-links&#10;script"></textarea></div>
+<label class="check-field"><input id="rule-enabled" type="checkbox" checked> 保存后立即启用</label>
+<div class="action-row"><button class="button button-primary" type="submit">保存新版本</button>
+<button id="rule-test" class="button button-secondary" type="button">测试当前规则</button></div>
+</form></section>
+<section class="console-panel"><h2>规则版本</h2>
+<div class="table-wrap"><table><thead><tr><th>版本</th><th>列表 / 正文</th><th>状态</th><th>创建时间</th><th>操作</th></tr></thead>
+<tbody id="rule-rows"></tbody></table></div></section>
+</main></body></html>

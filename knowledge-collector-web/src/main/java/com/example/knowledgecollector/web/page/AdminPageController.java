@@ -24,6 +24,18 @@ public class AdminPageController {
         return "sources";
     }
 
+    @GetMapping("/sources/{id}/rules")
+    public String sourceRules(@PathVariable long id, Model model) {
+        model.addAttribute("sourceId", id);
+        return "source-rules";
+    }
+
+    @GetMapping("/sources/{id}/test")
+    public String sourceTest(@PathVariable long id, Model model) {
+        model.addAttribute("sourceId", id);
+        return "source-rules";
+    }
+
     @GetMapping("/tasks")
     public String tasks() {
         return "tasks";

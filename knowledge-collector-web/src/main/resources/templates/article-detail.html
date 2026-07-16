@@ -8,7 +8,11 @@
 <dt>作者</dt><dd th:text="${article.author} ?: '-'"></dd>
 <dt>发布时间</dt><dd th:text="${article.publishTime}"></dd>
 <dt>摘要</dt><dd th:text="${article.summary} ?: '-'"></dd>
+<dt>字数 / 阅读时长</dt><dd><span th:text="${article.wordCount}"></span> 字 /
+<span th:text="${article.readingMinutes}"></span> 分钟</dd>
 <dt>规范化 URL</dt><dd th:text="${article.normalizedUrl}"></dd></dl>
+<article class="console-panel" th:if="${article.contentHtml != null}"
+         th:utext="${article.contentHtml}"></article>
 <a class="button" th:href="${article.originalUrl}" target="_blank" rel="noopener noreferrer">打开原文</a>
 <a class="button button-secondary" href="/articles">返回文章库</a>
 </main></body></html>

@@ -56,6 +56,8 @@ public class JdbcArticleGateway implements ArticleGateway {
                 resultSet.getString("original_url"), resultSet.getString("normalized_url"),
                 resultSet.getString("language"), resultSet.getObject("publish_time", OffsetDateTime.class),
                 resultSet.getBoolean("publish_time_inferred"),
+                resultSet.getString("content_html"), resultSet.getString("content_text"),
+                resultSet.getInt("word_count"), resultSet.getInt("reading_minutes"),
                 resultSet.getObject("first_collected_at", OffsetDateTime.class),
                 resultSet.getObject("last_collected_at", OffsetDateTime.class)
         );

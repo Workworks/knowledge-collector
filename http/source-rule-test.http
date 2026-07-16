@@ -1,2 +1,51 @@
-# Stage 6 将在此加入采集规则保存和无污染预览请求。
-# Stage 4 的来源测试边界见 sources.http。
+### 创建 HTML 规则 v1（sourceId 必须是 HTML_LIST）
+POST http://127.0.0.1:8080/api/v1/sources/1/rules
+Content-Type: application/json
+Accept: application/json
+X-Correlation-Id: idea-stage6-rule-create
+
+{
+  "listSelector": ".article-item",
+  "linkSelector": "a.title",
+  "titleSelector": "h1",
+  "contentSelector": "article .content",
+  "authorSelector": ".author",
+  "publishTimeSelector": "time",
+  "datePattern": "",
+  "removeSelectors": ".advertisement\n.related-links\nscript\niframe",
+  "enabled": true
+}
+
+> {%
+client.test("规则版本创建成功", function () {
+  client.assert(response.status === 201, "预期 HTTP 201");
+  client.assert(response.body.data.version >= 1, "规则版本必须大于等于 1");
+});
+%}
+
+### 查询规则版本
+GET http://127.0.0.1:8080/api/v1/sources/1/rules
+Accept: application/json
+
+### 查询当前规则
+GET http://127.0.0.1:8080/api/v1/sources/1/rules/active
+Accept: application/json
+
+### 无入库规则测试
+POST http://127.0.0.1:8080/api/v1/sources/1/rules/test
+Accept: application/json
+X-Correlation-Id: idea-stage6-rule-test
+
+### 激活历史版本
+PUT http://127.0.0.1:8080/api/v1/sources/1/rules/1/active
+Accept: application/json
+
+### 参数错误：缺少必要选择器
+POST http://127.0.0.1:8080/api/v1/sources/1/rules
+Content-Type: application/json
+
+{"listSelector":"","linkSelector":"","titleSelector":"","contentSelector":"","enabled":true}
+
+### 记录不存在
+GET http://127.0.0.1:8080/api/v1/sources/999999/rules
+Accept: application/json

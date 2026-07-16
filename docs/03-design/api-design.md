@@ -80,10 +80,9 @@
 | 方法 | 路径 | 用途 |
 | --- | --- | --- |
 | GET/POST | `/sources/{sourceId}/rules` | 版本列表/创建新版本 |
-| GET | `/rules/{id}` | 详情 |
-| POST | `/rules/{id}/copy` | 复制为新草稿版本 |
-| POST | `/rules/test` | 使用请求内规则测试，不入库 |
-| PATCH | `/rules/{id}/active` | 激活版本 |
+| GET | `/sources/{sourceId}/rules/active` | 当前启用版本 |
+| POST | `/sources/{sourceId}/rules/test` | 使用当前规则测试，不入库 |
+| PUT | `/sources/{sourceId}/rules/{ruleId}/active` | 激活历史版本 |
 
 ### 5.4 任务
 
@@ -171,4 +170,3 @@ GET /api/v1/articles?q=spring&topicId=1&readingStatus=UNREAD&minQuality=60&page=
 ## 9. 版本与兼容
 
 第一版固定 `/api/v1`。新增可选字段保持兼容；删除/改名字段需要新版本或弃用周期。API 文档与 Controller 测试在实现阶段同步维护。
-

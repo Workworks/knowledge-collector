@@ -21,6 +21,8 @@
 
     <modules>
         <module>knowledge-collector-domain</module>
+        <module>knowledge-collector-capability-api</module>
+        <module>knowledge-collector-capability-provider</module>
         <module>knowledge-collector-application</module>
         <module>knowledge-collector-infrastructure</module>
         <module>knowledge-collector-web</module>
@@ -35,6 +37,16 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>com.example</groupId>
+                <artifactId>knowledge-collector-capability-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.example</groupId>
+                <artifactId>knowledge-collector-capability-provider</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             <dependency>
                 <groupId>com.example</groupId>
                 <artifactId>knowledge-collector-domain</artifactId>
