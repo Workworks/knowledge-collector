@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>AI 研究助手 · Knowledge Collector</title>
+    <link rel="stylesheet" href="/css/app.css"><link rel="stylesheet" href="/css/ai-chat.css">
+    <script defer src="/js/admin-common.js"></script><script defer src="/js/ai-chat.js"></script>
+</head>
+<body>
+<nav class="site-nav"><a class="brand" href="/">KC <span>Knowledge Collector</span></a><div class="nav-links">
+    <a href="/topics">主题</a><a href="/sources">采集员</a><a href="/tasks">任务</a>
+    <a href="/articles">资料库</a><a class="active" href="/ai-chat">AI 助手</a></div></nav>
+<main class="container ai-chat-page">
+    <header class="page-hero compact-hero"><div><p class="eyebrow">LOCAL AI WORKSPACE</p>
+        <h1>AI 研究助手</h1><p class="lead">与本机 Ollama 连续对话，将有价值的回答保存为待审核资料。</p></div>
+        <div id="chat-provider" class="hero-stat"><strong>Ollama</strong><span>本地推理，不上传云端</span></div>
+    </header>
+    <div id="page-message" class="page-message" hidden></div>
+    <section class="ai-workspace">
+        <aside class="conversation-panel">
+            <button id="new-conversation" class="button button-primary button-block" type="button">＋ 新建对话</button>
+            <div id="conversation-list" class="conversation-list"></div>
+        </aside>
+        <section class="chat-panel">
+            <div id="chat-empty" class="chat-empty"><div class="ai-orb">AI</div>
+                <h2>从一个问题开始</h2><p>可以让 AI 整理知识、形成提纲、比较观点或生成待审核材料。</p></div>
+            <div id="chat-messages" class="chat-messages" aria-live="polite"></div>
+            <form id="chat-form" class="chat-composer">
+                <textarea id="chat-input" maxlength="8000" placeholder="输入问题，Ctrl + Enter 发送…" required></textarea>
+                <div><span id="chat-hint">AI 生成内容应在入库后人工审核。</span>
+                    <button id="chat-send" class="button button-primary" type="submit">发送</button></div>
+            </form>
+        </section>
+    </section>
+</main>
+</body></html>

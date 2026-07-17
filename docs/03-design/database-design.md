@@ -142,6 +142,25 @@ detail_json 不得包含 Token、完整 Cookie 或正文。
 
 一篇文章保存最近一次 AI 分析。结构化结果包含摘要、核心观点、关键词、标签、分类、阅读价值、Token 和耗时。
 
+### 4.15 ai_conversation
+
+`id, title, provider, model, created_at, updated_at`
+
+保存 AI 研究助手会话及实际使用的 Provider/模型信息。
+
+### 4.16 ai_chat_message
+
+`id, conversation_id, role, content CLOB, provider, model, duration_ms, saved_article_id, created_at`
+
+按时间保存用户和助手消息。助手消息保存资料库后回填 `saved_article_id`，避免重复入库。
+
+### 4.17 article AI 来源扩展
+
+`content_origin, ai_conversation_id, ai_message_id`
+
+普通采集内容使用 `COLLECTED`；聊天回复保存后使用 `AI_GENERATED`，状态固定从
+`PENDING_REVIEW` 开始，并关联原会话和消息。
+
 ## 5. 枚举
 
 - SourceType：RSS、ATOM、HTML_LIST、JSON_API、MANUAL_URL。

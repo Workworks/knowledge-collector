@@ -12,6 +12,7 @@
     <article class="reading-main">
         <header class="article-header"><div class="article-kicker"><span th:text="${article.sourceName}"></span>
             <span th:text="${article.readingMinutes + ' 分钟阅读'}"></span><span th:text="${article.qualityScore + ' 分'}"></span></div>
+            <div class="ai-source-notice" th:if="${article.contentOrigin == 'AI_GENERATED'}">AI 生成内容 · 该资料由 AI 生成，已进入人工审核流程。</div>
             <h1 th:text="${article.title}"></h1>
             <p class="article-deck" th:text="${article.summary} ?: '暂无摘要'"></p>
             <div class="article-byline"><span th:text="${article.author} ?: '未知作者'"></span>
@@ -25,8 +26,10 @@
             <h2>暂未采集到正文</h2>
             <p>该来源目前只提供摘要，或文章页面未包含可安全提取的静态正文。可以确认采集员已开启“允许采集正文”，然后重新执行采集任务补全正文。</p>
         </section>
-        <footer class="source-footer"><span>内容来自公开来源，页面仅展示经过安全清洗的正文。</span>
-            <a th:href="${article.originalUrl}" target="_blank" rel="noopener noreferrer">查看原文 ↗</a></footer>
+        <footer class="source-footer"><span th:if="${article.contentOrigin != 'AI_GENERATED'}">内容来自公开来源，页面仅展示经过安全清洗的正文。</span>
+            <span th:if="${article.contentOrigin == 'AI_GENERATED'}">该资料由 AI 生成，仅供参考，审核通过后再归档使用。</span>
+            <a th:if="${article.contentOrigin != 'AI_GENERATED'}" th:href="${article.originalUrl}"
+               target="_blank" rel="noopener noreferrer">查看原文 ↗</a></footer>
     </article>
     <aside class="reading-sidebar">
         <section class="side-card ai-card"><div class="ai-card-heading"><div><p class="eyebrow">LOCAL AI</p>

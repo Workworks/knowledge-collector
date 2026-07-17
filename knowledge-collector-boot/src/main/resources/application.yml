@@ -59,6 +59,8 @@ knowledge-collector:
       base-url: ${KNOWLEDGE_COLLECTOR_OLLAMA_BASE_URL:http://127.0.0.1:11434}
       model: ${KNOWLEDGE_COLLECTOR_OLLAMA_MODEL:qwen3:4b}
       timeout: ${KNOWLEDGE_COLLECTOR_OLLAMA_TIMEOUT:PT2M}
+    chat:
+      max-history-messages: ${KNOWLEDGE_COLLECTOR_AI_CHAT_MAX_HISTORY:20}
 
 logging:
   config: classpath:logback-spring.xml

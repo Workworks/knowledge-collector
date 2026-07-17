@@ -179,6 +179,19 @@ GET   /api/v1/tags
 `favorite`、`archived`、`tagId`、`minQuality` 和受控 `sort`。普通资料库默认传入
 `archived=false`，归档资料需要显式筛选。
 
+AI 研究助手：
+
+```text
+GET  /api/v1/ai/chat/conversations
+POST /api/v1/ai/chat/conversations
+GET  /api/v1/ai/chat/conversations/{conversationId}
+POST /api/v1/ai/chat/conversations/{conversationId}/messages
+POST /api/v1/ai/chat/messages/{messageId}/save
+```
+
+发送消息时携带最近若干轮历史；保存接口仅接受 AI 助手消息，可编辑材料标题。保存结果进入
+`PENDING_REVIEW`，并记录 `AI_GENERATED`、原会话和原消息，供资料库审核及追溯。
+
 ## 7. 页面 Controller
 
 页面路由不放在 `/api/v1` 下。POST 表单使用 PRG（Post/Redirect/Get），校验失败返回原表单和字段错误；异步局部操作调用 REST API。页面与 API 复用应用服务，但分别维护 ViewModel 与 API DTO。

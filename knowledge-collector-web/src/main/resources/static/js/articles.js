@@ -35,6 +35,7 @@ window.addEventListener("DOMContentLoaded", async () => {
         totalPages = data.totalPages;
         $("article-grid").innerHTML = data.content.map(article => `<article class="library-card">
             <div class="card-topline"><span class="status ${article.readingStatus === "READ" ? "on" : "off"}">${statusLabel(article.readingStatus)}</span>
+            ${article.contentOrigin === "AI_GENERATED" ? '<span class="origin-pill">AI 内容</span>' : ''}
             <span class="quality-pill">${article.qualityScore} 分</span></div>
             <h2><a href="/articles/${article.id}">${A.escape(article.title)}</a></h2>
             <p class="article-summary">${A.escape(article.summary || "暂无摘要")}</p>

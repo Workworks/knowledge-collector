@@ -8,7 +8,7 @@ public record ArticleView(
         boolean publishTimeInferred, String contentHtml, String contentText,
         int wordCount, int readingMinutes,
         int qualityScore, String reviewStatus, String sourceLevel,
-        String readingStatus, boolean favorite, boolean archived,
+        String contentOrigin, String readingStatus, boolean favorite, boolean archived,
         OffsetDateTime firstCollectedAt, OffsetDateTime lastCollectedAt
 ) {
 }

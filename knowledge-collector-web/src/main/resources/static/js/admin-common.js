@@ -24,3 +24,13 @@ window.AdminCommon = {
         return element.innerHTML;
     }
 };
+
+window.addEventListener("DOMContentLoaded", () => {
+    const links = document.querySelector(".nav-links");
+    if (links && !links.querySelector('a[href="/ai-chat"]')) {
+        const item = document.createElement("a");
+        item.href = "/ai-chat";
+        item.textContent = "AI 助手";
+        links.appendChild(item);
+    }
+});

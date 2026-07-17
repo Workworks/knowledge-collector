@@ -1,6 +1,7 @@
 package com.example.knowledgecollector.provider.intelligence;
 
 import com.example.knowledgecollector.capability.intelligence.ContentIntelligenceProvider;
+import com.example.knowledgecollector.capability.intelligence.ConversationalIntelligenceProvider;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,11 +14,14 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 @Component
-public class OllamaContentIntelligenceProvider implements ContentIntelligenceProvider {
+public class OllamaContentIntelligenceProvider implements ContentIntelligenceProvider,
+        ConversationalIntelligenceProvider {
     private static final Map<String, Object> FORMAT = Map.of(
             "type", "object",
             "properties", Map.of(
@@ -135,6 +139,58 @@ public class OllamaContentIntelligenceProvider implements ContentIntelligencePro
         } catch (Exception exception) {
             throw new IllegalStateException("OLLAMA-REQUEST-FAILED: " + safeMessage(exception), exception);
         }
+    }
+
+    @Override
+    public ChatResult chat(ChatRequest request) {
+        if (!enabled) {
+            throw new IllegalStateException("AI-PROVIDER-DISABLED: Ollama 已禁用");
+        }
+        try {
+            List<Map<String, String>> messages = new ArrayList<>();
+            messages.add(Map.of("role", "system", "content", """
+                    你是 Knowledge Collector 的资料研究助手。请使用清晰、准确的中文回答。
+                    不要虚构来源或事实；无法确认时明确说明。输出应适合用户进一步审核并保存到资料库。
+                    """));
+            for (var message : request.messages()) {
+                messages.add(Map.of("role", message.role(), "content", message.content()));
+            }
+            Map<String, Object> body = new LinkedHashMap<>();
+            body.put("model", model);
+            body.put("messages", messages);
+            body.put("stream", false);
+            body.put("options", Map.of("temperature", 0.2));
+            HttpRequest httpRequest = HttpRequest.newBuilder(endpoint.resolve("/api/chat"))
+                    .timeout(timeout)
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(json.writeValueAsString(body), StandardCharsets.UTF_8))
+                    .build();
+            HttpResponse<String> response = http.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() != 200) {
+                throw new IllegalStateException("OLLAMA-CHAT-HTTP-" + response.statusCode() + ": "
+                        + errorMessage(response.body()));
+            }
+            JsonNode envelope = json.readTree(response.body());
+            String content = cleanThinking(envelope.path("message").path("content").asText());
+            if (content.isBlank()) {
+                throw new IllegalStateException("OLLAMA-EMPTY-RESPONSE: 模型未返回聊天内容");
+            }
+            return new ChatResult(content, id(), envelope.path("model").asText(model),
+                    envelope.path("prompt_eval_count").asInt(0),
+                    envelope.path("eval_count").asInt(0),
+                    envelope.path("total_duration").asLong(0) / 1_000_000);
+        } catch (InterruptedException exception) {
+            Thread.currentThread().interrupt();
+            throw new IllegalStateException("OLLAMA-INTERRUPTED: AI 对话被中断", exception);
+        } catch (IllegalStateException exception) {
+            throw exception;
+        } catch (Exception exception) {
+            throw new IllegalStateException("OLLAMA-CHAT-FAILED: " + safeMessage(exception), exception);
+        }
+    }
+
+    private String cleanThinking(String value) {
+        return value == null ? "" : value.replaceAll("(?s)<think>.*?</think>", "").trim();
     }
 
     private URI validateEndpoint(String baseUrl) {

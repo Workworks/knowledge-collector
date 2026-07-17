@@ -200,7 +200,8 @@ public class JdbcOperationsGateway implements OperationsGateway {
                 rs.getObject("publish_time", OffsetDateTime.class), rs.getBoolean("publish_time_inferred"),
                 rs.getString("content_html"), rs.getString("content_text"), rs.getInt("word_count"),
                 rs.getInt("reading_minutes"), rs.getInt("quality_score"), rs.getString("review_status"),
-                rs.getString("source_level"), rs.getString("reading_status"), rs.getBoolean("favorite"),
+                rs.getString("source_level"), rs.getString("content_origin"),
+                rs.getString("reading_status"), rs.getBoolean("favorite"),
                 rs.getBoolean("archived"), rs.getObject("first_collected_at", OffsetDateTime.class),
                 rs.getObject("last_collected_at", OffsetDateTime.class));
     }
