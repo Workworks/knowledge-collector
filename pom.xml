@@ -19,6 +19,14 @@
     <name>Knowledge Collector</name>
     <description>Local knowledge collection and reading management system</description>
 
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
     <modules>
         <module>knowledge-collector-domain</module>
         <module>knowledge-collector-capability-api</module>

@@ -3,6 +3,11 @@
 **/target
 data
 .env*
+!.env.example
+ai-prompt
+data
+knowledge-collector-boot/data
+docs/stages
 mobile-offline/.gradle
 mobile-offline/app/build
 *.log

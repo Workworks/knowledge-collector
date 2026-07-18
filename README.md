@@ -1,152 +1,216 @@
 # Knowledge Collector
 
-Knowledge Collector 是面向个人和小团队的本地资料采集与阅读管理系统。当前完成至 Stage 14：支持 AI 自动发现采集源、来源健康检查、任务过滤和规则化归档。
+Knowledge Collector 是一个面向个人和小团队的本地资料采集、AI 研究与阅读管理系统。它把主题管理、公开来源采集、正文清洗、质量评估、AI 对话、审核入库、搜索阅读和归档整理放在同一个可离线保存数据的应用中。
 
-## 当前可用能力
+项目采用模块化单体架构，默认仅监听 `127.0.0.1`，数据保存在本机 H2 数据库和文件目录中。当前版本完成至 Stage 15，适合作为本地知识工作台或 Java/Spring Boot 二次开发基础。
 
-- 中文基础首页：`http://127.0.0.1:8080/`
-- 页面测试人员使用的 Web 接口测试台：`/test-console`
-- 系统状态 API：`/api/v1/system/status`
-- Actuator 健康检查：`/actuator/health`
-- IDEA HTTP Client 请求集：`http/knowledge-collector.http`
-- Stage 4 管理接口请求集：`http/stage-4-management.http`
-- 主题管理页面：`/topics`
-- 采集源管理页面：`/sources`
-- HTML 规则工作台：`/sources/{id}/rules`
-- 采集任务与文章库：`/tasks`、`/articles`
-- 待审核文章页面：`/articles/review`
-- 文章质量评估 API：`/api/v1/articles/{articleId}/assessment`
-- 资料库支持全文搜索、主题/来源/标签/状态/质量组合筛选
-- AI 研究助手页面：`/ai-chat`，支持多轮会话及历史记录
-- AI 回复可保存到待审核资料库，并明确标注“AI 内容”
-- AI 按主题、语言、数量和质量等级发现、验证并收纳公开采集源
-- 采集员健康状态、最近刷新时间与批量刷新
-- 采集任务默认最近七天并支持多条件过滤
-- 独立归档资料库与可配置整理规则
-- 阅读页支持收藏、已读/未读、归档、忽略、自定义标签和个人笔记
-- Stage 8 完整 IDEA 请求任务：`http/stage-8-end-to-end.http`
-- 调度与运维页面：`/operations`
-- Stage 9 IDEA 请求集：`http/stage-9-operations.http`
-- 固定周期调度、失败任务重试、待执行任务取消、运行仪表盘和本地备份
-- OpenAPI JSON 与 Swagger UI：`/v3/api-docs`、`/swagger-ui.html`
-- local Profile 测试工具：`/dev/tools`
-- H2 文件数据库与 Flyway V1—V11 迁移
-- 任务总请求超时、心跳租约与超时任务自动回收
-- JDK、Windows 系统根证书和可选 PEM CA 的组合 TLS 信任
-- RSS/Atom 支持内嵌全文和文章详情页正文提取、安全清洗及空正文回填
-- MANUAL_URL 支持直接采集单篇网页并提取正文
-- 本地 Ollama 文章摘要、核心观点、关键词、标签、分类和阅读价值
-- Docker Compose 一键部署与 Android SQLite 离线阅读包
-- 启动次数持久化，用于验证重启后数据不丢失
-- 数据、正文、快照、导出和日志目录自动创建
-- 全局异常响应、字段错误模型和请求关联编号
-- Windows/Linux 启动脚本
+## 功能特性
 
-## 环境要求
+- 主题、采集源、HTML 规则和固定周期调度管理。
+- RSS、Atom、HTML List、JSON API、Manual URL 等公开来源 Provider。
+- AI 按主题、语言、数量和质量等级发现、验证并收纳采集源。
+- 采集源健康检查、最近刷新记录和批量状态刷新。
+- 采集任务超时租约、失败重试、取消、最近七天默认查询和组合筛选。
+- 正文抽取、安全清洗、URL 去重、主题匹配、质量评分和人工审核。
+- 全文搜索、收藏、已读、标签、笔记、归档资料库和可配置整理规则。
+- 本地 Ollama 文章分析、多轮聊天，以及 AI 回复待审核入库和来源标记。
+- H2 + Flyway 持久化、本地备份恢复、Docker Compose 和 Android 离线资料包。
+- Swagger UI、IntelliJ IDEA HTTP Client 请求集和 JUnit 集成测试。
 
-- JDK 17 或更高版本
-- Maven 3.6.3 或更高版本
-- Git
+## 系统架构
 
-当前工程使用 Spring Boot 3.5.16。系统启动不依赖外部网络；第一次 Maven 构建可能需要下载依赖。
+```mermaid
+flowchart LR
+    Browser[浏览器 / HTTP Client] --> Web[knowledge-collector-web]
+    Web --> Application[knowledge-collector-application]
+    Application --> Domain[knowledge-collector-domain]
+    Infrastructure[knowledge-collector-infrastructure] --> Application
+    Providers[capability-provider] --> CapAPI[capability-api]
+    Infrastructure --> H2[(H2 / Flyway)]
+    Providers --> Sources[公开资料源 / Ollama]
+    Boot[knowledge-collector-boot] --> Web
+    Boot --> Infrastructure
+    Boot --> Providers
+```
 
-## 构建
+详细边界和数据流参见[系统架构说明](docs/03-design/system-architecture-design.md)。
+
+## 技术栈
+
+| 分类 | 技术 |
+| --- | --- |
+| 语言与构建 | Java 17、Maven Wrapper、多模块 Maven |
+| 应用框架 | Spring Boot 3.5.16、Spring MVC、Validation、Actuator |
+| 页面 | Thymeleaf、原生 JavaScript、响应式 CSS |
+| 数据 | H2 文件数据库、Spring Data JPA、JdbcClient、Flyway V1—V11 |
+| 采集 | JDK HttpClient、Rome、Jsoup、TLS 系统证书/附加 CA |
+| AI | Ollama，可通过能力接口扩展其他 Provider |
+| 测试 | JUnit 5、AssertJ、WireMock、Spring Boot Test |
+| 部署 | 可执行 JAR、Docker Compose、Android SQLite 离线包 |
+
+## 项目目录
+
+```text
+Knowledge Collector
+├─ knowledge-collector-domain/              领域模型与规则
+├─ knowledge-collector-capability-api/      外部能力接口
+├─ knowledge-collector-capability-provider/ 默认采集、HTTP 与 Ollama 实现
+├─ knowledge-collector-application/         应用服务与用例编排
+├─ knowledge-collector-infrastructure/      数据库、存储、调度和备份适配器
+├─ knowledge-collector-web/                 REST、MVC、模板和静态资源
+├─ knowledge-collector-boot/                启动模块、配置与集成测试
+├─ mobile-offline/                          Android 离线阅读工程
+├─ docs/                                    产品、设计、开发、部署和用户文档
+├─ http/                                    IntelliJ IDEA HTTP Client 请求
+├─ scripts/                                 打包和文档检查脚本
+├─ compose.yaml                             CPU Docker Compose
+├─ compose.gpu.yaml                         NVIDIA GPU Compose 扩展
+└─ pom.xml                                  Maven 聚合工程
+```
+
+## Quick Start
+
+### 1. 准备环境
+
+- 64 位 JDK 17 或更高版本；
+- Git；
+- Windows、Linux 或 macOS；
+- 可选：本机 [Ollama](https://ollama.com/) 和 `deepseek-r1:14b` 模型。
+
+项目自带 Maven Wrapper，不要求预先安装 Maven。首次构建需要访问 Maven Central 下载依赖。
+
+### 2. 克隆并构建
 
 ```bash
+git clone <your-repository-url>
+cd WorkTwo
 ./mvnw clean verify
 ```
 
-可执行文件：
-
-```text
-knowledge-collector-boot/target/knowledge-collector.jar
-```
-
-## 启动
-
-Windows：
+Windows PowerShell 或 CMD 使用：
 
 ```bat
-set JAVA_HOME=C:\path\to\jdk-17
-start.bat
+mvnw.cmd clean verify
 ```
 
-Linux/macOS：
-
-```bash
-export JAVA_HOME=/path/to/jdk-17
-chmod +x start.sh
-./start.sh
-```
-
-也可直接执行：
+### 3. 启动
 
 ```bash
 java -jar knowledge-collector-boot/target/knowledge-collector.jar
 ```
 
-按 `Ctrl+C` 正常停止。
+也可以运行 `start.bat`（Windows）或 `./start.sh`（Linux/macOS）。打开：
 
-local Profile（自动初始化演示主题与来源）：
+- 管理首页：<http://127.0.0.1:8080/>
+- Swagger UI：<http://127.0.0.1:8080/swagger-ui.html>
+- 健康检查：<http://127.0.0.1:8080/actuator/health>
+
+未安装 Ollama 时，非 AI 功能仍可使用。需要 AI 功能时执行：
+
+```bash
+ollama pull deepseek-r1:14b
+ollama serve
+```
+
+### 4. 使用 local 演示数据
 
 ```bash
 ./mvnw spring-boot:run -pl knowledge-collector-boot -am -Dspring-boot.run.profiles=local
 ```
 
+`local` Profile 会启用演示主题、演示来源和 `/dev/tools`，不要用于公网部署。
+
+## Docker Compose
+
+```bash
+docker compose up -d --build
+docker compose logs -f app
+```
+
+Compose 会启动应用和 Ollama，并使用命名卷保存数据库和模型。详细步骤、CPU/GPU 差异及升级方法见 [Docker Compose 指南](docs/06-deployment/docker-compose-guide.md)。
+
 ## 配置
+
+常用环境变量：
 
 | 环境变量 | 默认值 | 说明 |
 | --- | --- | --- |
 | `KNOWLEDGE_COLLECTOR_DATA_DIR` | `./data` | 数据根目录 |
 | `KNOWLEDGE_COLLECTOR_SERVER_ADDRESS` | `127.0.0.1` | 监听地址 |
-| `KNOWLEDGE_COLLECTOR_SERVER_PORT` | `8080` | HTTP 端口 |
-| `KNOWLEDGE_COLLECTOR_TASK_STALE_TIMEOUT` | `PT10M` | 任务最大无心跳时间 |
-| `KNOWLEDGE_COLLECTOR_TRUST_SYSTEM_STORE` | `true` | Windows 合并系统根证书 |
-| `KNOWLEDGE_COLLECTOR_ADDITIONAL_CA_FILE` | 空 | 额外可信 PEM CA 文件 |
-| `KNOWLEDGE_COLLECTOR_OLLAMA_ENABLED` | `true` | 启用 Ollama Provider |
+| `KNOWLEDGE_COLLECTOR_SERVER_PORT` | `8080` | 服务端口 |
+| `KNOWLEDGE_COLLECTOR_TASK_STALE_TIMEOUT` | `PT10M` | 无心跳任务回收时间 |
+| `KNOWLEDGE_COLLECTOR_OLLAMA_ENABLED` | `true` | 是否启用 Ollama Provider |
 | `KNOWLEDGE_COLLECTOR_OLLAMA_BASE_URL` | `http://127.0.0.1:11434` | Ollama 地址 |
 | `KNOWLEDGE_COLLECTOR_OLLAMA_MODEL` | `deepseek-r1:14b` | 默认模型 |
-| `KNOWLEDGE_COLLECTOR_OLLAMA_TIMEOUT` | `PT2M` | 单次分析超时 |
-| `KNOWLEDGE_COLLECTOR_AI_CHAT_MAX_HISTORY` | `20` | AI 对话携带的最近消息数 |
+| `KNOWLEDGE_COLLECTOR_OLLAMA_TIMEOUT` | `PT2M` | 单次 AI 请求超时 |
 
-Profile 分工：
+完整列表、Profile、TLS 与生产建议见[配置参考](docs/06-deployment/configuration-reference.md)。示例值见 [.env.example](.env.example)。
 
-- `local`：演示主题/来源、`/dev/tools`、更多诊断详情。
-- `test`：自动化测试、内存 H2、禁止真实网络配置。
-- `production`：关闭测试工具与 OpenAPI，严格限制 Actuator。
+## 文档导航
 
-第一版没有登录，默认只监听本机。请勿在未增加访问控制的情况下绑定公网地址。
+所有文档均可从 [docs 文档中心](docs/README.md) 访问。常用入口：
 
-## 数据目录
+- [用户手册](docs/07-user-guide/user-manual.md)
+- [安装手册](docs/08-operations/installation-manual.md)
+- [部署指南](docs/06-deployment/deployment-guide.md)
+- [配置参考](docs/06-deployment/configuration-reference.md)
+- [开发者指南](docs/04-development/developer-guide.md)
+- [系统架构](docs/03-design/system-architecture-design.md)
+- [API 设计](docs/03-design/api-design.md)
+- [数据库设计](docs/03-design/database-design.md)
+- [测试与手工接口验证](docs/05-testing/manual-api-testing.md)
+- [常见问题](docs/09-faq/faq.md)
+- [阶段报告索引](docs/stages/README.md)
+- [更新日志](CHANGELOG.md)
+- [贡献指南](CONTRIBUTING.md)
+- [安全策略](SECURITY.md)
 
-```text
-data/
-├─ database/        H2 数据库
-├─ article-content/ 文章内容文件
-├─ snapshots/       可选网页快照
-├─ exports/         导出与备份产物
-└─ logs/            应用日志
+## 开发与验证
+
+```bash
+./mvnw clean verify
 ```
 
-## 模块
+文档链接检查（Windows PowerShell）：
 
-- `knowledge-collector-domain`：领域模型与端口。
-- `knowledge-collector-capability-api`：第三方数据源、AI、搜索、通知、存储和安全能力接口。
-- `knowledge-collector-capability-provider`：RSS/Atom、Jsoup HTML、JDK HTTP 和 URL 安全默认实现。
-- `knowledge-collector-application`：应用用例和查询接口。
-- `knowledge-collector-infrastructure`：数据库、Flyway、存储等适配器。
-- `knowledge-collector-web`：MVC、REST、模板和静态资源。
-- `knowledge-collector-boot`：启动、配置和可执行 JAR。
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File ./scripts/check-doc-links.ps1
+```
 
-## 文档
+接口请求示例位于 `http/`。运行应用后，可直接在 IntelliJ IDEA 中执行 `.http` 文件。
 
-- 项目与假设：`docs/01-project`
-- 需求：`docs/02-requirements`
-- 架构与设计：`docs/03-design`
-- 开发说明：`docs/04-development`
-- 页面与接口测试：`docs/05-testing/manual-api-testing.md`
-- 阶段报告：`docs/stages`
+## Roadmap
 
-## 当前边界
+- 增加 OpenAI、兼容 OpenAI API 的云端 Provider 与可视化模型配置。
+- 增加动态网页渲染能力，但不绕过登录、验证码、付费墙或访问控制。
+- 增强学术数据源、全文搜索索引、通知和导出格式。
+- 增加身份认证、多用户权限和远程部署安全基线。
+- 后续阶段再引入 GitHub Actions、Release 自动化和镜像发布。
 
-当前支持 RSS、Atom、RSS 文章详情页通用正文抽取、基于 CSS Selector 的静态 HTML 采集、本地固定周期调度、H2 资料检索和 Ollama 内容分析。动态浏览器渲染、分布式调度、云端 AI Provider、专业搜索引擎及外部通知仍属于后续阶段。系统未加入任何绕过登录、验证码、付费墙或 robots.txt 的能力。
+版本变化见 [CHANGELOG](CHANGELOG.md)，阶段实现细节见[阶段报告](docs/stages/README.md)。
+
+## FAQ
+
+### 启动后无法使用 AI 功能？
+
+确认 Ollama 正在监听 `127.0.0.1:11434`，目标模型已经通过 `ollama pull` 下载。应用本身可以在 Ollama 不可用时启动。
+
+### 为什么默认只能从本机访问？
+
+当前版本没有登录鉴权，默认绑定回环地址是安全设计。不要在未增加认证、TLS 和访问控制前绑定公网地址。
+
+### 数据保存在哪里？
+
+默认保存在 `./data`。升级、迁移或卸载前请先从运维页面创建备份。更多问题见[完整 FAQ](docs/09-faq/faq.md)。
+
+## 安全与合规
+
+项目只面向公开、允许访问的资料源，不提供绕过登录、验证码、付费墙、robots.txt 或证书验证的能力。发现安全问题时请按[安全策略](SECURITY.md)私下报告，不要在公开 Issue 中披露敏感细节。
+
+## License
+
+本项目使用 [Apache License 2.0](LICENSE)。提交贡献即表示同意按该许可证发布贡献内容。
+
+## 致谢
+
+感谢 Spring Boot、H2、Flyway、Rome、Jsoup、Ollama 及其开源社区。

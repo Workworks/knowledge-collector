@@ -28,11 +28,16 @@ data/exports/*
 !data/exports/.gitkeep
 data/logs/*
 !data/logs/.gitkeep
+data/backups/
+knowledge-collector-boot/data/
+**/*.mv.db
+**/*.trace.db
 *.log
 
 # Local configuration and secrets
 .env
 .env.*
+!.env.example
 application-local.yaml
 application-local.properties
 http/http-client.private.env.json
@@ -41,3 +46,9 @@ http/http-client.private.env.json
 *.tmp
 *.swp
 ~$*
+*.bak
+*.orig
+*.rej
+
+# Local planning/prompts used during development
+ai-prompt/
