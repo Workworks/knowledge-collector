@@ -2,6 +2,7 @@ package com.example.knowledgecollector.provider.intelligence;
 
 import com.example.knowledgecollector.capability.intelligence.ContentIntelligenceProvider;
 import com.example.knowledgecollector.capability.intelligence.ConversationalIntelligenceProvider;
+import com.example.knowledgecollector.capability.management.ManagedCapabilityProvider;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,7 +22,7 @@ import java.util.Map;
 
 @Component
 public class OllamaContentIntelligenceProvider implements ContentIntelligenceProvider,
-        ConversationalIntelligenceProvider {
+        ConversationalIntelligenceProvider, ManagedCapabilityProvider {
     private static final Map<String, Object> FORMAT = Map.of(
             "type", "object",
             "properties", analysisProperties(),
@@ -58,9 +59,9 @@ public class OllamaContentIntelligenceProvider implements ContentIntelligencePro
 
     private final ObjectMapper json;
     private final HttpClient http;
-    private final boolean enabled;
-    private final URI endpoint;
-    private final String model;
+    private volatile boolean enabled;
+    private volatile URI endpoint;
+    private volatile String model;
     private final Duration timeout;
     private final int maxContentChars;
 
@@ -83,6 +84,31 @@ public class OllamaContentIntelligenceProvider implements ContentIntelligencePro
     @Override
     public String id() {
         return "ollama";
+    }
+
+    @Override public String serviceType() { return "AI"; }
+    @Override public String displayName() { return "Ollama 本地大模型"; }
+    @Override public String implementationName() { return getClass().getName(); }
+    @Override public List<String> businessUsages() {
+        return List.of("文章结构化分析", "AI 研究助手", "知识卡片推荐", "AI 采集源建议");
+    }
+    @Override public RuntimeConfiguration currentConfiguration() {
+        return new RuntimeConfiguration(enabled, endpoint.toString(), model, "NONE", null);
+    }
+
+    @Override
+    public synchronized void configure(RuntimeConfiguration configuration) {
+        this.enabled = configuration.enabled();
+        this.endpoint = validateEndpoint(configuration.endpoint());
+        if (configuration.model() != null && !configuration.model().isBlank()) {
+            this.model = configuration.model().trim();
+        }
+    }
+
+    @Override
+    public ConnectionResult testConnection() {
+        ProviderStatus status = status();
+        return new ConnectionResult(status.available(), status.message(), availableModels());
     }
 
     @Override
@@ -236,6 +262,24 @@ public class OllamaContentIntelligenceProvider implements ContentIntelligencePro
             return "Ollama 可用，但模型尚未安装：" + model;
         } catch (Exception ignored) {
             return "Ollama 可用";
+        }
+    }
+
+    private List<String> availableModels() {
+        if (!enabled) return List.of();
+        try {
+            HttpRequest request = HttpRequest.newBuilder(endpoint.resolve("/api/tags"))
+                    .timeout(Duration.ofSeconds(5)).GET().build();
+            HttpResponse<String> response = http.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() != 200) return List.of();
+            List<String> result = new ArrayList<>();
+            for (JsonNode item : json.readTree(response.body()).path("models")) {
+                String name = item.path("name").asText(item.path("model").asText());
+                if (!name.isBlank()) result.add(name);
+            }
+            return List.copyOf(result);
+        } catch (Exception ignored) {
+            return List.of();
         }
     }
 

@@ -180,6 +180,16 @@ detail_json 不得包含 Token、完整 Cookie 或正文。
 | `knowledge_gap`、`knowledge_review` | 25 | 知识缺口、到期复习和复习历史 |
 
 实体合并通过 `merged_into_id` 记录去向。外键删除规则根据资产语义选择 `CASCADE` 或 `SET NULL`，避免删除文章时误删独立研究结论。
+
+## V13 第三方能力与来源发现
+
+| 表 | 说明 |
+| --- | --- |
+| `third_party_service` | Provider 地址、模型、认证、启停、默认/备用角色和健康状态 |
+| `third_party_call_log` | 业务场景、操作、状态、耗时、结果、失败原因和重试关联 |
+| `source_discovery_candidate` | SearXNG 候选、评分、推荐原因、验证状态和导入来源 ID |
+
+查询接口只返回“是否已配置认证信息”，不返回凭据正文。候选必须验证为 `VERIFIED` 才能转为正式采集源。
 - CrawlTaskStatus：CREATED、RUNNING、PARTIAL_SUCCESS、SUCCESS、FAILED、CANCELED。
 - TriggerType：MANUAL_SOURCE、MANUAL_TOPIC、SCHEDULED、RETRY。
 - ReadingStatus：UNREAD、READ、ARCHIVED、IGNORED。

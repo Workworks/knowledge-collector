@@ -5,8 +5,7 @@
     <link rel="stylesheet" href="/css/app.css">
     <script defer src="/js/admin-common.js"></script><script defer src="/js/article-detail.js"></script></head>
 <body>
-<nav class="site-nav"><a class="brand" href="/">KC <span>Knowledge Collector</span></a><div class="nav-links">
-    <a href="/topics">主题</a><a href="/sources">采集员</a><a href="/tasks">任务</a><a class="active" href="/articles">资料库</a></div></nav>
+<nav th:replace="~{fragments/navigation :: siteNav('articles')}"></nav>
 <main class="container reading-layout" th:attr="data-article-id=${article.id}">
     <div id="page-message" class="page-message" hidden></div>
     <article class="reading-main">

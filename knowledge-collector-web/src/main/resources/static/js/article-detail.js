@@ -28,13 +28,14 @@ window.addEventListener("DOMContentLoaded", () => {
         catch (error) { $("#ai-summary").textContent = error.message; }
     }
     $("#ai-analyze").onclick = async event => {
-        event.currentTarget.disabled = true;
-        event.currentTarget.textContent = "AI 正在分析…";
+        const button = event.currentTarget;
+        button.disabled = true;
+        button.textContent = "AI 正在分析…";
         try {
             renderAi(await A.request(`/api/v1/articles/${id}/ai/analyze`, {method:"POST"}));
             A.message("AI 分析已完成");
         } catch (error) { A.message(error.message, true); }
-        finally { event.currentTarget.disabled = false; event.currentTarget.textContent = "使用默认 AI 重新分析"; }
+        finally { button.disabled = false; button.textContent = "使用默认 AI 重新分析"; }
     };
 
     async function state(body, message) {

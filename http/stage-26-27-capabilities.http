@@ -1,0 +1,35 @@
+@baseUrl = http://127.0.0.1:8080
+@candidateId = 1
+
+### 查询第三方能力
+GET {{baseUrl}}/api/v1/capabilities
+
+### 测试 Ollama
+POST {{baseUrl}}/api/v1/capabilities/ollama/test
+
+### 测试 SearXNG
+POST {{baseUrl}}/api/v1/capabilities/searxng/test
+
+### 保存 SearXNG 配置
+PUT {{baseUrl}}/api/v1/capabilities/searxng
+Content-Type: application/json
+
+{"endpoint":"http://127.0.0.1:8088","model":"","authenticationType":"NONE","credential":"","enabled":true,"defaultProvider":true,"fallbackProvider":false}
+
+### 发现候选采集源
+POST {{baseUrl}}/api/v1/sources/search-discovery
+Content-Type: application/json
+
+{"topic":"人工智能治理","language":"zh-CN","count":5,"sourceType":"HTML_LIST","qualityLevel":"权威"}
+
+### 查询候选
+GET {{baseUrl}}/api/v1/sources/discovery-candidates
+
+### 验证候选
+POST {{baseUrl}}/api/v1/sources/discovery-candidates/{{candidateId}}/validate
+
+### 导入候选
+POST {{baseUrl}}/api/v1/sources/discovery-candidates/{{candidateId}}/import
+
+### 查询调用日志
+GET {{baseUrl}}/api/v1/capabilities/calls?limit=20

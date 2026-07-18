@@ -7,9 +7,7 @@
     <script defer src="/js/admin-common.js"></script><script defer src="/js/articles.js"></script>
 </head>
 <body>
-<nav class="site-nav"><a class="brand" href="/">KC <span>Knowledge Collector</span></a><div class="nav-links">
-    <a href="/topics">主题</a><a href="/sources">采集员</a><a href="/tasks">任务</a>
-    <a class="active" href="/articles">资料库</a><a href="/test-console">接口测试</a></div></nav>
+<nav th:replace="~{fragments/navigation :: siteNav('articles')}"></nav>
 <main class="container admin-container" th:attr="data-review-mode=${reviewMode}">
     <header class="page-hero compact-hero"><div><p class="eyebrow" th:text="${reviewMode ? 'QUALITY REVIEW' : 'KNOWLEDGE LIBRARY'}"></p>
         <h1 th:text="${reviewMode ? '待审核资料' : '你的资料库'}">你的资料库</h1>

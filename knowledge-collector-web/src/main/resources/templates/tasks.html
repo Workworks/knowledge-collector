@@ -1,8 +1,7 @@
 <!doctype html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>采集任务 · Knowledge Collector</title><link rel="stylesheet" href="/css/app.css">
 <script defer src="/js/admin-common.js"></script><script defer src="/js/tasks.js"></script></head><body>
-<nav class="site-nav"><a class="brand" href="/">KC <span>Knowledge Collector</span></a><div class="nav-links">
-<a href="/topics">主题</a><a href="/sources">采集员</a><a class="active" href="/tasks">任务</a><a href="/articles">资料库</a></div></nav>
+<nav th:replace="~{fragments/navigation :: siteNav('tasks')}"></nav>
 <main class="container admin-container"><header class="page-hero compact-hero"><div><p class="eyebrow">COLLECTION RUNS</p>
 <h1>采集任务</h1><p class="lead">跟踪每次采集的发现、新增、重复与执行耗时。</p></div>
 <div class="hero-stat"><strong id="task-count">0 个任务</strong><span>历史执行记录</span></div></header>

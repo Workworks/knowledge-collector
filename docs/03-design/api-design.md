@@ -194,6 +194,23 @@ POST /api/v1/ai/chat/messages/{messageId}/save
 
 ## 7. 页面 Controller
 
+## Stage 26–27 第三方能力与来源发现 API
+
+| 方法 | 路径 | 用途 |
+| --- | --- | --- |
+| GET | `/capabilities` | 服务配置、状态与统计 |
+| PUT | `/capabilities/{providerId}` | 保存地址、模型、认证、启停和角色 |
+| POST | `/capabilities/{providerId}/test` | 测试连接并读取模型 |
+| GET | `/capabilities/calls` | 查询调用与失败日志 |
+| POST | `/capabilities/calls/{id}/retry` | 重试失败服务检测 |
+| POST | `/sources/search-discovery` | 通过默认搜索 Provider 发现候选 |
+| GET | `/sources/discovery-candidates` | 查询未忽略候选 |
+| POST | `/sources/discovery-candidates/{id}/validate` | 验证单个候选 |
+| POST | `/sources/discovery-candidates/validate` | 批量验证 |
+| POST | `/sources/discovery-candidates/{id}/import` | 导入单个已验证候选 |
+| POST | `/sources/discovery-candidates/import` | 批量导入 |
+| POST | `/sources/discovery-candidates/{id}/ignore` | 忽略候选 |
+
 页面路由不放在 `/api/v1` 下。POST 表单使用 PRG（Post/Redirect/Get），校验失败返回原表单和字段错误；异步局部操作调用 REST API。页面与 API 复用应用服务，但分别维护 ViewModel 与 API DTO。
 
 ## 8. 安全预留

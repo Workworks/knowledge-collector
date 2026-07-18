@@ -10,11 +10,23 @@ services:
       KNOWLEDGE_COLLECTOR_OLLAMA_ENABLED: "true"
       KNOWLEDGE_COLLECTOR_OLLAMA_BASE_URL: "http://ollama:11434"
       KNOWLEDGE_COLLECTOR_OLLAMA_MODEL: "${OLLAMA_MODEL:-deepseek-r1:14b}"
+      KNOWLEDGE_COLLECTOR_SEARXNG_ENABLED: "true"
+      KNOWLEDGE_COLLECTOR_SEARXNG_BASE_URL: "http://searxng:8080"
     volumes:
       - knowledge_data:/data
     depends_on:
       ollama:
         condition: service_started
+      searxng:
+        condition: service_started
+
+  searxng:
+    image: searxng/searxng:latest
+    restart: unless-stopped
+    environment:
+      SEARXNG_BASE_URL: "http://searxng:8080/"
+    volumes:
+      - searxng_data:/etc/searxng
 
   ollama:
     image: ollama/ollama:latest
@@ -36,3 +48,4 @@ services:
 volumes:
   knowledge_data:
   ollama_models:
+  searxng_data:

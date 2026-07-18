@@ -8,8 +8,7 @@
     <script defer th:src="@{/js/sources.js}"></script>
 </head>
 <body>
-<nav class="site-nav"><a class="brand" href="/">KC <span>Knowledge Collector</span></a><div class="nav-links">
-    <a href="/topics">主题</a><a class="active" href="/sources">采集员</a><a href="/tasks">任务</a><a href="/articles">资料库</a></div></nav>
+<nav th:replace="~{fragments/navigation :: siteNav('sources')}"></nav>
 <main class="container admin-container">
     <header class="console-header"><div><p class="eyebrow">ADMIN / COLLECTORS</p><h1>采集员管理</h1>
         <p class="lead">每个采集员负责一个公开来源，并配置访问策略、内容方式与所属主题。</p></div>
@@ -17,16 +16,19 @@
             <a class="button button-secondary" href="/topics">主题</a></nav></header>
     <div id="page-message" class="page-message" hidden></div>
     <section class="console-panel discovery-panel">
-        <div class="section-heading"><div><p class="eyebrow">AI DISCOVERY</p><h2>AI 自动发现采集源</h2>
-            <p>输入主题、语言和数量；系统只导入实际验证可访问且不重复的公开来源。</p></div></div>
+        <div class="section-heading"><div><p class="eyebrow">SEARXNG DISCOVERY</p><h2>自动发现采集源</h2>
+            <p>通过 SearXNG 搜索候选来源；确认结果后再验证和批量导入。</p></div><a class="button button-secondary" href="/capabilities">配置 SearXNG</a></div>
         <form id="source-discovery-form" class="toolbar">
             <div class="form-field grow"><label for="discovery-topic">研究主题</label><input id="discovery-topic" required maxlength="128" placeholder="例如：人工智能"></div>
             <div class="form-field"><label for="discovery-language">资料语言</label><select id="discovery-language"><option value="zh-CN">中文</option><option value="en">英文</option></select></div>
             <div class="form-field"><label for="discovery-count">期望数量</label><input id="discovery-count" type="number" min="1" max="50" value="10" required></div>
+            <div class="form-field"><label for="discovery-type">来源类型</label><select id="discovery-type"><option value="HTML_LIST">网页列表</option><option value="RSS">RSS</option><option value="ATOM">Atom</option><option value="JSON_API">JSON API</option><option value="MANUAL_URL">单页</option></select></div>
             <div class="form-field"><label for="discovery-quality">质量等级</label><select id="discovery-quality"><option>推荐</option><option>普通</option><option>权威</option></select></div>
-            <button id="source-discover" class="button button-primary" type="submit">AI 发现并收纳</button>
+            <button id="source-discover" class="button button-primary" type="submit">发现采集源</button>
         </form>
         <div id="discovery-result" class="inline-result" hidden></div>
+        <div class="candidate-actions"><label><input id="candidate-all" type="checkbox"> 全选</label><button id="candidate-validate" class="button button-secondary" type="button">批量验证</button><button id="candidate-import" class="button button-primary" type="button">批量导入</button></div>
+        <div class="table-wrap"><table><thead><tr><th></th><th>来源</th><th>采集地址</th><th>类型 / 语言</th><th>可靠性</th><th>验证状态</th><th>推荐原因</th><th>操作</th></tr></thead><tbody id="candidate-rows"></tbody></table></div>
     </section>
     <section class="console-panel">
         <div class="toolbar">

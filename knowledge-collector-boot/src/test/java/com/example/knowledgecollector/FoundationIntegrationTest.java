@@ -1,6 +1,7 @@
 package com.example.knowledgecollector;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.jsoup.Jsoup;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -47,7 +48,7 @@ class FoundationIntegrationTest {
         assertThat(response.path("data").path("applicationName").asText())
                 .isEqualTo("knowledge-collector");
         assertThat(response.path("data").path("databaseProduct").asText()).containsIgnoringCase("H2");
-        assertThat(response.path("data").path("flywayMigrationCount").asInt()).isEqualTo(12);
+        assertThat(response.path("data").path("flywayMigrationCount").asInt()).isEqualTo(13);
         assertThat(response.path("data").path("startupCount").asLong()).isGreaterThanOrEqualTo(1);
         assertThat(response.path("correlationId").asText()).isNotBlank();
     }
@@ -93,6 +94,20 @@ class FoundationIntegrationTest {
         assertThat(script)
                 .contains("isSafeApplicationPath")
                 .contains("X-Correlation-Id");
+    }
+
+    @Test
+    void keepsNavigationStableAndMessagesOutOfContentLayout() {
+        List<String> expected = List.of("主题", "采集员", "任务", "资料库", "归档库",
+                "知识工作台", "AI 助手", "第三方能力", "运维", "接口测试");
+        for (String path : List.of("/", "/topics", "/articles", "/knowledge", "/ai-chat",
+                "/capabilities", "/operations", "/test-console")) {
+            String html = restTemplate.getForObject("http://127.0.0.1:" + port + path, String.class);
+            assertThat(Jsoup.parse(html).select("nav.site-nav .nav-links a").eachText())
+                    .as("navigation at %s", path).containsExactlyElementsOf(expected);
+        }
+        String css = restTemplate.getForObject("http://127.0.0.1:" + port + "/css/app.css", String.class);
+        assertThat(css).contains(".page-message { position:fixed");
     }
 
     @Test

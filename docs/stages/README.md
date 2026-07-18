@@ -28,3 +28,5 @@
 - [Stage 23：多资料综合归纳](stage-23-report.md)
 - [Stage 24：写作模块联动](stage-24-report.md)
 - [Stage 25：知识复习与持续更新](stage-25-report.md)
+- [Stage 26：第三方能力接入框架](stage-26-report.md)
+- [Stage 27：SearXNG 搜索与采集源发现](stage-27-report.md)

@@ -1,8 +1,7 @@
 <!doctype html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>任务详情 · Knowledge Collector</title><link rel="stylesheet" href="/css/app.css">
 <script defer src="/js/admin-common.js"></script><script defer src="/js/task-detail.js"></script></head><body>
-<nav class="site-nav"><a class="brand" href="/">KC <span>Knowledge Collector</span></a><div class="nav-links">
-<a href="/sources">采集员</a><a class="active" href="/tasks">任务</a><a href="/articles">资料库</a></div></nav>
+<nav th:replace="~{fragments/navigation :: siteNav('tasks')}"></nav>
 <main class="container admin-container" data-task-id="" th:attr="data-task-id=${taskId}"
       xmlns:th="http://www.thymeleaf.org"><header class="page-hero compact-hero"><div><p class="eyebrow">TASK DETAIL</p>
 <h1 id="task-title">任务详情</h1><p class="lead">采集员：<span id="task-source">加载中</span></p></div>

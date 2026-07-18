@@ -1,6 +1,7 @@
 package com.example.knowledgecollector.application.intelligence;
 
 import com.example.knowledgecollector.application.exception.BusinessRuleException;
+import com.example.knowledgecollector.application.capability.ThirdPartyCapabilityService;
 import com.example.knowledgecollector.capability.intelligence.ConversationalIntelligenceProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -13,14 +14,17 @@ public class AiChatService {
     private final List<ConversationalIntelligenceProvider> providers;
     private final String defaultProvider;
     private final int maxHistoryMessages;
+    private final ThirdPartyCapabilityService capabilities;
 
     public AiChatService(AiChatGateway gateway, List<ConversationalIntelligenceProvider> providers,
                          @Value("${knowledge-collector.ai.provider:ollama}") String defaultProvider,
-                         @Value("${knowledge-collector.ai.chat.max-history-messages:20}") int maxHistoryMessages) {
+                         @Value("${knowledge-collector.ai.chat.max-history-messages:20}") int maxHistoryMessages,
+                         ThirdPartyCapabilityService capabilities) {
         this.gateway = gateway;
         this.providers = providers;
         this.defaultProvider = defaultProvider;
         this.maxHistoryMessages = Math.max(2, maxHistoryMessages);
+        this.capabilities = capabilities;
     }
 
     public List<AiConversationView> list() {
@@ -28,7 +32,7 @@ public class AiChatService {
     }
 
     public AiConversationView create(String title, String providerId) {
-        String selected = providerId == null || providerId.isBlank() ? defaultProvider : providerId;
+        String selected = providerId == null || providerId.isBlank() ? capabilities.defaultProvider("AI") : providerId;
         provider(selected);
         return gateway.create(title == null || title.isBlank() ? "新对话" : title.trim(), selected);
     }
@@ -52,7 +56,9 @@ public class AiChatService {
                         message.role().toLowerCase(), message.content()))
                 .toList();
         try {
-            var result = provider.chat(new ConversationalIntelligenceProvider.ChatRequest(history));
+            var request = new ConversationalIntelligenceProvider.ChatRequest(history);
+            var result = capabilities.invoke(provider.id(), "AI_CHAT", "AI 研究助手",
+                    "conversationId=" + conversationId, () -> provider.chat(request), value -> "AI 回复已生成");
             return gateway.appendAssistant(conversationId, result);
         } catch (Exception exception) {
             throw new BusinessRuleException("AI-CHAT-FAILED",

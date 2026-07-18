@@ -26,6 +26,9 @@ public class AdminPageController {
         return "topics";
     }
 
+    @GetMapping("/capabilities")
+    public String capabilities() { return "capabilities"; }
+
     @GetMapping("/sources")
     public String sources() {
         return "sources";

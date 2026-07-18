@@ -61,6 +61,10 @@ knowledge-collector:
       timeout: ${KNOWLEDGE_COLLECTOR_OLLAMA_TIMEOUT:PT2M}
     chat:
       max-history-messages: ${KNOWLEDGE_COLLECTOR_AI_CHAT_MAX_HISTORY:20}
+  search:
+    searxng:
+      enabled: ${KNOWLEDGE_COLLECTOR_SEARXNG_ENABLED:false}
+      base-url: ${KNOWLEDGE_COLLECTOR_SEARXNG_BASE_URL:http://127.0.0.1:8088}
 
 logging:
   config: classpath:logback-spring.xml

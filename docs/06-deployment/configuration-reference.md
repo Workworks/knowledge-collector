@@ -31,6 +31,10 @@
 | `KNOWLEDGE_COLLECTOR_OLLAMA_BASE_URL` | `http://127.0.0.1:11434` | Ollama API 地址 |
 | `KNOWLEDGE_COLLECTOR_OLLAMA_MODEL` | `deepseek-r1:14b` | 默认模型名称 |
 | `KNOWLEDGE_COLLECTOR_OLLAMA_TIMEOUT` | `PT2M` | 单次请求超时 |
+| `KNOWLEDGE_COLLECTOR_SEARXNG_ENABLED` | `false` | 是否启用 SearXNG 来源发现 |
+| `KNOWLEDGE_COLLECTOR_SEARXNG_BASE_URL` | `http://127.0.0.1:8088` | SearXNG API 根地址 |
+
+这些值是首次运行默认值。进入“第三方能力”保存配置后，页面配置持久化到数据库并优先用于运行时；认证信息不会通过查询 API 明文回显。
 
 ## Spring Profile
 

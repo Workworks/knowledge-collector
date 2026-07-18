@@ -2,6 +2,7 @@ package com.example.knowledgecollector.web.source;
 
 import com.example.knowledgecollector.application.source.CrawlSourceService;
 import com.example.knowledgecollector.application.source.AiSourceDiscoveryService;
+import com.example.knowledgecollector.application.source.SearchSourceDiscoveryService;
 import com.example.knowledgecollector.application.crawl.CrawlTaskService;
 import com.example.knowledgecollector.domain.source.SourceType;
 import com.example.knowledgecollector.web.api.ApiResponse;
@@ -36,12 +37,37 @@ public class CrawlSourceController {
     private final CrawlSourceService service;
     private final CrawlTaskService crawlTasks;
     private final AiSourceDiscoveryService discovery;
+    private final SearchSourceDiscoveryService searchDiscovery;
 
     public CrawlSourceController(CrawlSourceService service, CrawlTaskService crawlTasks,
-                                 AiSourceDiscoveryService discovery) {
+                                 AiSourceDiscoveryService discovery, SearchSourceDiscoveryService searchDiscovery) {
         this.service = service;
         this.crawlTasks = crawlTasks;
         this.discovery = discovery;
+        this.searchDiscovery = searchDiscovery;
+    }
+
+    @PostMapping("/search-discovery")
+    public ApiResponse<?> searchDiscovery(@Valid @RequestBody SearchDiscoveryRequest body,HttpServletRequest request) {
+        return ApiResponse.success(searchDiscovery.discover(body.topic(),body.language(),body.count(),body.sourceType(),body.qualityLevel()),correlationId(request));
+    }
+    @GetMapping("/discovery-candidates") public ApiResponse<?> candidates(HttpServletRequest request) {
+        return ApiResponse.success(searchDiscovery.list(),correlationId(request));
+    }
+    @PostMapping("/discovery-candidates/{id}/validate") public ApiResponse<?> validateCandidate(@PathVariable long id,HttpServletRequest request) {
+        return ApiResponse.success(searchDiscovery.validate(id),correlationId(request));
+    }
+    @PostMapping("/discovery-candidates/validate") public ApiResponse<?> validateCandidates(@Valid @RequestBody CandidateIdsRequest body,HttpServletRequest request) {
+        return ApiResponse.success(searchDiscovery.validate(body.ids()),correlationId(request));
+    }
+    @PostMapping("/discovery-candidates/{id}/import") public ApiResponse<?> importCandidate(@PathVariable long id,HttpServletRequest request) {
+        return ApiResponse.success(searchDiscovery.importCandidate(id),correlationId(request));
+    }
+    @PostMapping("/discovery-candidates/import") public ApiResponse<?> importCandidates(@Valid @RequestBody CandidateIdsRequest body,HttpServletRequest request) {
+        return ApiResponse.success(searchDiscovery.importCandidates(body.ids()),correlationId(request));
+    }
+    @PostMapping("/discovery-candidates/{id}/ignore") public ApiResponse<?> ignoreCandidate(@PathVariable long id,HttpServletRequest request) {
+        return ApiResponse.success(searchDiscovery.ignore(id),correlationId(request));
     }
 
     @GetMapping

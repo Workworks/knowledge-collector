@@ -2,7 +2,7 @@
 <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
     <title>本地测试工具 · Knowledge Collector</title><link rel="stylesheet" th:href="@{/css/app.css}"></head>
-<body><main class="container"><header><p class="eyebrow">LOCAL PROFILE ONLY</p><h1>本地测试辅助工具</h1>
+<body><nav th:replace="~{fragments/navigation :: siteNav('test-console')}"></nav><main class="container"><header><p class="eyebrow">LOCAL PROFILE ONLY</p><h1>本地测试辅助工具</h1>
     <p class="lead">该页面只在 local Profile 加载，production 不会注册路由。</p></header>
     <section class="details"><h2>运行状态</h2><dl>
         <div><dt>激活 Profile</dt><dd th:text="${profiles}">local</dd></div>

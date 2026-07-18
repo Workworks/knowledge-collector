@@ -1,0 +1,15 @@
+<!doctype html><html lang="zh-CN" xmlns:th="http://www.thymeleaf.org"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>第三方能力 · Knowledge Collector</title><link rel="stylesheet" th:href="@{/css/app.css}">
+<script defer th:src="@{/js/admin-common.js}"></script><script defer th:src="@{/js/capabilities.js}"></script></head><body>
+<nav th:replace="~{fragments/navigation :: siteNav('capabilities')}"></nav>
+<main class="container admin-container"><header class="console-header"><div><p class="eyebrow">SYSTEM / CAPABILITIES</p>
+<h1>第三方能力</h1><p class="lead">统一配置、检查和追踪 Ollama、SearXNG 等外部服务。</p></div></header>
+<div id="page-message" class="page-message" hidden></div>
+<section class="dashboard-metrics"><article class="metric-card violet"><span>服务总数</span><strong id="cap-total">0</strong><small>已注册 Provider</small></article>
+<article class="metric-card green"><span>可用服务</span><strong id="cap-available">0</strong><small>最近连接成功</small></article>
+<article class="metric-card blue"><span>今日调用</span><strong id="cap-calls">0</strong><small>包含业务调用与检测</small></article></section>
+<section><div id="capability-grid" class="capability-grid"></div></section>
+<section class="console-panel"><div class="section-heading"><div><p class="eyebrow">CALL LOG</p><h2>调用记录与失败重试</h2></div><button id="cap-refresh" class="button button-secondary">刷新</button></div>
+<div class="table-wrap"><table><thead><tr><th>时间</th><th>服务 / 场景</th><th>操作</th><th>状态</th><th>结果或失败原因</th><th>耗时</th><th>操作</th></tr></thead><tbody id="call-rows"></tbody></table></div></section>
+</main></body></html>

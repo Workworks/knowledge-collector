@@ -14,9 +14,9 @@ window.AdminCommon = {
     },
     message(text, error = false) {
         const element = document.querySelector("#page-message");
+        if (!element) return;
         element.textContent = text; element.hidden = false;
         element.className = `page-message ${error ? "message-error" : "message-success"}`;
-        window.scrollTo({top: 0, behavior: "smooth"});
     },
     escape(value) {
         const element = document.createElement("span");
@@ -24,25 +24,3 @@ window.AdminCommon = {
         return element.innerHTML;
     }
 };
-
-window.addEventListener("DOMContentLoaded", () => {
-    const links = document.querySelector(".nav-links");
-    if (links && !links.querySelector('a[href="/knowledge"]')) {
-        const item = document.createElement("a");
-        item.href = "/knowledge";
-        item.textContent = "知识工作台";
-        links.appendChild(item);
-    }
-    if (links && !links.querySelector('a[href="/ai-chat"]')) {
-        const item = document.createElement("a");
-        item.href = "/ai-chat";
-        item.textContent = "AI 助手";
-        links.appendChild(item);
-    }
-    if (links && !links.querySelector('a[href="/articles/archive"]')) {
-        const item = document.createElement("a");
-        item.href = "/articles/archive";
-        item.textContent = "归档库";
-        links.appendChild(item);
-    }
-});

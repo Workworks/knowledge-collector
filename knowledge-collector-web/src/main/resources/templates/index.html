@@ -8,9 +8,7 @@
     <link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
 <body>
-<nav class="site-nav"><a class="brand" href="/">KC <span>Knowledge Collector</span></a><div class="nav-links">
-    <a href="/topics">主题</a><a href="/sources">采集员</a><a href="/tasks">任务</a>
-    <a href="/articles">资料库</a><a href="/knowledge">知识工作台</a><a href="/operations">运维</a><a href="/test-console">接口测试</a></div></nav>
+<nav th:replace="~{fragments/navigation :: siteNav('home')}"></nav>
 <main class="container">
     <header class="page-hero">
         <div>

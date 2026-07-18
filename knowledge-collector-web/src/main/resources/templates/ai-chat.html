@@ -7,9 +7,7 @@
     <script defer src="/js/admin-common.js"></script><script defer src="/js/ai-chat.js"></script>
 </head>
 <body>
-<nav class="site-nav"><a class="brand" href="/">KC <span>Knowledge Collector</span></a><div class="nav-links">
-    <a href="/topics">主题</a><a href="/sources">采集员</a><a href="/tasks">任务</a>
-    <a href="/articles">资料库</a><a class="active" href="/ai-chat">AI 助手</a></div></nav>
+<nav th:replace="~{fragments/navigation :: siteNav('ai-chat')}"></nav>
 <main class="container ai-chat-page">
     <header class="page-hero compact-hero"><div><p class="eyebrow">LOCAL AI WORKSPACE</p>
         <h1>AI 研究助手</h1><p class="lead">与本机 Ollama 连续对话，将有价值的回答保存为待审核资料。</p></div>
