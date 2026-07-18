@@ -161,6 +161,8 @@ Compose 会启动应用及 Ollama、SearXNG、Playwright、MinIO、Tika、Qdrant
 - [用户手册](docs/07-user-guide/user-manual.md)
 - [知识研究工作台指南](docs/07-user-guide/knowledge-workspace.md)
 - [安装手册](docs/08-operations/installation-manual.md)
+- [第三方账号与凭据管理](docs/08-operations/credential-management.md)
+- [运维管理与日志排错](docs/08-operations/administration-manual.md)
 - [部署指南](docs/06-deployment/deployment-guide.md)
 - [配置参考](docs/06-deployment/configuration-reference.md)
 - [开发者指南](docs/04-development/developer-guide.md)

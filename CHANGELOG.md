@@ -1,5 +1,12 @@
 # Changelog
 
+## Operations and Docker proxy
+
+- 验证 Docker Desktop 通过 Clash `127.0.0.1:7890` 连接 Docker Hub，并补充 Ollama 容器模型部署流程。
+- 新增第三方账号、默认凭据、配置位置、轮换和重置手册。
+- 扩展运维手册：Docker Desktop、Compose、PowerShell、Grafana、Prometheus、IDEA HTTP Client 及分层日志排错。
+- 移除 n8n 2.x 已不适用的 Basic Auth 环境变量，明确首次创建 Owner 账号。
+
 ## Stage 30-38
 
 - Apache Tika/OCR 文档导入并创建资料库文章。

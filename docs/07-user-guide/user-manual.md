@@ -389,8 +389,7 @@ GRAFANA_ADMIN_USER=admin
 GRAFANA_ADMIN_PASSWORD=KcGrafana_2026_Local_7mQ2vR8p
 N8N_PORT=127.0.0.1:5678
 N8N_ENCRYPTION_KEY=KcN8n_2026_Local_32chars_4pR8mQ2v
-N8N_USER=knowledge-admin
-N8N_PASSWORD=KcN8n_Login_2026_8vQ3mP6r
+# n8n 2.x 无默认账号；首次打开 5678 时创建 Owner
 # 无云账号时保持空白，默认使用 Ollama
 KNOWLEDGE_COLLECTOR_CLOUD_LLM_ENDPOINT=
 KNOWLEDGE_COLLECTOR_CLOUD_LLM_API_KEY=
@@ -452,7 +451,7 @@ docker compose -f compose.yaml -f compose.windows-host-ollama.yaml -f compose.wi
 
 ### 18.6 n8n 首次导入
 
-打开 `http://127.0.0.1:5678`，用 `.env` 的 N8N 账号登录，选择 Import from File，导入 `deploy/n8n/knowledge-collector-workflow.json`，再点击 Active。Windows 调试 URL 是 `http://127.0.0.1:5678/webhook/knowledge-collector`；系统容器中填写 `http://n8n:5678/webhook/knowledge-collector`。
+打开 `http://127.0.0.1:5678`。n8n 2.x 没有默认账号：首次访问先创建 Owner 邮箱与随机密码，以后用该 Owner 登录。选择 Import from File，导入 `deploy/n8n/knowledge-collector-workflow.json`，再点击 Active。Windows 调试 URL 是 `http://127.0.0.1:5678/webhook/knowledge-collector`；系统容器中填写 `http://n8n:5678/webhook/knowledge-collector`。
 
 ## 19. Stage 30：文档导入
 

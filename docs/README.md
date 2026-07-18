@@ -34,6 +34,7 @@
 - [备份与恢复](06-deployment/backup-and-restore.md)
 - [移动端离线包](06-deployment/mobile-offline-guide.md)
 - [用户手册](07-user-guide/user-manual.md)
+- [第三方服务账号与凭据管理](08-operations/credential-management.md)
 - [主题和采集源管理](07-user-guide/topic-source-management.md)
 - [知识研究工作台指南](07-user-guide/knowledge-workspace.md)
 - [管理手册](08-operations/administration-manual.md)
