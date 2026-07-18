@@ -1,5 +1,14 @@
 # Changelog
 
+## Stage 30-38
+
+- Apache Tika/OCR 文档导入并创建资料库文章。
+- Qdrant 向量索引、关键词/语义/混合搜索与重排调试。
+- Crossref 学术搜索、DOI 元数据导入。
+- OpenAI 兼容云模型的内容预览、确认调用和安全审计。
+- AI 调用记录、Prometheus/Grafana 监控、ntfy 通知与 n8n Webhook 工作流。
+- Windows Docker Desktop 全栈 Compose、宿主机 Ollama 与缓存运行时绕行方案。
+
 本项目采用阶段标签记录可运行里程碑。正式版本发布后将遵循 [Semantic Versioning](https://semver.org/)。
 
 ## [Unreleased]

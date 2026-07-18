@@ -1,0 +1,6 @@
+services:
+  app:
+    build:
+      context: ./knowledge-collector-boot/target
+      dockerfile: ../../deploy/windows/Dockerfile.cached-runtime
+    image: knowledge-collector:stage-38-windows

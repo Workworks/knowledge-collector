@@ -1,5 +1,13 @@
 # 测试报告
 
+## Stage 30—38 回归（2026-07-19）
+
+- Maven 全量：35 tests，0 failures，0 errors，0 skipped。
+- 新增端到端：文档解析入库、Qdrant 重建/检索、Crossref 搜索/导入、云模型安全审计、监控、ntfy、n8n，共一条完整业务链。
+- 文档：82 个 Markdown 文件链接检查通过。
+- Docker Desktop 实机：应用、SearXNG、Playwright、MinIO、Tika、Qdrant、ntfy、Prometheus、Grafana、n8n 均运行；应用 health=UP，Flyway=15。
+- 浏览器：1280px 桌面无横向溢出；375×812 移动端无横向溢出，表单为单列、页签可横向滚动；控制台 0 error/warn。
+
 ## 执行信息
 
 - 日期：2026-07-18

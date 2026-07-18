@@ -1,0 +1,21 @@
+package com.example.knowledgecollector.provider.advanced;
+
+import com.example.knowledgecollector.capability.management.ManagedCapabilityProvider;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import java.net.URI;import java.net.http.*;import java.time.Duration;import java.util.List;
+
+@Configuration
+public class AdvancedManagedProviderConfiguration {
+ @Bean ManagedCapabilityProvider tikaDocumentProvider(@Value("${knowledge-collector.advanced.tika-url:http://127.0.0.1:9998}")String u){return provider("tika-document","DOCUMENT_EXTRACTION","Apache Tika / OCR","TikaDocumentProvider",u,"tika-ocr",List.of("PDF 与 Office 文档解析","图片 OCR","创建文章或研究材料"));}
+ @Bean ManagedCapabilityProvider qdrantVectorProvider(@Value("${knowledge-collector.advanced.qdrant-url:http://127.0.0.1:6333}")String u){return provider("qdrant-vector","VECTOR_SEARCH","Qdrant 向量检索","QdrantSearchProvider",u,"LOCAL_HASH_64",List.of("语义搜索","相似文章与卡片","混合检索重排"));}
+ @Bean ManagedCapabilityProvider crossrefProvider(){return provider("crossref-academic","ACADEMIC_SEARCH","Crossref / PubMed","AcademicDiscoveryProvider","https://api.crossref.org","Crossref REST",List.of("论文搜索","DOI 核验","元数据补全与导入"));}
+ @Bean ManagedCapabilityProvider cloudLlmProvider(){return provider("cloud-llm","CONTENT_INTELLIGENCE","云端大模型","OpenAiCompatibleProvider","https://api.openai.com/v1/chat/completions","user-configured",List.of("文章分析","卡片、提纲、草稿与事实核验","模型结果对比"));}
+ @Bean ManagedCapabilityProvider langfuseProvider(@Value("${knowledge-collector.advanced.langfuse-url:http://127.0.0.1:3001}")String u){return provider("langfuse-observability","AI_OBSERVABILITY","Langfuse","LangfuseTraceProvider",u,"trace",List.of("AI 调用追踪","Prompt 版本与 Token 审计","错误定位"));}
+ @Bean ManagedCapabilityProvider monitoringProvider(){return provider("prometheus-grafana","MONITORING","Prometheus / Grafana","PrometheusMonitoringProvider","http://127.0.0.1:9090","Grafana",List.of("系统指标","依赖服务状态","Grafana 仪表盘"));}
+ @Bean ManagedCapabilityProvider ntfyProvider(@Value("${knowledge-collector.advanced.ntfy-url:http://127.0.0.1:8085}")String u){return provider("ntfy-notification","NOTIFICATION","ntfy 通知","NtfyNotificationProvider",u,"topic",List.of("任务失败通知","研究完成提醒","每日摘要"));}
+ @Bean ManagedCapabilityProvider n8nProvider(@Value("${knowledge-collector.advanced.n8n-url:http://127.0.0.1:5678}")String u){return provider("n8n-workflow","WORKFLOW","n8n 外部工作流","N8nWorkflowProvider",u,"webhook",List.of("文章与简报推送","报告与导出文件推送","失败重试"));}
+ private static ManagedCapabilityProvider provider(String id,String type,String name,String impl,String endpoint,String model,List<String> usages){return new HttpManagedProvider(id,type,name,impl,endpoint,model,usages);}
+ private static final class HttpManagedProvider implements ManagedCapabilityProvider {private final String id,type,name,impl;private final List<String>usages;private volatile RuntimeConfiguration config;private HttpManagedProvider(String id,String type,String name,String impl,String endpoint,String model,List<String>usages){this.id=id;this.type=type;this.name=name;this.impl=impl;this.usages=usages;this.config=new RuntimeConfiguration(!id.equals("cloud-llm")&&!id.equals("langfuse-observability"),endpoint,model,"NONE",null);}@Override public String id(){return id;}@Override public String serviceType(){return type;}@Override public String displayName(){return name;}@Override public String implementationName(){return impl;}@Override public List<String>businessUsages(){return usages;}@Override public RuntimeConfiguration currentConfiguration(){return config;}@Override public void configure(RuntimeConfiguration c){config=c;}@Override public ConnectionResult testConnection(){if(!config.enabled())return new ConnectionResult(false,name+" 已停用",List.of());try{var req=HttpRequest.newBuilder(URI.create(config.endpoint())).timeout(Duration.ofSeconds(6)).GET().build();int s=HttpClient.newHttpClient().send(req,HttpResponse.BodyHandlers.discarding()).statusCode();return new ConnectionResult(s<500,name+" 可访问（HTTP "+s+"）",List.of(config.model()==null?"default":config.model()));}catch(Exception e){return new ConnectionResult(false,name+" 连接失败："+(e.getMessage()==null?e.getClass().getSimpleName():e.getMessage()),List.of());}}}
+}

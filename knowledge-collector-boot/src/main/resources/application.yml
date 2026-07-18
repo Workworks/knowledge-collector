@@ -37,7 +37,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info
+        include: health,info,prometheus,metrics
   endpoint:
     health:
       show-details: never
@@ -79,6 +79,14 @@ knowledge-collector:
     playwright:
       enabled: ${KNOWLEDGE_COLLECTOR_PLAYWRIGHT_ENABLED:false}
       base-url: ${KNOWLEDGE_COLLECTOR_PLAYWRIGHT_BASE_URL:http://127.0.0.1:3003}
+  advanced:
+    tika-url: ${KNOWLEDGE_COLLECTOR_TIKA_URL:http://127.0.0.1:9998}
+    qdrant-url: ${KNOWLEDGE_COLLECTOR_QDRANT_URL:http://127.0.0.1:6333}
+    grafana-url: ${KNOWLEDGE_COLLECTOR_GRAFANA_URL:http://127.0.0.1:3000}
+    ntfy-url: ${KNOWLEDGE_COLLECTOR_NTFY_URL:http://127.0.0.1:8085}
+    n8n-url: ${KNOWLEDGE_COLLECTOR_N8N_URL:http://127.0.0.1:5678}
+    langfuse-url: ${KNOWLEDGE_COLLECTOR_LANGFUSE_URL:http://127.0.0.1:3001}
+    crossref-url: ${KNOWLEDGE_COLLECTOR_CROSSREF_URL:https://api.crossref.org}
 logging:
   config: classpath:logback-spring.xml
 

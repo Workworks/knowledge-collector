@@ -1,0 +1,15 @@
+services:
+  app:
+    environment:
+      KNOWLEDGE_COLLECTOR_OLLAMA_BASE_URL: "http://host.docker.internal:11434"
+    depends_on:
+      ollama:
+        condition: service_started
+        required: false
+      ollama-init:
+        condition: service_completed_successfully
+        required: false
+  ollama:
+    profiles: ["container-ollama"]
+  ollama-init:
+    profiles: ["container-ollama"]

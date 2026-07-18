@@ -2,7 +2,7 @@
 
 Knowledge Collector 是一个面向个人和小团队的本地资料采集、AI 研究与阅读管理系统。它把主题管理、公开来源采集、正文清洗、质量评估、AI 对话、审核入库、搜索阅读和归档整理放在同一个可离线保存数据的应用中。
 
-项目采用模块化单体架构，默认仅监听 `127.0.0.1`，数据保存在本机 H2 数据库和文件目录中。当前版本完成至 Stage 29，已经从资料采集器升级为带原始证据链的本地知识研究与写作工作台。
+项目采用模块化单体架构，默认仅监听 `127.0.0.1`，数据保存在本机 H2 数据库和文件目录中。当前版本完成至 Stage 38，已具备文档/OCR 导入、Qdrant 混合检索、学术资料发现、云模型、AI 调用审计、监控、通知和外部工作流能力。
 
 ## 功能特性
 
@@ -48,7 +48,7 @@ flowchart LR
 | 语言与构建 | Java 17、Maven Wrapper、多模块 Maven |
 | 应用框架 | Spring Boot 3.5.16、Spring MVC、Validation、Actuator |
 | 页面 | Thymeleaf、原生 JavaScript、响应式 CSS |
-| 数据 | H2 文件数据库、Spring Data JPA、JdbcClient、Flyway V1—V14、MinIO |
+| 数据 | H2 文件数据库、Spring Data JPA、JdbcClient、Flyway V1—V15、MinIO、Qdrant |
 | 采集 | JDK HttpClient、Rome、Jsoup、Firecrawl、Playwright Chromium、TLS 系统证书/附加 CA |
 | AI | Ollama，可通过能力接口扩展其他 Provider |
 | 测试 | JUnit 5、AssertJ、WireMock、Spring Boot Test |
@@ -133,7 +133,7 @@ docker compose up -d --build
 docker compose logs -f app
 ```
 
-Compose 会启动应用、Ollama 和 SearXNG，并使用命名卷保存数据库、模型和搜索配置。详细步骤、CPU/GPU 差异及升级方法见 [Docker Compose 指南](docs/06-deployment/docker-compose-guide.md)。
+Compose 会启动应用及 Ollama、SearXNG、Playwright、MinIO、Tika、Qdrant、Prometheus、Grafana、ntfy、n8n，并使用命名卷保存数据。Windows 从零部署、`.env` 逐项示例、Web 打包、Docker Hub 超时绕行和验收命令见 [完整系统用户手册](docs/07-user-guide/user-manual.md)。
 
 ## 配置
 

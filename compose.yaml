@@ -2,7 +2,7 @@ services:
   app:
     build:
       context: .
-    image: knowledge-collector:stage-29
+    image: knowledge-collector:stage-38
     restart: unless-stopped
     ports:
       - "${KNOWLEDGE_COLLECTOR_PORT:-8080}:8080"
@@ -19,6 +19,12 @@ services:
       KNOWLEDGE_COLLECTOR_MINIO_BUCKET: "knowledge-collector"
       KNOWLEDGE_COLLECTOR_MINIO_ACCESS_KEY: "${MINIO_ROOT_USER:-knowledge}"
       KNOWLEDGE_COLLECTOR_MINIO_SECRET_KEY: "${MINIO_ROOT_PASSWORD:-collector-secret}"
+      KNOWLEDGE_COLLECTOR_TIKA_URL: "http://tika:9998"
+      KNOWLEDGE_COLLECTOR_QDRANT_URL: "http://qdrant:6333"
+      KNOWLEDGE_COLLECTOR_GRAFANA_URL: "http://127.0.0.1:3000"
+      KNOWLEDGE_COLLECTOR_NTFY_URL: "http://ntfy:80"
+      KNOWLEDGE_COLLECTOR_N8N_URL: "http://n8n:5678"
+      KNOWLEDGE_COLLECTOR_LANGFUSE_URL: "${KNOWLEDGE_COLLECTOR_LANGFUSE_URL:-http://host.docker.internal:3001}"
     volumes:
       - knowledge_data:/data
     depends_on:
@@ -30,6 +36,10 @@ services:
         condition: service_healthy
       minio-init:
         condition: service_completed_successfully
+      tika:
+        condition: service_started
+      qdrant:
+        condition: service_started
 
   searxng:
     image: searxng/searxng:latest
@@ -86,8 +96,69 @@ services:
     entrypoint: ["/bin/sh", "-c"]
     command: ["until mc alias set local http://minio:9000 ${MINIO_ROOT_USER:-knowledge} ${MINIO_ROOT_PASSWORD:-collector-secret}; do sleep 2; done; mc mb --ignore-existing local/knowledge-collector"]
 
+  tika:
+    image: apache/tika:latest-full
+    restart: unless-stopped
+    ports: ["${TIKA_PORT:-127.0.0.1:9998}:9998"]
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    restart: unless-stopped
+    ports: ["${QDRANT_PORT:-127.0.0.1:6333}:6333"]
+    volumes: ["qdrant_data:/qdrant/storage"]
+
+  ntfy:
+    image: binwiederhier/ntfy:latest
+    restart: unless-stopped
+    command: serve
+    ports: ["${NTFY_PORT:-127.0.0.1:8085}:80"]
+    volumes: ["ntfy_data:/var/cache/ntfy"]
+
+  prometheus:
+    image: prom/prometheus:latest
+    restart: unless-stopped
+    command: ["--config.file=/etc/prometheus/prometheus.yml", "--storage.tsdb.path=/prometheus"]
+    ports: ["${PROMETHEUS_PORT:-127.0.0.1:9090}:9090"]
+    volumes:
+      - ./deploy/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+
+  grafana:
+    image: grafana/grafana:latest
+    restart: unless-stopped
+    ports: ["${GRAFANA_PORT:-127.0.0.1:3000}:3000"]
+    environment:
+      GF_SECURITY_ADMIN_USER: "${GRAFANA_ADMIN_USER:-admin}"
+      GF_SECURITY_ADMIN_PASSWORD: "${GRAFANA_ADMIN_PASSWORD:-change-this-password}"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./deploy/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./deploy/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    depends_on: [prometheus]
+
+  n8n:
+    image: n8nio/n8n:latest
+    restart: unless-stopped
+    ports: ["${N8N_PORT:-127.0.0.1:5678}:5678"]
+    environment:
+      N8N_ENCRYPTION_KEY: "${N8N_ENCRYPTION_KEY:-replace-with-at-least-32-random-characters}"
+      N8N_BASIC_AUTH_ACTIVE: "true"
+      N8N_BASIC_AUTH_USER: "${N8N_USER:-knowledge-admin}"
+      N8N_BASIC_AUTH_PASSWORD: "${N8N_PASSWORD:-change-this-password}"
+      N8N_SECURE_COOKIE: "false"
+      N8N_WEBHOOK_URL: "http://127.0.0.1:5678/"
+      N8N_UNVERIFIED_PACKAGES_ENABLED: "false"
+    volumes:
+      - n8n_data:/home/node/.n8n
+      - ./deploy/n8n:/workflow-seed:ro
+
 volumes:
   knowledge_data:
   ollama_models:
   searxng_data:
   minio_data:
+  qdrant_data:
+  ntfy_data:
+  prometheus_data:
+  grafana_data:
+  n8n_data:

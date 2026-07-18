@@ -29,6 +29,10 @@ public class AdminPageController {
     @GetMapping("/capabilities")
     public String capabilities() { return "capabilities"; }
 
+    @GetMapping({"/advanced", "/document-import", "/global-search", "/academic", "/vector-index",
+            "/retrieval-debug", "/ai-calls", "/monitoring", "/notifications", "/workflows"})
+    public String advanced() { return "advanced-capabilities"; }
+
     @GetMapping("/extractions")
     public String extractions(@org.springframework.web.bind.annotation.RequestParam(required = false) Long articleId,
                               @org.springframework.web.bind.annotation.RequestParam(required = false) String url, Model model) {

@@ -48,7 +48,7 @@ class FoundationIntegrationTest {
         assertThat(response.path("data").path("applicationName").asText())
                 .isEqualTo("knowledge-collector");
         assertThat(response.path("data").path("databaseProduct").asText()).containsIgnoringCase("H2");
-        assertThat(response.path("data").path("flywayMigrationCount").asInt()).isEqualTo(14);
+        assertThat(response.path("data").path("flywayMigrationCount").asInt()).isEqualTo(15);
         assertThat(response.path("data").path("startupCount").asLong()).isGreaterThanOrEqualTo(1);
         assertThat(response.path("correlationId").asText()).isNotBlank();
     }
@@ -99,9 +99,9 @@ class FoundationIntegrationTest {
     @Test
     void keepsNavigationStableAndMessagesOutOfContentLayout() {
         List<String> expected = List.of("主题", "采集员", "任务", "资料库", "归档库",
-                "文件与快照", "知识工作台", "AI 助手", "第三方能力", "网页提取", "运维", "接口测试");
+                "文件与快照", "知识工作台", "AI 助手", "第三方能力", "网页提取", "运维", "接口测试", "增强能力");
         for (String path : List.of("/", "/topics", "/articles", "/knowledge", "/ai-chat",
-                "/capabilities", "/extractions", "/evidence-files", "/operations", "/test-console")) {
+                "/capabilities", "/extractions", "/evidence-files", "/operations", "/test-console", "/advanced")) {
             String html = restTemplate.getForObject("http://127.0.0.1:" + port + path, String.class);
             assertThat(Jsoup.parse(html).select("nav.site-nav .nav-links a").eachText())
                     .as("navigation at %s", path).containsExactlyElementsOf(expected);

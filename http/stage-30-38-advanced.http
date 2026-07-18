@@ -1,0 +1,37 @@
+@baseUrl = http://127.0.0.1:8080
+
+### Stage 31：重建真实 Qdrant 索引
+POST {{baseUrl}}/api/v1/advanced/vectors/rebuild
+
+### Stage 32：混合检索与重排
+POST {{baseUrl}}/api/v1/advanced/search
+Content-Type: application/json
+
+{"query":"人工智能 知识管理","mode":"HYBRID","rerank":true,"recall":10,"limit":5,"reliabilityWeight":0.2,"freshnessWeight":0.2}
+
+### Stage 33：Crossref 学术搜索
+POST {{baseUrl}}/api/v1/advanced/academic/search
+Content-Type: application/json
+
+{"query":"knowledge management","doi":"","author":"","fromDate":"2024-01-01"}
+
+### Stage 36：刷新监控指标
+GET {{baseUrl}}/api/v1/advanced/monitor
+
+### Stage 37：ntfy 测试通知
+POST {{baseUrl}}/api/v1/advanced/notifications/test
+Content-Type: application/json
+
+{"url":"http://ntfy:80","topic":"knowledge-alerts","title":"Knowledge Collector 测试","message":"Stage 37 通知链路验证通过"}
+
+### Stage 38：n8n Webhook（先在 n8n 导入并激活 deploy/n8n/knowledge-collector-workflow.json）
+POST {{baseUrl}}/api/v1/advanced/workflows/trigger
+Content-Type: application/json
+
+{"webhook":"http://n8n:5678/webhook/knowledge-collector","contentType":"ARTICLE","businessId":1,"summary":"Stage 38 可验证示例"}
+
+### Stage 35：查看 AI 调用记录
+GET {{baseUrl}}/api/v1/advanced/executions?stage=34&limit=50
+
+### 全阶段执行历史
+GET {{baseUrl}}/api/v1/advanced/executions?limit=100

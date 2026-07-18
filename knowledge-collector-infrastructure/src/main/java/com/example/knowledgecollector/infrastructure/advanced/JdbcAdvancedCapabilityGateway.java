@@ -1,0 +1,31 @@
+package com.example.knowledgecollector.infrastructure.advanced;
+
+import com.example.knowledgecollector.application.advanced.AdvancedCapabilityGateway;
+import com.example.knowledgecollector.application.exception.ResourceNotFoundException;
+import org.springframework.jdbc.core.simple.JdbcClient;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.time.OffsetDateTime;
+import java.util.*;
+
+@Repository
+public class JdbcAdvancedCapabilityGateway implements AdvancedCapabilityGateway {
+    private final JdbcClient jdbc;
+    public JdbcAdvancedCapabilityGateway(JdbcClient jdbc){this.jdbc=jdbc;}
+
+    @Override public long saveExecution(String stage,String operation,String status,String requestJson,String resultJson,String error,Long retryOfId,long duration){long id=jdbc.sql("select next value for advanced_execution_seq").query(Long.class).single();jdbc.sql("insert into advanced_execution(id,stage_no,operation,status,request_json,result_json,error_message,retry_of_id,duration_millis,created_at) values(:id,:stage,:op,:status,:request,:result,:error,:retry,:duration,:now)").param("id",id).param("stage",stage).param("op",operation).param("status",status).param("request",requestJson).param("result",resultJson).param("error",error).param("retry",retryOfId).param("duration",duration).param("now",OffsetDateTime.now()).update();return id;}
+    @Override public Map<String,Object> getExecution(long id){return jdbc.sql("select * from advanced_execution where id=:id").param("id",id).query((rs,row)->execution(rs)).optional().orElseThrow(()->new ResourceNotFoundException("执行记录不存在："+id));}
+    @Override public List<Map<String,Object>> listExecutions(String stage,int limit){String sql="select * from advanced_execution "+(stage==null||stage.isBlank()?"":"where stage_no=:stage ")+"order by id desc limit :limit";var spec=jdbc.sql(sql).param("limit",Math.max(1,Math.min(limit,200)));if(stage!=null&&!stage.isBlank())spec=spec.param("stage",stage);return spec.query((rs,row)->execution(rs)).list();}
+    @Override public List<Map<String,Object>> searchableDocuments(){List<Map<String,Object>> out=new ArrayList<>();out.addAll(jdbc.sql("select id,'ARTICLE' document_type,title,coalesce(content_text,coalesce(summary,'')) content,coalesce(original_url,'') url from article order by id").query((rs,row)->map("id",rs.getLong("id"),"type",rs.getString("document_type"),"title",rs.getString("title"),"content",rs.getString("content"),"url",rs.getString("url"))).list());out.addAll(jdbc.sql("select id+1000000000 id,'CARD' document_type,title,content,'' url from knowledge_card order by id").query((rs,row)->map("id",rs.getLong("id"),"type",rs.getString("document_type"),"title",rs.getString("title"),"content",rs.getString("content"),"url",rs.getString("url"))).list());return out;}
+    @Override @Transactional public long createImportedArticle(String title,String url,String content,String metadataJson,boolean aiContent){long source=jdbc.sql("select id from crawl_source where source_code='SYSTEM_IMPORT'").query(Long.class).single();String hash=sha256(url);OffsetDateTime now=OffsetDateTime.now();jdbc.sql("insert into article(source_id,title,summary,original_url,normalized_url,url_hash,language,first_collected_at,last_collected_at,content_text,word_count,reading_minutes,content_origin,created_at,updated_at) values(:source,:title,:summary,:url,:url,:hash,'zh-CN',:now,:now,:content,:words,:minutes,:origin,:now,:now)").param("source",source).param("title",trim(title,500)).param("summary",trim(metadataJson,4000)).param("url",url).param("hash",hash).param("now",now).param("content",content).param("words",content.length()).param("minutes",Math.max(1,content.length()/500)).param("origin",aiContent?"AI_GENERATED":"IMPORTED").update();return jdbc.sql("select id from article where url_hash=:hash").param("hash",hash).query(Long.class).single();}
+    @Override public Map<String,Object> metrics(){return map("articles",count("article"),"cards",count("knowledge_card"),"tasks",count("crawl_task"),"failedTasks",jdbc.sql("select count(*) from crawl_task where status='FAILED'").query(Long.class).single(),"successfulExecutions",jdbc.sql("select count(*) from advanced_execution where status='SUCCESS'").query(Long.class).single(),"failedExecutions",jdbc.sql("select count(*) from advanced_execution where status='FAILED'").query(Long.class).single());}
+    @Override public void saveSetting(String key,String value){jdbc.sql("merge into system_setting(setting_key,setting_value,value_type,description,updated_at) key(setting_key) values(:key,:value,'STRING','Stage 30-38 增强能力配置',:now)").param("key",key).param("value",value).param("now",OffsetDateTime.now()).update();}
+    @Override public Map<String,String> settings(String prefix){Map<String,String> out=new LinkedHashMap<>();jdbc.sql("select setting_key,setting_value from system_setting where setting_key like :prefix order by setting_key").param("prefix",prefix+"%").query((rs,row)->{out.put(rs.getString(1),rs.getString(2));return 1;}).list();return out;}
+    private long count(String table){return jdbc.sql("select count(*) from "+table).query(Long.class).single();}
+    private Map<String,Object> execution(java.sql.ResultSet rs)throws java.sql.SQLException{return map("id",rs.getLong("id"),"stage",rs.getString("stage_no"),"operation",rs.getString("operation"),"status",rs.getString("status"),"requestJson",rs.getString("request_json"),"resultJson",rs.getString("result_json"),"errorMessage",rs.getString("error_message"),"retryOfId",rs.getObject("retry_of_id"),"durationMillis",rs.getLong("duration_millis"),"createdAt",rs.getObject("created_at"));}
+    private static String sha256(String value){try{return HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest(value.getBytes(StandardCharsets.UTF_8)));}catch(Exception e){throw new IllegalStateException(e);}}
+    private static String trim(String s,int n){return s==null?null:s.substring(0,Math.min(s.length(),n));}private static Map<String,Object> map(Object...v){Map<String,Object>m=new LinkedHashMap<>();for(int i=0;i<v.length;i+=2)m.put(String.valueOf(v[i]),v[i+1]);return m;}
+}
