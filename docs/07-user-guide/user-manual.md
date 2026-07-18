@@ -498,3 +498,6 @@ docker compose -f compose.yaml -f compose.windows-host-ollama.yaml logs --tail 2
 ```
 
 n8n 404 表示工作流未激活；Tika 检查 9998；语义检索先重建索引并检查 6333；通知必须订阅完全相同主题；云模型 401 表示 endpoint、模型或 Key 不匹配。所有密码只放 `.env`，不得提交。
+# WorkTwo8 登录与个人账户
+
+完整操作示例见 [WorkTwo8 使用与验收手册](worktwo8-security-and-external-systems.md)。普通用户从 `http://127.0.0.1:8080/login` 登录，可使用文章、资料库、归档库、知识工作台和 AI 助手，并在顶部“个人信息”修改自己的密码。普通用户看不到且不能直接访问用户管理、第三方系统、运维和接口测试等管理员功能。

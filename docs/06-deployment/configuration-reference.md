@@ -81,3 +81,13 @@ java -jar knowledge-collector-boot/target/knowledge-collector.jar
 ```
 
 升级、备份和生产建议见[部署指南](deployment-guide.md)与[备份恢复](backup-and-restore.md)。
+# WorkTwo8 安全配置
+
+| 环境变量 | 必填 | 示例 | 说明 |
+| --- | --- | --- | --- |
+| `KNOWLEDGE_COLLECTOR_SECURITY_ENABLED` | 是 | `true` | 生产环境必须开启 |
+| `KNOWLEDGE_COLLECTOR_INITIAL_ADMIN_USERNAME` | 首次启动 | `admin` | 仅数据库没有用户时用于初始化 |
+| `KNOWLEDGE_COLLECTOR_INITIAL_ADMIN_PASSWORD` | 首次启动 | `AdminChangeMe123!` | 至少 12 位，含大小写字母和数字；示例必须替换 |
+| `KNOWLEDGE_COLLECTOR_SESSION_TIMEOUT` | 否 | `8h` | 登录会话有效期 |
+
+初始密码不写死在代码或镜像中。数据库已经存在用户后，初始化变量不会覆盖账号或密码；可从 `.env` 删除初始密码并执行 `docker compose up -d --force-recreate app`。遗失管理员密码时应先备份数据，再由另一管理员在“用户管理”重置；没有其他管理员时由运维在受控维护窗口创建一次性恢复流程，不得直接把明文写入数据库。

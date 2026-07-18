@@ -1,5 +1,7 @@
 # Knowledge Collector
 
+> WorkTwo8 已增加统一登录、`USER`/`ADMIN` 权限隔离、用户管理、个人密码修改，以及第三方系统统一入口。首次启动前必须通过环境变量设置初始管理员，详见 [WorkTwo8 使用与验收手册](docs/07-user-guide/worktwo8-security-and-external-systems.md)。数据库迁移当前为 Flyway V16。
+
 Knowledge Collector 是一个面向个人和小团队的本地资料采集、AI 研究与阅读管理系统。它把主题管理、公开来源采集、正文清洗、质量评估、AI 对话、审核入库、搜索阅读和归档整理放在同一个可离线保存数据的应用中。
 
 项目采用模块化单体架构，默认仅监听 `127.0.0.1`，数据保存在本机 H2 数据库和文件目录中。当前版本完成至 Stage 38，已具备文档/OCR 导入、Qdrant 混合检索、学术资料发现、云模型、AI 调用审计、监控、通知和外部工作流能力。

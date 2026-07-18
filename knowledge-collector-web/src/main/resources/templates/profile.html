@@ -1,0 +1,8 @@
+<!doctype html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>个人信息</title><link rel="stylesheet" href="/css/app.css"></head>
+<body><nav th:replace="~{fragments/navigation :: siteNav('profile')}"></nav><main class="container">
+  <section class="compact-hero"><div><p class="eyebrow">MY ACCOUNT</p><h1>个人信息与密码</h1><p id="profile-summary">正在加载账户信息…</p></div></section>
+  <div id="page-message" class="page-message" hidden></div>
+  <section class="panel"><h2>修改密码</h2><form id="change-password" class="advanced-form"><label>当前密码<input type="password" name="currentPassword" required></label><label>新密码<input type="password" name="newPassword" required placeholder="至少12位，含大小写字母和数字"></label><button class="button primary">修改密码</button></form></section>
+</main><script src="/js/admin-common.js"></script><script src="/js/profile.js"></script></body></html>

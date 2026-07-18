@@ -26,7 +26,8 @@ foreach ($file in $files) {
             Join-Path $file.DirectoryName $pathPart
         }
         if (-not (Test-Path -LiteralPath $candidate)) {
-            $relative = [IO.Path]::GetRelativePath($root, $file.FullName)
+            # Windows PowerShell 5.1 runs on .NET Framework and has no Path.GetRelativePath.
+            $relative = $file.FullName.Substring($root.TrimEnd('\').Length).TrimStart('\')
             $errors.Add("$relative -> $target")
         }
     }

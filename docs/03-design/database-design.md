@@ -231,3 +231,6 @@ detail_json 不得包含 Token、完整 Cookie 或正文。
 ## 10. 清理策略
 
 清理使用批次和上限，记录审计；不在同一事务删除大量 CLOB/文件。文件删除前验证规范化路径在数据根目录内，并处理数据库与文件操作失败的补偿。
+# V16 用户与第三方系统
+
+Flyway `V16__create_users_and_external_systems.sql` 新增 `app_user` 和 `external_system`。`app_user.password_hash` 只保存 BCrypt（cost 12）结果，角色受 `USER/ADMIN` 检查约束；登录时间和密码更新时间独立记录。`external_system` 保存入口地址、健康地址、打开方式、角色、排序、启停、最近检测/成功时间和安全截断后的失败原因。管理员操作继续复用 `audit_log`，不写密码、哈希或认证令牌。

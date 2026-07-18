@@ -260,3 +260,6 @@ POST /api/v1/ai/chat/messages/{messageId}/save
 | 复习 | `GET /reviews/due`、`POST /reviews/{id}/complete` | 到期复习和下次安排 |
 
 文章结构化分析沿用 `/api/v1/articles/{articleId}/ai/analyze`，返回字段在保持旧字段兼容的基础上扩展。
+# WorkTwo8 API
+
+管理接口均要求 `ADMIN`：`GET/POST /api/v1/users`、`GET/PUT /api/v1/users/{id}`、`POST /api/v1/users/{id}/reset-password`，以及 `/api/v1/external-systems` 下的列表、新增、编辑、启停、检测和安全打开接口。当前用户接口为 `GET /api/v1/profile` 与 `POST /api/v1/profile/password`。未登录 API 返回 `401/AUTH-401`，越权返回 `403/AUTH-403`；用户响应模型不含密码和哈希字段。

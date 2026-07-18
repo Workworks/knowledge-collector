@@ -152,3 +152,6 @@ docker compose up -d --force-recreate grafana
 ```
 
 不要用 Docker Desktop 的“Delete volume”处理普通故障。升级前创建应用备份并记录 `docker compose images`；升级后依次检查 Flyway、health、Provider 和关键业务请求。
+# WorkTwo8 账户与第三方系统管理
+
+管理员新增了“用户管理”和“第三方系统”两个入口。创建、停用、角色修改、密码重置、服务配置和健康检测均写入 `audit_log`，响应和日志不包含密码哈希。逐字段填写示例、验证结果和故障处理见 [WorkTwo8 使用与验收手册](../07-user-guide/worktwo8-security-and-external-systems.md)。

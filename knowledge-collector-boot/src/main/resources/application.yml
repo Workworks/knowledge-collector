@@ -32,6 +32,12 @@ server:
   error:
     include-message: never
     include-stacktrace: never
+  servlet:
+    session:
+      timeout: ${KNOWLEDGE_COLLECTOR_SESSION_TIMEOUT:8h}
+      cookie:
+        http-only: true
+        same-site: lax
 
 management:
   endpoints:
@@ -43,6 +49,10 @@ management:
       show-details: never
 
 knowledge-collector:
+  security:
+    enabled: ${KNOWLEDGE_COLLECTOR_SECURITY_ENABLED:true}
+    initial-admin-username: ${KNOWLEDGE_COLLECTOR_INITIAL_ADMIN_USERNAME:}
+    initial-admin-password: ${KNOWLEDGE_COLLECTOR_INITIAL_ADMIN_PASSWORD:}
   storage:
     root: ${KNOWLEDGE_COLLECTOR_DATA_DIR:./data}
     minio:

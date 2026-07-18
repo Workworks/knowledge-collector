@@ -1,0 +1,3 @@
+package com.example.knowledgecollector.web.security;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;import org.springframework.context.annotation.*;import org.springframework.security.config.annotation.web.builders.HttpSecurity;import org.springframework.security.web.SecurityFilterChain;
+@Configuration @ConditionalOnProperty(name="knowledge-collector.security.enabled",havingValue="false") public class DisabledSecurityConfiguration {@Bean SecurityFilterChain disabledSecurity(HttpSecurity http)throws Exception{return http.authorizeHttpRequests(a->a.anyRequest().permitAll()).anonymous(a->a.principal("test-admin").authorities("ROLE_ADMIN")).csrf(c->c.disable()).build();}}

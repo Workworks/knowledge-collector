@@ -1,0 +1,39 @@
+@baseUrl = http://127.0.0.1:8080
+@adminUsername = admin
+@adminPassword = AdminChangeMe123!
+
+### 1. 获取登录页与 CSRF；IDEA HTTP Client 会维护 Cookie
+GET {{baseUrl}}/login
+
+> {%
+const match = response.body.match(/name="_csrf"[^>]*value="([^"]+)"/);
+if (!match) client.fail("登录页未找到 CSRF Token");
+client.global.set("loginCsrf", match[1]);
+%}
+
+### 2. 管理员登录，预期 302 到 /
+POST {{baseUrl}}/login
+Content-Type: application/x-www-form-urlencoded
+
+username={{adminUsername}}&password={{adminPassword}}&_csrf={{loginCsrf}}
+
+### 3. 当前用户，不返回密码字段
+GET {{baseUrl}}/api/v1/profile
+Accept: application/json
+
+### 4. 用户分页查询，仅 ADMIN 成功
+GET {{baseUrl}}/api/v1/users?page=0&size=20&keyword=
+Accept: application/json
+
+### 5. 第三方系统列表，应至少包含 10 项
+GET {{baseUrl}}/api/v1/external-systems
+Accept: application/json
+
+### 6. 使用上一步响应中的实际 id 测试连接
+@externalSystemId = 2
+POST {{baseUrl}}/api/v1/external-systems/{{externalSystemId}}/test
+Accept: application/json
+
+### 7. 获取经过后端校验的安全跳转地址
+GET {{baseUrl}}/api/v1/external-systems/{{externalSystemId}}/open
+Accept: application/json

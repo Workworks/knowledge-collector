@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>第三方系统</title><link rel="stylesheet" href="/css/app.css"></head>
+<body><nav th:replace="~{fragments/navigation :: siteNav('third-party-systems')}"></nav><main class="container admin-console">
+  <section class="compact-hero"><div><p class="eyebrow">EXTERNAL SYSTEMS</p><h1>第三方系统统一入口</h1><p>集中管理访问入口、健康检测和启停状态。跳转不会携带密码或令牌。</p></div><button class="button primary" id="new-system">新增系统</button></section>
+  <div id="page-message" class="page-message" hidden></div>
+  <section class="panel"><form id="system-form" class="advanced-form grid-4">
+    <input type="hidden" name="id"><label>代码<input name="code" required placeholder="GRAFANA"></label><label>名称<input name="name" required placeholder="Grafana"></label><label>类型<input name="type" required placeholder="OBSERVABILITY"></label><label>图标<input name="icon" placeholder="📊"></label>
+    <label class="span-2">访问地址<input name="accessUrl" type="url" placeholder="http://127.0.0.1:3000"></label><label class="span-2">健康检查地址<input name="healthUrl" type="url" placeholder="http://grafana:3000/api/health"></label>
+    <label class="span-2">说明<input name="description" placeholder="指标与仪表盘"></label><label>打开方式<select name="openMode"><option value="CURRENT">当前页面</option><option value="NEW_TAB">新标签页</option></select></label><label>允许角色<select name="allowedRole"><option value="ADMIN">ADMIN</option></select></label>
+    <label>排序<input name="sortOrder" type="number" value="100"></label><label class="check-line"><input type="checkbox" name="enabled" checked> 启用</label><div class="span-all"><button class="button primary">保存配置</button><button class="button" type="button" id="clear-system">清空</button></div>
+  </form></section>
+  <section><div id="systems-grid" class="external-system-grid">正在加载…</div></section>
+</main><script src="/js/admin-common.js"></script><script src="/js/third-party-systems.js"></script></body></html>

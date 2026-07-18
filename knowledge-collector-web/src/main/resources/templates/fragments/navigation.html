@@ -1,22 +1,26 @@
 <!doctype html>
-<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <body>
 <nav class="site-nav" th:fragment="siteNav(active)">
     <a class="brand" href="/">KC <span>Knowledge Collector</span></a>
     <div class="nav-links">
-        <a href="/topics" th:classappend="${active == 'topics'} ? 'active'">主题</a>
-        <a href="/sources" th:classappend="${active == 'sources'} ? 'active'">采集员</a>
-        <a href="/tasks" th:classappend="${active == 'tasks'} ? 'active'">任务</a>
+        <a sec:authorize="hasRole('ADMIN')" href="/topics" th:classappend="${active == 'topics'} ? 'active'">主题</a>
+        <a sec:authorize="hasRole('ADMIN')" href="/sources" th:classappend="${active == 'sources'} ? 'active'">采集员</a>
+        <a sec:authorize="hasRole('ADMIN')" href="/tasks" th:classappend="${active == 'tasks'} ? 'active'">任务</a>
         <a href="/articles" th:classappend="${active == 'articles'} ? 'active'">资料库</a>
         <a href="/articles/archive" th:classappend="${active == 'archive'} ? 'active'">归档库</a>
-        <a href="/evidence-files" th:classappend="${active == 'evidence-files'} ? 'active'">文件与快照</a>
+        <a sec:authorize="hasRole('ADMIN')" href="/evidence-files" th:classappend="${active == 'evidence-files'} ? 'active'">文件与快照</a>
         <a href="/knowledge" th:classappend="${active == 'knowledge'} ? 'active'">知识工作台</a>
         <a href="/ai-chat" th:classappend="${active == 'ai-chat'} ? 'active'">AI 助手</a>
-        <a href="/capabilities" th:classappend="${active == 'capabilities'} ? 'active'">第三方能力</a>
-        <a href="/extractions" th:classappend="${active == 'extractions'} ? 'active'">网页提取</a>
-        <a href="/operations" th:classappend="${active == 'operations'} ? 'active'">运维</a>
-        <a href="/test-console" th:classappend="${active == 'test-console'} ? 'active'">接口测试</a>
-        <a href="/advanced" th:classappend="${active == 'advanced'} ? 'active'">增强能力</a>
+        <a sec:authorize="hasRole('ADMIN')" href="/capabilities" th:classappend="${active == 'capabilities'} ? 'active'">第三方能力</a>
+        <a sec:authorize="hasRole('ADMIN')" href="/third-party-systems" th:classappend="${active == 'third-party-systems'} ? 'active'">第三方系统</a>
+        <a sec:authorize="hasRole('ADMIN')" href="/users" th:classappend="${active == 'users'} ? 'active'">用户管理</a>
+        <a sec:authorize="hasRole('ADMIN')" href="/extractions" th:classappend="${active == 'extractions'} ? 'active'">网页提取</a>
+        <a sec:authorize="hasRole('ADMIN')" href="/operations" th:classappend="${active == 'operations'} ? 'active'">运维</a>
+        <a sec:authorize="hasRole('ADMIN')" href="/test-console" th:classappend="${active == 'test-console'} ? 'active'">接口测试</a>
+        <a sec:authorize="hasRole('ADMIN')" href="/advanced" th:classappend="${active == 'advanced'} ? 'active'">增强能力</a>
+        <a href="/profile" th:classappend="${active == 'profile'} ? 'active'">个人信息</a>
+        <form sec:authorize="isAuthenticated()" method="post" action="/logout" class="nav-logout"><input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"><button type="submit">退出</button></form>
     </div>
 </nav>
 </body>

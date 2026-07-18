@@ -1,5 +1,12 @@
 # Changelog
 
+## WorkTwo8 authentication and external systems
+
+- 新增基于数据库的登录、退出、会话、`USER`/`ADMIN` 四层权限控制及登录失败限流。
+- 新增用户管理、个人密码修改、BCrypt 密码存储、管理员操作审计和环境变量初始管理员。
+- 新增 MinIO、Grafana、Ollama 等十项第三方系统统一入口、健康检测、启停与安全跳转。
+- 新增 Flyway V16、IDEA HTTP Client 示例、安全集成测试和完整操作验收手册。
+
 ## Operations and Docker proxy
 
 - 验证 Docker Desktop 通过 Clash `127.0.0.1:7890` 连接 Docker Hub，并补充 Ollama 容器模型部署流程。

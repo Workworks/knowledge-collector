@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>用户管理</title><link rel="stylesheet" href="/css/app.css"></head>
+<body><nav th:replace="~{fragments/navigation :: siteNav('users')}"></nav>
+<main class="container admin-console">
+  <section class="compact-hero"><div><p class="eyebrow">SYSTEM ADMINISTRATION</p><h1>用户管理</h1><p>创建账户、分配固定角色、停用用户和安全重置密码。</p></div></section>
+  <div id="page-message" class="page-message" hidden></div>
+  <section class="panel"><form id="user-form" class="advanced-form grid-4">
+    <input type="hidden" name="id">
+    <label>用户名<input name="username" required placeholder="researcher"></label>
+    <label>显示名称<input name="displayName" required placeholder="研究员示例"></label>
+    <label>角色<select name="role"><option value="USER">普通用户</option><option value="ADMIN">管理员</option></select></label>
+    <label class="check-line"><input type="checkbox" name="enabled" checked> 启用</label>
+    <label class="span-all">初始密码（新建时必填）<input name="password" type="password" placeholder="至少12位，含大小写字母和数字"></label>
+    <button class="button primary">保存用户</button><button class="button" type="button" id="clear-user">新建</button>
+  </form></section>
+  <section class="panel"><div class="section-heading"><h2>用户列表</h2><form id="user-search"><input name="keyword" placeholder="用户名或显示名称"><button class="button">查询</button></form></div><div id="users-table" class="result-box">正在加载…</div></section>
+  <dialog id="password-dialog"><form id="password-form" class="advanced-form"><input type="hidden" name="id"><h2>重置密码</h2><label>新密码<input type="password" name="password" required></label><div><button class="button primary">确认重置</button><button class="button" type="button" data-close>取消</button></div></form></dialog>
+</main><script src="/js/admin-common.js"></script><script src="/js/users.js"></script></body></html>

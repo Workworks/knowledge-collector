@@ -6,6 +6,8 @@ spring:
       enabled: false
 
 knowledge-collector:
+  security:
+    enabled: false
   network:
     enabled: false
 
