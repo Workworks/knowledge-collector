@@ -73,6 +73,11 @@ public class AdminPageController {
         return "archive";
     }
 
+    @GetMapping("/knowledge")
+    public String knowledgeWorkspace() {
+        return "knowledge-workspace";
+    }
+
     @GetMapping("/articles/{id}")
     public String articleDetail(@PathVariable long id, Model model) {
         model.addAttribute("article", articles.get(id));

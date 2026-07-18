@@ -8,6 +8,7 @@ window.addEventListener("DOMContentLoaded", () => {
         if (!data) return;
         $("#ai-status").textContent = data.status === "SUCCESS" ? "已完成" : "失败";
         $("#ai-summary").textContent = data.oneSentenceSummary || data.errorMessage || "暂无分析结果";
+        $("#ai-core-summary").textContent = data.coreSummary || "";
         $("#ai-result").hidden = data.status !== "SUCCESS";
         $("#ai-key-points").innerHTML = (data.keyPoints || []).map(item => `<li>${A.escape(item)}</li>`).join("");
         $("#ai-keywords").innerHTML = [...(data.keywords || []), ...(data.tags || [])]
@@ -15,6 +16,12 @@ window.addEventListener("DOMContentLoaded", () => {
         $("#ai-category").textContent = data.category || "未分类";
         $("#ai-value").textContent = data.readingValue ?? "—";
         $("#ai-meta").textContent = `${data.provider || "AI"} · ${data.model || "默认模型"} · ${data.durationMillis || 0} ms`;
+        const groups = [["文章大纲",data.outline],["关键结论",data.keyConclusions],["关键数据",data.keyData],
+            ["重要案例",data.importantCases],["人物",data.people],["机构",data.organizations],["产品",data.products],
+            ["技术",data.technologies],["地点",data.locations],["时间",data.timeInformation],["信息性质",data.informationNature]];
+        $("#ai-structured").innerHTML = groups.filter(([,items]) => items?.length).map(([name,items]) =>
+            `<div><strong>${A.escape(name)}</strong><ul>${items.map(item => `<li>${A.escape(item)}</li>`).join("")}</ul></div>`).join("") +
+            `<p><strong>文章类型</strong> ${A.escape(data.articleType || "未分类")}</p><p><strong>来源可信度</strong> ${A.escape(data.sourceCredibility || "待核验")}</p><p><strong>推荐理由</strong> ${A.escape(data.readingReason || "暂无")}</p>`;
     }
     async function loadAi() {
         try { renderAi(await A.request(`/api/v1/articles/${id}/ai`)); }
@@ -56,6 +63,18 @@ window.addEventListener("DOMContentLoaded", () => {
             {method:"PUT", body:JSON.stringify({tagNames:$("#article-tags").value})});
         $("#tag-list").innerHTML = data.tags.map(tag => `<span class="tag">${A.escape(tag.name)}</span>`).join("");
         A.message("标签已更新");
+    };
+    $("#use-selection").onclick = () => {
+        const selected = window.getSelection()?.toString().trim();
+        if (!selected) return A.message("请先在正文中选中一段内容", true);
+        $("#card-content").value = selected;
+    };
+    $("#knowledge-card-form").onsubmit = async event => {
+        event.preventDefault();
+        await A.request("/api/v1/knowledge/cards", {method:"POST", body:JSON.stringify({articleId:Number(id),
+            title:$("#card-title").value,content:$("#card-content").value,cardType:$("#card-type").value,
+            tags:$("#card-tags").value,sourceLocation:"文章阅读页人工摘录",confirmed:true})});
+        event.currentTarget.reset(); A.message("知识卡片已保存，可在知识工作台继续关联与研究");
     };
     loadAi();
 });

@@ -36,12 +36,22 @@
             <h2>AI 阅读助手</h2></div><span id="ai-status" class="component-status">未分析</span></div>
             <p id="ai-summary" class="muted">使用本机 Ollama 生成摘要、核心观点、关键词和阅读价值。</p>
             <div id="ai-result" hidden>
+                <p id="ai-core-summary" class="muted"></p>
                 <h3>核心观点</h3><ul id="ai-key-points" class="ai-points"></ul>
+                <details class="ai-structured"><summary>查看完整结构化分析</summary><div id="ai-structured"></div></details>
                 <div id="ai-keywords" class="tag-list"></div>
                 <p class="muted">分类：<strong id="ai-category"></strong> · 阅读价值 <strong id="ai-value"></strong>/100</p>
                 <p id="ai-meta" class="ai-meta"></p>
             </div>
             <button id="ai-analyze" class="button button-primary button-block" type="button">使用默认 AI 分析</button>
+        </section>
+        <section class="side-card knowledge-card-editor"><p class="eyebrow">STAGE 17</p><h2>沉淀知识卡片</h2>
+            <p class="muted">选中文章正文后点击“使用选中文本”，补充标题和类型即可保存。</p>
+            <form id="knowledge-card-form" class="compact-form"><input id="card-title" maxlength="240" required placeholder="卡片标题">
+                <select id="card-type"><option value="FACT">事实</option><option value="DATA">数据</option><option value="DEFINITION">定义</option><option value="CONCEPT">概念</option><option value="METHOD">方法</option><option value="CASE">案例</option><option value="OPINION">观点</option><option value="CONCLUSION">结论</option><option value="PREDICTION">预测</option><option value="QUOTE">引用</option><option value="TO_VERIFY">待验证</option><option value="PERSONAL_THOUGHT">个人思考</option></select>
+                <textarea id="card-content" required placeholder="知识卡片正文"></textarea><input id="card-tags" placeholder="标签，逗号分隔">
+                <button id="use-selection" class="button button-ghost" type="button">使用选中文本</button>
+                <button class="button button-primary" type="submit">保存到知识工作台</button></form>
         </section>
         <section class="side-card"><p class="eyebrow">READING ACTIONS</p><h2>阅读操作</h2>
             <p>当前状态：<strong id="reading-status" th:text="${reading.readingStatus}"></strong></p>

@@ -21,6 +21,7 @@
 - [能力 Provider 设计](03-design/capability-provider-design.md)
 - [API 设计](03-design/api-design.md)
 - [数据库设计](03-design/database-design.md)
+- [知识研究工作台设计](03-design/knowledge-workspace-design.md)
 - [原型设计](03-design/prototype-design.md)
 - [UI 设计规范](03-design/ui-design-guidelines.md)
 
@@ -34,6 +35,7 @@
 - [移动端离线包](06-deployment/mobile-offline-guide.md)
 - [用户手册](07-user-guide/user-manual.md)
 - [主题和采集源管理](07-user-guide/topic-source-management.md)
+- [知识研究工作台指南](07-user-guide/knowledge-workspace.md)
 - [管理手册](08-operations/administration-manual.md)
 - [常见问题](09-faq/faq.md)
 
@@ -47,6 +49,7 @@
 - [测试用例](05-testing/test-cases.md)
 - [测试报告](05-testing/test-report.md)
 - [手工 API 测试](05-testing/manual-api-testing.md)
+- [Stage 16–25 验收说明](05-testing/stage-16-25-acceptance.md)
 
 ## 发布与版本
 

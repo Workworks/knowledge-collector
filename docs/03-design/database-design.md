@@ -164,6 +164,22 @@ detail_json 不得包含 Token、完整 Cookie 或正文。
 ## 5. 枚举
 
 - SourceType：RSS、ATOM、HTML_LIST、JSON_API、MANUAL_URL。
+
+## V12 知识研究工作台
+
+| 表 | 对应阶段 | 说明 |
+|---|---:|---|
+| `knowledge_card`、`knowledge_relation` | 17 | 可复用卡片与卡片语义关系 |
+| `knowledge_claim`、`claim_evidence` | 18 | 观点、文章/卡片证据和摘录 |
+| `knowledge_entity`、`entity_reference` | 19 | 标准实体、别名合并和知识引用 |
+| `knowledge_event`、`event_article` | 20 | 事件与多来源文章聚合 |
+| `knowledge_topic_page` | 21 | 持续更新的专题知识页 |
+| `research_project`、`research_item` | 22 | 研究目标、问题和证据矩阵 |
+| `knowledge_synthesis` | 23 | 带来源引用的综合归纳 |
+| `writing_draft` | 24 | 研究联动的提纲和草稿 |
+| `knowledge_gap`、`knowledge_review` | 25 | 知识缺口、到期复习和复习历史 |
+
+实体合并通过 `merged_into_id` 记录去向。外键删除规则根据资产语义选择 `CASCADE` 或 `SET NULL`，避免删除文章时误删独立研究结论。
 - CrawlTaskStatus：CREATED、RUNNING、PARTIAL_SUCCESS、SUCCESS、FAILED、CANCELED。
 - TriggerType：MANUAL_SOURCE、MANUAL_TOPIC、SCHEDULED、RETRY。
 - ReadingStatus：UNREAD、READ、ARCHIVED、IGNORED。

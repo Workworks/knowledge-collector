@@ -127,7 +127,7 @@ class Stage9OperationsIntegrationTest {
         assertThat(rest.getForEntity(url("/operations"), String.class).getBody())
                 .contains("SCHEDULING & OPERATIONS", "/js/operations.js");
         assertThat(rest.getForEntity(url("/"), String.class).getBody())
-                .contains("基础设施状态", "调度与运维控制台", "运行正常");
+                .contains("基础设施状态", "知识研究与写作链路", "运行正常");
     }
 
     private ResponseEntity<JsonNode> exchange(HttpMethod method, String path, Object body) {

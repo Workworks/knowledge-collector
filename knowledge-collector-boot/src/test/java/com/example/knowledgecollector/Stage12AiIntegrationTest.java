@@ -41,7 +41,7 @@ class Stage12AiIntegrationTest {
                 .withBody("""
                         {
                           "model":"qwen-test",
-                          "response":"{\\"oneSentenceSummary\\":\\"文章解释了睡眠与主动回忆如何帮助长期记忆。\\",\\"keyPoints\\":[\\"主动回忆增强提取能力\\",\\"睡眠帮助记忆巩固\\"],\\"keywords\\":[\\"记忆\\",\\"睡眠\\"],\\"tags\\":[\\"认知科学\\"],\\"category\\":\\"学习科学\\",\\"readingValue\\":91}",
+                          "response":"{\\"oneSentenceSummary\\":\\"文章解释了睡眠与主动回忆如何帮助长期记忆。\\",\\"coreSummary\\":\\"睡眠巩固与主动提取共同改善长期记忆。\\",\\"outline\\":[\\"主动回忆\\",\\"睡眠巩固\\"],\\"keyPoints\\":[\\"主动回忆增强提取能力\\",\\"睡眠帮助记忆巩固\\"],\\"keyConclusions\\":[\\"两种方法应结合\\"],\\"keywords\\":[\\"记忆\\",\\"睡眠\\"],\\"tags\\":[\\"认知科学\\"],\\"category\\":\\"学习科学\\",\\"articleType\\":\\"科普\\",\\"readingValue\\":91,\\"qualityScore\\":88,\\"sourceCredibility\\":\\"待人工核验\\",\\"readingReason\\":\\"提供可执行方法\\",\\"informationNature\\":[\\"客观事实\\"],\\"recommendedCards\\":[{\\"title\\":\\"主动回忆\\",\\"content\\":\\"主动回忆增强提取能力\\",\\"cardType\\":\\"METHOD\\",\\"sourceQuote\\":\\"主动回忆增强提取能力\\",\\"confidence\\":80}]}",
                           "done":true,
                           "total_duration":250000000,
                           "prompt_eval_count":120,
@@ -98,6 +98,10 @@ class Stage12AiIntegrationTest {
         assertThat(analysis.path("data").path("oneSentenceSummary").asText()).contains("长期记忆");
         assertThat(analysis.path("data").path("readingValue").asInt()).isEqualTo(91);
         assertThat(analysis.path("data").path("keyPoints").size()).isEqualTo(2);
+        assertThat(analysis.path("data").path("coreSummary").asText()).contains("睡眠巩固");
+        JsonNode recommended = getJson("/api/v1/knowledge/cards?articleId=" + articleId + "&confirmed=false");
+        assertThat(recommended.path("data").size()).isEqualTo(1);
+        assertThat(recommended.path("data").get(0).path("aiSuggested").asBoolean()).isTrue();
 
         JsonNode saved = getJson("/api/v1/articles/" + articleId + "/ai");
         assertThat(saved.path("data").path("model").asText()).isEqualTo("qwen-test");

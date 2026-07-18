@@ -1,0 +1,76 @@
+@baseUrl = http://127.0.0.1:8080
+
+### Stage 16：对已采集文章执行完整结构化分析
+POST {{baseUrl}}/api/v1/articles/1/ai/analyze?provider=ollama
+Accept: application/json
+
+### Stage 17：创建知识卡片
+POST {{baseUrl}}/api/v1/knowledge/cards
+Content-Type: application/json
+
+{
+  "articleId": 1,
+  "title": "RAG 的核心作用",
+  "content": "检索外部证据后再生成答案。",
+  "cardType": "FACT",
+  "tags": "RAG,事实核验",
+  "confidence": 80
+}
+
+### Stage 18：创建观点
+POST {{baseUrl}}/api/v1/knowledge/claims
+Content-Type: application/json
+
+{"statement":"RAG 能降低无来源回答的风险","scopeNote":"知识库来源可靠时"}
+
+### 为观点添加证据
+POST {{baseUrl}}/api/v1/knowledge/claims/1/evidence
+Content-Type: application/json
+
+{"cardId":1,"evidenceType":"SUPPORT","excerpt":"检索后生成","strength":80}
+
+### Stage 19：创建实体
+POST {{baseUrl}}/api/v1/knowledge/entities
+Content-Type: application/json
+
+{"canonicalName":"OpenAI","entityType":"COMPANY","aliases":"Open AI,开放人工智能"}
+
+### Stage 20：创建事件聚合
+POST {{baseUrl}}/api/v1/knowledge/events
+Content-Type: application/json
+
+{"title":"AI Agent 产品发布","eventDate":"2026-07-18","clusterKey":"ai-agent-release"}
+
+### Stage 21：创建专题知识页
+POST {{baseUrl}}/api/v1/knowledge/topics
+Content-Type: application/json
+
+{"name":"AI Agent","introduction":"持续更新的专题","unresolvedQuestions":"可靠性如何评估？"}
+
+### Stage 22：创建研究项目
+POST {{baseUrl}}/api/v1/knowledge/projects
+Content-Type: application/json
+
+{"title":"未来五年 AI Agent","objective":"研究发展方向","coreQuestions":"关键能力是什么？"}
+
+### Stage 23：创建带来源的综合归纳
+POST {{baseUrl}}/api/v1/knowledge/syntheses
+Content-Type: application/json
+
+{"projectId":1,"title":"Agent 研究简报","content":"共同结论与主要分歧","sourceReferences":"card:1,claim:1"}
+
+### Stage 24：创建写作草稿
+POST {{baseUrl}}/api/v1/knowledge/drafts
+Content-Type: application/json
+
+{"projectId":1,"title":"AI Agent 的下一阶段","outline":"一、背景\n二、证据","sourceReferences":"card:1"}
+
+### Stage 25：新增知识缺口
+POST {{baseUrl}}/api/v1/knowledge/gaps
+Content-Type: application/json
+
+{"projectId":1,"gapType":"MISSING_COUNTERPOINT","description":"需要补充反方资料"}
+
+### 知识资产统计
+GET {{baseUrl}}/api/v1/knowledge/statistics
+Accept: application/json

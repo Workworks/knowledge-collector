@@ -82,9 +82,14 @@ public class JdbcArticleIntelligenceGateway implements ArticleIntelligenceGatewa
             throw new IllegalStateException("AI 结果读取失败", exception);
         }
         return new ArticleIntelligenceView(articleId, provider, model, status,
-                text(values, "oneSentenceSummary"), strings(values, "keyPoints"),
-                strings(values, "keywords"), strings(values, "tags"), text(values, "category"),
-                integer(values, "readingValue"), integer(values, "promptTokens"),
+                text(values, "oneSentenceSummary"), text(values, "coreSummary"), strings(values, "outline"),
+                strings(values, "keyPoints"), strings(values, "keyConclusions"), strings(values, "keyData"),
+                strings(values, "importantCases"), strings(values, "people"), strings(values, "organizations"),
+                strings(values, "products"), strings(values, "technologies"), strings(values, "locations"),
+                strings(values, "timeInformation"), strings(values, "keywords"), strings(values, "tags"),
+                text(values, "category"), text(values, "articleType"), integer(values, "readingValue"),
+                integer(values, "qualityScore"), text(values, "sourceCredibility"), text(values, "readingReason"),
+                strings(values, "informationNature"), integer(values, "promptTokens"),
                 integer(values, "responseTokens"), longValue(values, "durationMillis"),
                 errorMessage, analyzedAt);
     }

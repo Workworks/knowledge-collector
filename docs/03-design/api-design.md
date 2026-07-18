@@ -206,3 +206,24 @@ POST /api/v1/ai/chat/messages/{messageId}/save
 ## 9. 版本与兼容
 
 第一版固定 `/api/v1`。新增可选字段保持兼容；删除/改名字段需要新版本或弃用周期。API 文档与 Controller 测试在实现阶段同步维护。
+
+## Stage 16–25 知识研究 API
+
+统一前缀为 `/api/v1/knowledge`：
+
+| 资源 | 主要端点 | 用途 |
+|---|---|---|
+| 统计 | `GET /statistics` | 查询十类知识资产数量 |
+| 卡片 | `GET/POST /cards`、`POST /cards/{id}/confirm` | 创建、筛选和确认知识卡片 |
+| 关系 | `POST /cards/{fromId}/relations/{toId}` | 建立卡片语义关系 |
+| 观点证据 | `GET/POST /claims`、`POST /claims/{id}/evidence` | 管理主张和可追溯证据 |
+| 实体 | `GET/POST /entities`、`POST /entities/{source}/merge/{target}` | 统一实体和别名 |
+| 事件 | `GET/POST /events`、`POST /events/{id}/articles` | 聚合同一事件多来源 |
+| 专题 | `GET/POST /topics` | 持续更新专题知识页 |
+| 研究 | `GET/POST /projects`、`POST /projects/{id}/items` | 研究问题和证据矩阵 |
+| 综合 | `GET/POST /syntheses` | 创建必须带来源的综合结论 |
+| 写作 | `GET/POST /drafts` | 保存提纲、草稿和引用 |
+| 缺口 | `GET/POST /gaps` | 管理知识待办 |
+| 复习 | `GET /reviews/due`、`POST /reviews/{id}/complete` | 到期复习和下次安排 |
+
+文章结构化分析沿用 `/api/v1/articles/{articleId}/ai/analyze`，返回字段在保持旧字段兼容的基础上扩展。

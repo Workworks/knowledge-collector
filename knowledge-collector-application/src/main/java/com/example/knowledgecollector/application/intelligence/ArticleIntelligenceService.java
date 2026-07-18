@@ -2,6 +2,7 @@ package com.example.knowledgecollector.application.intelligence;
 
 import com.example.knowledgecollector.application.article.ArticleService;
 import com.example.knowledgecollector.application.exception.BusinessRuleException;
+import com.example.knowledgecollector.application.knowledge.KnowledgeWorkspaceService;
 import com.example.knowledgecollector.capability.intelligence.ContentIntelligenceProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -15,14 +16,17 @@ public class ArticleIntelligenceService {
     private final ArticleIntelligenceGateway gateway;
     private final List<ContentIntelligenceProvider> providers;
     private final String defaultProvider;
+    private final KnowledgeWorkspaceService knowledge;
 
     public ArticleIntelligenceService(ArticleService articles, ArticleIntelligenceGateway gateway,
                                       List<ContentIntelligenceProvider> providers,
-                                      @Value("${knowledge-collector.ai.provider:ollama}") String defaultProvider) {
+                                      @Value("${knowledge-collector.ai.provider:ollama}") String defaultProvider,
+                                      KnowledgeWorkspaceService knowledge) {
         this.articles = articles;
         this.gateway = gateway;
         this.providers = providers;
         this.defaultProvider = defaultProvider;
+        this.knowledge = knowledge;
     }
 
     public List<ContentIntelligenceProvider.ProviderStatus> providers() {
@@ -54,10 +58,13 @@ public class ArticleIntelligenceService {
                     article.title(), content, Set.of(
                     ContentIntelligenceProvider.Capability.SUMMARY,
                     ContentIntelligenceProvider.Capability.KEYWORD_EXTRACTION,
+                    ContentIntelligenceProvider.Capability.ENTITY_EXTRACTION,
                     ContentIntelligenceProvider.Capability.TAG_GENERATION,
                     ContentIntelligenceProvider.Capability.CLASSIFICATION,
                     ContentIntelligenceProvider.Capability.QUALITY_SCORING)));
-            return gateway.saveSuccess(articleId, result);
+            ArticleIntelligenceView saved = gateway.saveSuccess(articleId, result);
+            knowledge.saveAiRecommendedCards(articleId, result.values());
+            return saved;
         } catch (Exception exception) {
             gateway.saveFailure(articleId, provider.id(), exception.getMessage());
             throw new BusinessRuleException("AI-ANALYSIS-FAILED", exception.getMessage());

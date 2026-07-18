@@ -24,18 +24,37 @@ public class OllamaContentIntelligenceProvider implements ContentIntelligencePro
         ConversationalIntelligenceProvider {
     private static final Map<String, Object> FORMAT = Map.of(
             "type", "object",
-            "properties", Map.of(
-                    "oneSentenceSummary", Map.of("type", "string"),
-                    "keyPoints", Map.of("type", "array", "items", Map.of("type", "string")),
-                    "keywords", Map.of("type", "array", "items", Map.of("type", "string")),
-                    "tags", Map.of("type", "array", "items", Map.of("type", "string")),
-                    "category", Map.of("type", "string"),
-                    "readingValue", Map.of("type", "integer", "minimum", 0, "maximum", 100)
-            ),
+            "properties", analysisProperties(),
             "required", new String[]{
                     "oneSentenceSummary", "keyPoints", "keywords", "tags", "category", "readingValue"
             }
     );
+
+    private static Map<String, Object> analysisProperties() {
+        Map<String, Object> properties = new LinkedHashMap<>();
+        properties.put("oneSentenceSummary", Map.of("type", "string"));
+        properties.put("coreSummary", Map.of("type", "string"));
+        for (String name : List.of("outline", "keyPoints", "keyConclusions", "keyData", "importantCases",
+                "people", "organizations", "products", "technologies", "locations", "timeInformation",
+                "keywords", "tags", "informationNature")) {
+            properties.put(name, Map.of("type", "array", "items", Map.of("type", "string")));
+        }
+        properties.put("category", Map.of("type", "string"));
+        properties.put("articleType", Map.of("type", "string"));
+        properties.put("readingReason", Map.of("type", "string"));
+        properties.put("sourceCredibility", Map.of("type", "string"));
+        properties.put("readingValue", Map.of("type", "integer", "minimum", 0, "maximum", 100));
+        properties.put("qualityScore", Map.of("type", "integer", "minimum", 0, "maximum", 100));
+        properties.put("recommendedCards", Map.of("type", "array", "items", Map.of(
+                "type", "object", "properties", Map.of(
+                        "title", Map.of("type", "string"),
+                        "content", Map.of("type", "string"),
+                        "cardType", Map.of("type", "string"),
+                        "sourceQuote", Map.of("type", "string"),
+                        "confidence", Map.of("type", "integer", "minimum", 0, "maximum", 100)),
+                "required", new String[]{"title", "content", "cardType"})));
+        return properties;
+    }
 
     private final ObjectMapper json;
     private final HttpClient http;
@@ -95,7 +114,13 @@ public class OllamaContentIntelligenceProvider implements ContentIntelligencePro
         }
         String prompt = """
                 请分析下面的文章。只根据提供的内容作答，不要补充无法验证的事实。
-                输出语言与文章主要语言一致。摘要简洁，核心观点 3-6 条，关键词和标签各 3-8 个。
+                输出语言与文章主要语言一致。请生成一句话摘要、核心摘要、大纲、核心观点、关键结论、
+                关键数据、重要案例，以及人物、机构、产品、技术、地点、时间信息、关键词和标签。
+                同时判断文章类型、内容质量、来源可信度、推荐阅读理由，并逐条标记信息性质：
+                客观事实、作者观点、引用观点、推断、预测、广告性表达或尚未证实信息。
+                另外推荐 0-6 张可独立复用的知识卡片，类型只能使用 FACT、DATA、DEFINITION、CONCEPT、
+                METHOD、CASE、OPINION、CONCLUSION、PREDICTION、QUOTE 或 TO_VERIFY，并保留对应原文摘录。
+                不存在的项目返回空数组，不要凭空补充。
 
                 标题：%s
 

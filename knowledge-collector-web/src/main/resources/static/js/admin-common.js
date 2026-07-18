@@ -27,6 +27,12 @@ window.AdminCommon = {
 
 window.addEventListener("DOMContentLoaded", () => {
     const links = document.querySelector(".nav-links");
+    if (links && !links.querySelector('a[href="/knowledge"]')) {
+        const item = document.createElement("a");
+        item.href = "/knowledge";
+        item.textContent = "知识工作台";
+        links.appendChild(item);
+    }
     if (links && !links.querySelector('a[href="/ai-chat"]')) {
         const item = document.createElement("a");
         item.href = "/ai-chat";
