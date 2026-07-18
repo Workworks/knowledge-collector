@@ -31,6 +31,13 @@
                target="_blank" rel="noopener noreferrer">查看原文 ↗</a></footer>
     </article>
     <aside class="reading-sidebar">
+        <section class="side-card"><p class="eyebrow">STAGE 28–29</p><h2>正文与原始证据</h2>
+            <p class="muted">可重新提取正文；动态网页选择 Playwright。成功后将覆盖当前正文并保存抓取记录。</p>
+            <div class="action-stack">
+                <a class="button button-primary" th:href="@{/extractions(articleId=${article.id},url=${article.originalUrl})}">重新提取正文</a>
+                <a class="button button-secondary" th:href="@{/evidence-files(ownerType='ARTICLE',ownerId=${article.id})}">查看原始网页、快照与版本</a>
+            </div>
+        </section>
         <section class="side-card ai-card"><div class="ai-card-heading"><div><p class="eyebrow">LOCAL AI</p>
             <h2>AI 阅读助手</h2></div><span id="ai-status" class="component-status">未分析</span></div>
             <p id="ai-summary" class="muted">使用本机 Ollama 生成摘要、核心观点、关键词和阅读价值。</p>

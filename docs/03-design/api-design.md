@@ -213,6 +213,22 @@ POST /api/v1/ai/chat/messages/{messageId}/save
 
 页面路由不放在 `/api/v1` 下。POST 表单使用 PRG（Post/Redirect/Get），校验失败返回原表单和字段错误；异步局部操作调用 REST API。页面与 API 复用应用服务，但分别维护 ViewModel 与 API DTO。
 
+## Stage 28–29 网页提取与证据文件 API
+
+| 方法 | 路径 | 用途 |
+| --- | --- | --- |
+| POST | `/api/v1/extractions` | 按 DIRECT、FIRECRAWL 或 PLAYWRIGHT 发起抓取，可回写文章 |
+| GET | `/api/v1/extractions` | 按文章查询抓取历史、状态和结果 |
+| GET | `/api/v1/extractions/{id}` | 查询单次抓取详情 |
+| POST | `/api/v1/extractions/{id}/retry` | 保留原记录并创建关联重试 |
+| GET | `/api/v1/extractions/{id}/raw` | 查看原始 HTML |
+| GET | `/api/v1/extractions/{id}/screenshot` | 查看 Playwright PNG 截图 |
+| GET | `/api/v1/evidence-files` | 按归属对象查询文件和版本 |
+| POST | `/api/v1/evidence-files` | Multipart 上传附件或补充材料到默认存储 Provider |
+| GET | `/api/v1/evidence-files/{id}/download` | 从对象存储下载原始字节 |
+
+所有 URL 在交给远程抓取服务前先经过协议、DNS 和私有地址校验。文件 API 返回元数据和下载流，不返回对象存储凭据。
+
 ## 8. 安全预留
 
 - 后续加入 Spring Security 后，页面使用会话/CSRF，API 可使用同源会话或 Token。

@@ -26,6 +26,16 @@
 - `NotificationProvider`
 - `ObjectStorageProvider`
 - `UrlSecurityValidator`
+- `ContentExtractionProvider`
+
+## Stage 28–29 已实现适配器
+
+- `DirectContentExtractionProvider`：受限 HTTP 与 Jsoup 正文清洗；
+- `FirecrawlContentExtractionProvider`：调用 `/v1/scrape` 并映射 HTML、Markdown 和元数据；
+- `PlaywrightContentExtractionProvider`：调用仓库内 Chromium 渲染微服务并接收全页截图；
+- `MinioObjectStorageProvider`：通过 MinIO Java SDK 保存、读取和删除原始证据。
+
+Firecrawl、Playwright、MinIO 均实现 `ManagedCapabilityProvider`，因此复用第三方能力页面的配置、启停、连接检查、默认/备用角色、调用日志和失败原因。动态认证配置只在运行时注入具体 Provider，不通过查询 View 回显。
 
 ## 依赖规则
 

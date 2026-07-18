@@ -29,6 +29,22 @@ public class AdminPageController {
     @GetMapping("/capabilities")
     public String capabilities() { return "capabilities"; }
 
+    @GetMapping("/extractions")
+    public String extractions(@org.springframework.web.bind.annotation.RequestParam(required = false) Long articleId,
+                              @org.springframework.web.bind.annotation.RequestParam(required = false) String url, Model model) {
+        model.addAttribute("articleId", articleId);
+        model.addAttribute("url", url);
+        return "extractions";
+    }
+
+    @GetMapping("/evidence-files")
+    public String evidenceFiles(@org.springframework.web.bind.annotation.RequestParam(required = false) String ownerType,
+                                @org.springframework.web.bind.annotation.RequestParam(required = false) Long ownerId, Model model) {
+        model.addAttribute("ownerType", ownerType);
+        model.addAttribute("ownerId", ownerId);
+        return "evidence-files";
+    }
+
     @GetMapping("/sources")
     public String sources() {
         return "sources";

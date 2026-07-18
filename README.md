@@ -2,14 +2,16 @@
 
 Knowledge Collector 是一个面向个人和小团队的本地资料采集、AI 研究与阅读管理系统。它把主题管理、公开来源采集、正文清洗、质量评估、AI 对话、审核入库、搜索阅读和归档整理放在同一个可离线保存数据的应用中。
 
-项目采用模块化单体架构，默认仅监听 `127.0.0.1`，数据保存在本机 H2 数据库和文件目录中。当前版本完成至 Stage 27，已经从资料采集器升级为本地知识研究与写作工作台。
+项目采用模块化单体架构，默认仅监听 `127.0.0.1`，数据保存在本机 H2 数据库和文件目录中。当前版本完成至 Stage 29，已经从资料采集器升级为带原始证据链的本地知识研究与写作工作台。
 
 ## 功能特性
 
 - 主题、采集源、HTML 规则和固定周期调度管理。
 - RSS、Atom、HTML List、JSON API、Manual URL 等公开来源 Provider。
 - SearXNG 按主题、语言、数量、来源类型和质量等级发现候选，支持验证、导入与忽略。
-- 统一第三方能力页面管理 Ollama 和 SearXNG 的配置、健康、模型、日志与重试。
+- 统一第三方能力页面管理 Ollama、SearXNG、Firecrawl、Playwright 和 MinIO 的配置、健康、模型、日志与重试。
+- Firecrawl/Playwright 可选正文提取、文章回写、原始 HTML、浏览器截图和失败重试。
+- MinIO 原始网页、快照、附件和补充材料存储、下载及版本管理。
 - 采集源健康检查、最近刷新记录和批量状态刷新。
 - 采集任务超时租约、失败重试、取消、最近七天默认查询和组合筛选。
 - 正文抽取、安全清洗、URL 去重、主题匹配、质量评分和人工审核。
@@ -46,8 +48,8 @@ flowchart LR
 | 语言与构建 | Java 17、Maven Wrapper、多模块 Maven |
 | 应用框架 | Spring Boot 3.5.16、Spring MVC、Validation、Actuator |
 | 页面 | Thymeleaf、原生 JavaScript、响应式 CSS |
-| 数据 | H2 文件数据库、Spring Data JPA、JdbcClient、Flyway V1—V13 |
-| 采集 | JDK HttpClient、Rome、Jsoup、TLS 系统证书/附加 CA |
+| 数据 | H2 文件数据库、Spring Data JPA、JdbcClient、Flyway V1—V14、MinIO |
+| 采集 | JDK HttpClient、Rome、Jsoup、Firecrawl、Playwright Chromium、TLS 系统证书/附加 CA |
 | AI | Ollama，可通过能力接口扩展其他 Provider |
 | 测试 | JUnit 5、AssertJ、WireMock、Spring Boot Test |
 | 部署 | 可执行 JAR、Docker Compose、Android SQLite 离线包 |

@@ -16,7 +16,7 @@ window.addEventListener("DOMContentLoaded", async () => {
         document.querySelector("#task-items").innerHTML = items.map(item => `<tr>
             <td>${item.ID}</td><td><span class="status ${item.STATUS === "CREATED" ? "on" : "off"}">${item.STATUS}</span></td>
             <td class="url-cell">${A.escape(item.NORMALIZED_URL || item.ORIGINAL_URL)}</td>
-            <td>${item.ARTICLE_ID ? `<a href="/articles/${item.ARTICLE_ID}">文章 #${item.ARTICLE_ID}</a>` : "—"}</td></tr>`).join("");
+            <td>${item.ARTICLE_ID ? `<a href="/articles/${item.ARTICLE_ID}">文章 #${item.ARTICLE_ID}</a>` : `<a href="/extractions?url=${encodeURIComponent(item.ORIGINAL_URL || item.NORMALIZED_URL)}">更换方式抓取</a>`}</td></tr>`).join("");
         document.querySelector("#task-item-empty").hidden = items.length > 0;
         const retry = document.querySelector("#retry-task");
         retry.hidden = task.status !== "FAILED";

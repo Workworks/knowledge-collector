@@ -1,0 +1,12 @@
+<!doctype html><html lang="zh-CN" xmlns:th="http://www.thymeleaf.org"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>网页提取工作台 · Knowledge Collector</title><link rel="stylesheet" href="/css/app.css"><script defer src="/js/admin-common.js"></script><script defer src="/js/extractions.js"></script></head><body>
+<nav th:replace="~{fragments/navigation :: siteNav('extractions')}"></nav><main class="container admin-container" th:attr="data-article-id=${articleId},data-url=${url}"><div id="page-message" class="page-message" hidden></div>
+<header class="page-hero compact-hero"><div><p class="eyebrow">STAGE 28 · WEB EXTRACTION</p><h1>网页提取工作台</h1><p class="lead">用直连、Firecrawl 或 Playwright 抓取正文；成功结果可回写文章，并保留原始 HTML 与截图。</p></div><a class="button button-secondary" href="/capabilities">配置抓取服务</a></header>
+<section class="console-panel"><h2>发起提取</h2><form id="extraction-form" class="filter-grid">
+<label>文章 ID（回写正文时填写）<input id="extract-article-id" type="number" min="1" placeholder="例如：550"></label>
+<label class="filter-wide">网页 URL<input id="extract-url" type="url" required placeholder="https://example.org/article"></label>
+<label>抓取方式<select id="extract-method"><option value="DIRECT">直接重新提取正文</option><option value="FIRECRAWL">Firecrawl</option><option value="PLAYWRIGHT">Playwright 浏览器</option></select></label>
+<button id="extract-submit" class="button button-primary" type="submit">开始提取</button></form></section>
+<section id="extraction-result" class="console-panel" hidden><div class="section-heading"><div><p class="eyebrow">LATEST RESULT</p><h2>本次结果</h2></div><div id="extract-actions" class="header-actions"></div></div><div id="extract-metrics" class="metric-grid"></div><p id="extract-error" class="warning-text"></p><div id="extract-preview" class="reader-content"></div></section>
+<section class="console-panel"><div class="section-heading"><h2>最近提取任务</h2><button id="extract-refresh" class="button button-secondary">刷新</button></div><div class="table-wrap"><table><thead><tr><th>ID</th><th>方式/状态</th><th>标题与地址</th><th>正文</th><th>耗时</th><th>操作</th></tr></thead><tbody id="extraction-rows"></tbody></table></div><div id="extraction-empty" class="empty-state">暂无提取记录。</div></section>
+</main></body></html>

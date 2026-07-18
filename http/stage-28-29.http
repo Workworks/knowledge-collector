@@ -1,0 +1,60 @@
+### Stage 28：手动 URL 使用 Firecrawl 提取（不回写文章）
+POST http://127.0.0.1:8080/api/v1/extractions
+Content-Type: application/json
+Accept: application/json
+X-Correlation-Id: idea-stage28-firecrawl-001
+
+{"articleId":null,"url":"https://spring.io/blog","method":"FIRECRAWL"}
+
+### Stage 28：把文章 550 用 Playwright 重新提取并回写
+POST http://127.0.0.1:8080/api/v1/extractions
+Content-Type: application/json
+Accept: application/json
+X-Correlation-Id: idea-stage28-playwright-001
+
+{"articleId":550,"url":"https://example.org/public-article","method":"PLAYWRIGHT"}
+
+### 查询文章 550 的提取历史
+GET http://127.0.0.1:8080/api/v1/extractions?articleId=550&limit=30
+Accept: application/json
+
+### 重试提取任务 1
+POST http://127.0.0.1:8080/api/v1/extractions/1/retry
+Accept: application/json
+
+### 查看提取任务 1 的原始 HTML
+GET http://127.0.0.1:8080/api/v1/extractions/1/raw
+Accept: text/plain
+
+### Stage 29：上传文章 550 的补充材料
+POST http://127.0.0.1:8080/api/v1/evidence-files
+Content-Type: multipart/form-data; boundary=Stage29Boundary
+Accept: application/json
+X-Correlation-Id: idea-stage29-upload-001
+
+--Stage29Boundary
+Content-Disposition: form-data; name="ownerType"
+
+ARTICLE
+--Stage29Boundary
+Content-Disposition: form-data; name="ownerId"
+
+550
+--Stage29Boundary
+Content-Disposition: form-data; name="fileKind"
+
+SUPPLEMENT
+--Stage29Boundary
+Content-Disposition: form-data; name="file"; filename="verification-note.txt"
+Content-Type: text/plain; charset=UTF-8
+
+2026-07-18：已与公开原始页面交叉验证。
+--Stage29Boundary--
+
+### 查询文章 550 的全部证据版本
+GET http://127.0.0.1:8080/api/v1/evidence-files?ownerType=ARTICLE&ownerId=550
+Accept: application/json
+
+### 下载证据文件 1
+GET http://127.0.0.1:8080/api/v1/evidence-files/1/download
+Accept: application/octet-stream

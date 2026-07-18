@@ -43,7 +43,9 @@ class Stage26To27CapabilityIntegrationTest {
 
     @Test void configuresTestsDiscoversValidatesImportsAndLogs(){
         JsonNode services=get("/api/v1/capabilities").path("data");
-        assertThat(services.size()).isEqualTo(2);
+        assertThat(services.size()).isGreaterThanOrEqualTo(5);
+        assertThat(find(services,"firecrawl").path("serviceType").asText()).isEqualTo("EXTRACTION");
+        assertThat(find(services,"minio").path("serviceType").asText()).isEqualTo("STORAGE");
         JsonNode ollama=find(services,"ollama");
         assertThat(ollama.path("endpoint").asText()).isEqualTo(SERVICES.baseUrl());
         JsonNode tested=post("/api/v1/capabilities/ollama/test",null).path("data");

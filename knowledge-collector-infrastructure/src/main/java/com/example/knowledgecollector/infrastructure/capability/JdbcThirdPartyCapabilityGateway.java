@@ -2,6 +2,7 @@ package com.example.knowledgecollector.infrastructure.capability;
 
 import com.example.knowledgecollector.application.capability.*;
 import com.example.knowledgecollector.application.exception.ResourceNotFoundException;
+import com.example.knowledgecollector.capability.management.ManagedCapabilityProvider;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +24,12 @@ public class JdbcThirdPartyCapabilityGateway implements ThirdPartyCapabilityGate
     @Override public Optional<ThirdPartyServiceView> findService(String providerId) {
         return jdbc.sql(serviceSql() + " where s.provider_id=:providerId").param("providerId", providerId)
                 .query(this::service).optional();
+    }
+    @Override public Optional<ManagedCapabilityProvider.RuntimeConfiguration> runtimeConfiguration(String providerId) {
+        return jdbc.sql("select enabled,endpoint,model,authentication_type,credential from third_party_service where provider_id=:id")
+                .param("id", providerId).query((rs, row) -> new ManagedCapabilityProvider.RuntimeConfiguration(
+                        rs.getBoolean("enabled"), rs.getString("endpoint"), rs.getString("model"),
+                        rs.getString("authentication_type"), rs.getString("credential"))).optional();
     }
 
     @Override @Transactional

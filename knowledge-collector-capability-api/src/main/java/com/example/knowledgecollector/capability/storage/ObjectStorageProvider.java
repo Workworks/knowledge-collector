@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.util.Map;
 
 public interface ObjectStorageProvider {
+    String id();
     StoredObject save(StorageRequest request);
     InputStream read(String objectKey);
     void delete(String objectKey);

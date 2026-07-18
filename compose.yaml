@@ -2,7 +2,7 @@ services:
   app:
     build:
       context: .
-    image: knowledge-collector:stage-12
+    image: knowledge-collector:stage-29
     restart: unless-stopped
     ports:
       - "${KNOWLEDGE_COLLECTOR_PORT:-8080}:8080"
@@ -12,6 +12,13 @@ services:
       KNOWLEDGE_COLLECTOR_OLLAMA_MODEL: "${OLLAMA_MODEL:-deepseek-r1:14b}"
       KNOWLEDGE_COLLECTOR_SEARXNG_ENABLED: "true"
       KNOWLEDGE_COLLECTOR_SEARXNG_BASE_URL: "http://searxng:8080"
+      KNOWLEDGE_COLLECTOR_PLAYWRIGHT_ENABLED: "true"
+      KNOWLEDGE_COLLECTOR_PLAYWRIGHT_BASE_URL: "http://playwright:3003"
+      KNOWLEDGE_COLLECTOR_MINIO_ENABLED: "true"
+      KNOWLEDGE_COLLECTOR_MINIO_ENDPOINT: "http://minio:9000"
+      KNOWLEDGE_COLLECTOR_MINIO_BUCKET: "knowledge-collector"
+      KNOWLEDGE_COLLECTOR_MINIO_ACCESS_KEY: "${MINIO_ROOT_USER:-knowledge}"
+      KNOWLEDGE_COLLECTOR_MINIO_SECRET_KEY: "${MINIO_ROOT_PASSWORD:-collector-secret}"
     volumes:
       - knowledge_data:/data
     depends_on:
@@ -19,6 +26,10 @@ services:
         condition: service_started
       searxng:
         condition: service_started
+      playwright:
+        condition: service_healthy
+      minio-init:
+        condition: service_completed_successfully
 
   searxng:
     image: searxng/searxng:latest
@@ -45,7 +56,38 @@ services:
       ollama:
         condition: service_started
 
+  playwright:
+    build: ./playwright-service
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:3003/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+
+  minio:
+    image: minio/minio:latest
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: "${MINIO_ROOT_USER:-knowledge}"
+      MINIO_ROOT_PASSWORD: "${MINIO_ROOT_PASSWORD:-collector-secret}"
+    ports:
+      - "${MINIO_CONSOLE_PORT:-9001}:9001"
+    volumes:
+      - minio_data:/data
+
+  minio-init:
+    image: minio/mc:latest
+    restart: "no"
+    depends_on:
+      minio:
+        condition: service_started
+    entrypoint: ["/bin/sh", "-c"]
+    command: ["until mc alias set local http://minio:9000 ${MINIO_ROOT_USER:-knowledge} ${MINIO_ROOT_PASSWORD:-collector-secret}; do sleep 2; done; mc mb --ignore-existing local/knowledge-collector"]
+
 volumes:
   knowledge_data:
   ollama_models:
   searxng_data:
+  minio_data:

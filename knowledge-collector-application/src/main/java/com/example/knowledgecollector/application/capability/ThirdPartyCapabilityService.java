@@ -109,8 +109,10 @@ public class ThirdPartyCapabilityService {
     }
     private void apply(ThirdPartyServiceView config) { apply(config, provider(config.providerId())); }
     private void apply(ThirdPartyServiceView config, ManagedCapabilityProvider provider) {
-        provider.configure(new ManagedCapabilityProvider.RuntimeConfiguration(config.enabled(), config.endpoint(),
-                config.model(), config.authenticationType(), null));
+        var runtime = config.userConfigured()
+                ? gateway.runtimeConfiguration(config.providerId()).orElseThrow()
+                : provider.currentConfiguration();
+        provider.configure(runtime);
     }
     private ManagedCapabilityProvider provider(String id) {
         return providers.stream().filter(item -> item.id().equalsIgnoreCase(id)).findFirst()

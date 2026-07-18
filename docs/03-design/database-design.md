@@ -190,6 +190,15 @@ detail_json 不得包含 Token、完整 Cookie 或正文。
 | `source_discovery_candidate` | SearXNG 候选、评分、推荐原因、验证状态和导入来源 ID |
 
 查询接口只返回“是否已配置认证信息”，不返回凭据正文。候选必须验证为 `VERIFIED` 才能转为正式采集源。
+
+## V14 网页提取与原始证据
+
+| 表 | 说明 |
+| --- | --- |
+| `content_extraction_job` | 文章/URL、实际方式、Provider、标题作者时间、正文、原始 HTML、截图、耗时、错误和重试关系 |
+| `evidence_file` | 通用归属对象、文件类型、MinIO 对象键、MIME、大小、SHA-256、自动版本和 Provider |
+
+提取任务保留嵌入的原始 HTML/截图用于即时查看；MinIO 可用时同时写入对象存储并建立 `evidence_file` 证据索引。相同 `owner_type + owner_id + file_kind` 的新文件按最大版本加一，旧版本不覆盖。
 - CrawlTaskStatus：CREATED、RUNNING、PARTIAL_SUCCESS、SUCCESS、FAILED、CANCELED。
 - TriggerType：MANUAL_SOURCE、MANUAL_TOPIC、SCHEDULED、RETRY。
 - ReadingStatus：UNREAD、READ、ARCHIVED、IGNORED。

@@ -1,8 +1,10 @@
 window.AdminCommon = {
     async request(url, options = {}) {
+        const multipart = options.body instanceof FormData;
+        const headers = {"Accept": "application/json", "X-Correlation-Id": `web-admin-${Date.now()}`,
+            ...(multipart ? {} : {"Content-Type": "application/json"}), ...(options.headers || {})};
         const response = await fetch(url, {
-            headers: {"Accept": "application/json", "Content-Type": "application/json",
-                "X-Correlation-Id": `web-admin-${Date.now()}`}, ...options
+            ...options, headers
         });
         if (response.status === 204) return null;
         const payload = await response.json();

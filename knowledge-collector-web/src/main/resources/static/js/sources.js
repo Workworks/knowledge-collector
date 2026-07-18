@@ -10,7 +10,7 @@ window.addEventListener("DOMContentLoaded", async () => {
         <td>${s.timeoutSeconds}s / ${s.maxRetries} 次 / ${s.requestIntervalMillis}ms</td>
         <td><span class="status ${s.healthStatus==="VERIFIED"?"on":"off"}">${{VERIFIED:"正常 · 已验证",UNHEALTHY:"异常",UNKNOWN:"未检查"}[s.healthStatus]||s.healthStatus}</span><small>${A.escape(s.lastHealthMessage||"")}</small></td>
         <td>${s.lastHealthCheckedAt?new Date(s.lastHealthCheckedAt).toLocaleString("zh-CN"):"—"}<small>${s.enabled?"启用":"停用"}</small></td><td class="row-actions">
-        <button data-edit="${s.id}">编辑</button><button data-health="${s.id}">刷新</button>${s.type==="HTML_LIST"?`<button data-rule="${s.id}">规则</button>`:""}<button data-crawl="${s.id}">立即采集</button>
+        <button data-edit="${s.id}">编辑</button><button data-health="${s.id}">刷新</button>${s.type==="HTML_LIST"?`<button data-rule="${s.id}">规则</button>`:""}<button data-extract="${A.escape(s.feedUrl)}">测试抓取</button><button data-crawl="${s.id}">立即采集</button>
         <button data-toggle="${s.id}" data-enabled="${!s.enabled}">${s.enabled?"停用":"启用"}</button>
         <button class="danger-link" data-delete="${s.id}">删除</button></td></tr>`).join("");
         $("source-empty").hidden=data.content.length>0;$("source-page").textContent=`第 ${page+1} 页 / 共 ${Math.max(totalPages,1)} 页`;
@@ -36,6 +36,7 @@ window.addEventListener("DOMContentLoaded", async () => {
         if(b.dataset.test)await A.request(`/api/v1/sources/${b.dataset.test}/test`,{method:"POST"});
         if(b.dataset.health){await A.request(`/api/v1/sources/${b.dataset.health}/health`,{method:"POST"});await load();}
         if(b.dataset.rule)location.href=`/sources/${b.dataset.rule}/rules`;
+        if(b.dataset.extract)location.href=`/extractions?url=${encodeURIComponent(b.dataset.extract)}`;
         if(b.dataset.crawl){const task=await A.request(`/api/v1/sources/${b.dataset.crawl}/crawl`,{method:"POST"});location.href=`/tasks/${task.id}`;}
         if(b.dataset.toggle){await A.request(`/api/v1/sources/${b.dataset.toggle}/enabled`,{method:"PATCH",body:JSON.stringify({enabled:b.dataset.enabled==="true"})});await load();}
         if(b.dataset.delete&&confirm("确定删除该采集源？")){await A.request(`/api/v1/sources/${b.dataset.delete}`,{method:"DELETE"});await load();}

@@ -45,6 +45,12 @@ management:
 knowledge-collector:
   storage:
     root: ${KNOWLEDGE_COLLECTOR_DATA_DIR:./data}
+    minio:
+      enabled: ${KNOWLEDGE_COLLECTOR_MINIO_ENABLED:false}
+      endpoint: ${KNOWLEDGE_COLLECTOR_MINIO_ENDPOINT:http://127.0.0.1:9000}
+      bucket: ${KNOWLEDGE_COLLECTOR_MINIO_BUCKET:knowledge-collector}
+      access-key: ${KNOWLEDGE_COLLECTOR_MINIO_ACCESS_KEY:}
+      secret-key: ${KNOWLEDGE_COLLECTOR_MINIO_SECRET_KEY:}
   tasks:
     stale-timeout: ${KNOWLEDGE_COLLECTOR_TASK_STALE_TIMEOUT:PT10M}
   network:
@@ -65,7 +71,14 @@ knowledge-collector:
     searxng:
       enabled: ${KNOWLEDGE_COLLECTOR_SEARXNG_ENABLED:false}
       base-url: ${KNOWLEDGE_COLLECTOR_SEARXNG_BASE_URL:http://127.0.0.1:8088}
-
+  extraction:
+    firecrawl:
+      enabled: ${KNOWLEDGE_COLLECTOR_FIRECRAWL_ENABLED:false}
+      base-url: ${KNOWLEDGE_COLLECTOR_FIRECRAWL_BASE_URL:http://127.0.0.1:3002}
+      api-key: ${KNOWLEDGE_COLLECTOR_FIRECRAWL_API_KEY:}
+    playwright:
+      enabled: ${KNOWLEDGE_COLLECTOR_PLAYWRIGHT_ENABLED:false}
+      base-url: ${KNOWLEDGE_COLLECTOR_PLAYWRIGHT_BASE_URL:http://127.0.0.1:3003}
 logging:
   config: classpath:logback-spring.xml
 

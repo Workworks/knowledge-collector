@@ -34,6 +34,23 @@
 | `KNOWLEDGE_COLLECTOR_SEARXNG_ENABLED` | `false` | 是否启用 SearXNG 来源发现 |
 | `KNOWLEDGE_COLLECTOR_SEARXNG_BASE_URL` | `http://127.0.0.1:8088` | SearXNG API 根地址 |
 
+## 网页提取与证据存储
+
+| 环境变量 | 默认值 | 说明 |
+| --- | --- | --- |
+| `KNOWLEDGE_COLLECTOR_FIRECRAWL_ENABLED` | `false` | 启用 Firecrawl Provider |
+| `KNOWLEDGE_COLLECTOR_FIRECRAWL_BASE_URL` | `http://127.0.0.1:3002` | Firecrawl API 根地址；云服务可填 `https://api.firecrawl.dev` |
+| `KNOWLEDGE_COLLECTOR_FIRECRAWL_API_KEY` | 空 | Firecrawl Bearer API Key |
+| `KNOWLEDGE_COLLECTOR_PLAYWRIGHT_ENABLED` | `false` | 启用 Playwright Chromium 渲染服务 |
+| `KNOWLEDGE_COLLECTOR_PLAYWRIGHT_BASE_URL` | `http://127.0.0.1:3003` | 仓库 `playwright-service` 地址 |
+| `KNOWLEDGE_COLLECTOR_MINIO_ENABLED` | `false` | 启用 MinIO 原始证据存储 |
+| `KNOWLEDGE_COLLECTOR_MINIO_ENDPOINT` | `http://127.0.0.1:9000` | MinIO S3 API 地址 |
+| `KNOWLEDGE_COLLECTOR_MINIO_BUCKET` | `knowledge-collector` | 证据存储桶 |
+| `KNOWLEDGE_COLLECTOR_MINIO_ACCESS_KEY` | 空 | MinIO Access Key |
+| `KNOWLEDGE_COLLECTOR_MINIO_SECRET_KEY` | 空 | MinIO Secret Key |
+
+环境变量提供首次启动值；也可在“第三方能力”动态保存。页面中的 MinIO 凭据格式为 `accessKey:secretKey`，Firecrawl 使用 Bearer Key。
+
 这些值是首次运行默认值。进入“第三方能力”保存配置后，页面配置持久化到数据库并优先用于运行时；认证信息不会通过查询 API 明文回显。
 
 ## Spring Profile
