@@ -89,7 +89,7 @@ Knowledge Collector
 
 ```bash
 git clone <your-repository-url>
-cd WorkTwo
+cd knowledge-collector
 ./mvnw clean verify
 ```
 
