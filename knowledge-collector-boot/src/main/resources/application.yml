@@ -57,7 +57,7 @@ knowledge-collector:
     ollama:
       enabled: ${KNOWLEDGE_COLLECTOR_OLLAMA_ENABLED:true}
       base-url: ${KNOWLEDGE_COLLECTOR_OLLAMA_BASE_URL:http://127.0.0.1:11434}
-      model: ${KNOWLEDGE_COLLECTOR_OLLAMA_MODEL:qwen3:4b}
+      model: ${KNOWLEDGE_COLLECTOR_OLLAMA_MODEL:deepseek-r1:14b}
       timeout: ${KNOWLEDGE_COLLECTOR_OLLAMA_TIMEOUT:PT2M}
     chat:
       max-history-messages: ${KNOWLEDGE_COLLECTOR_AI_CHAT_MAX_HISTORY:20}

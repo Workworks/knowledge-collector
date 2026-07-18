@@ -49,7 +49,7 @@ public class OllamaContentIntelligenceProvider implements ContentIntelligencePro
             ObjectMapper json,
             @Value("${knowledge-collector.ai.ollama.enabled:true}") boolean enabled,
             @Value("${knowledge-collector.ai.ollama.base-url:http://127.0.0.1:11434}") String baseUrl,
-            @Value("${knowledge-collector.ai.ollama.model:qwen3:4b}") String model,
+            @Value("${knowledge-collector.ai.ollama.model:deepseek-r1:14b}") String model,
             @Value("${knowledge-collector.ai.ollama.timeout:PT2M}") Duration timeout,
             @Value("${knowledge-collector.ai.max-content-chars:24000}") int maxContentChars) {
         this.json = json;

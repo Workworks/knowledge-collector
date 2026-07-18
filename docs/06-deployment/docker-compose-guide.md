@@ -1,6 +1,6 @@
 # Docker Compose 部署
 
-CPU 模式运行 `.\scripts\package-docker.ps1` 或 `./scripts/package-docker.sh`。脚本构建应用镜像、启动 Ollama，并下载默认 `qwen3:4b` 模型。
+CPU 模式运行 `.\scripts\package-docker.ps1` 或 `./scripts/package-docker.sh`。脚本构建应用镜像、启动 Ollama，并下载默认 `deepseek-r1:14b` 模型。
 
 NVIDIA GPU 模式：
 

@@ -1,5 +1,5 @@
 param(
-    [string]$Model = "qwen3:4b",
+    [string]$Model = "deepseek-r1:14b",
     [switch]$Gpu,
     [switch]$BuildOnly
 )

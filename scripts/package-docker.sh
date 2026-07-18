@@ -3,7 +3,7 @@ set -eu
 
 ROOT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 cd "$ROOT_DIR"
-MODEL="${OLLAMA_MODEL:-qwen3:4b}"
+MODEL="${OLLAMA_MODEL:-deepseek-r1:14b}"
 FILES="-f compose.yaml"
 if [ "${1:-}" = "--gpu" ]; then
   FILES="$FILES -f compose.gpu.yaml"

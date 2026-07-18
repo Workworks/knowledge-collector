@@ -105,7 +105,7 @@ local Profile（自动初始化演示主题与来源）：
 | `KNOWLEDGE_COLLECTOR_ADDITIONAL_CA_FILE` | 空 | 额外可信 PEM CA 文件 |
 | `KNOWLEDGE_COLLECTOR_OLLAMA_ENABLED` | `true` | 启用 Ollama Provider |
 | `KNOWLEDGE_COLLECTOR_OLLAMA_BASE_URL` | `http://127.0.0.1:11434` | Ollama 地址 |
-| `KNOWLEDGE_COLLECTOR_OLLAMA_MODEL` | `qwen3:4b` | 默认模型 |
+| `KNOWLEDGE_COLLECTOR_OLLAMA_MODEL` | `deepseek-r1:14b` | 默认模型 |
 | `KNOWLEDGE_COLLECTOR_OLLAMA_TIMEOUT` | `PT2M` | 单次分析超时 |
 | `KNOWLEDGE_COLLECTOR_AI_CHAT_MAX_HISTORY` | `20` | AI 对话携带的最近消息数 |
 
