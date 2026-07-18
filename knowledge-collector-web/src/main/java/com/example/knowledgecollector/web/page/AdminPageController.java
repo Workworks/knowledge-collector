@@ -57,13 +57,20 @@ public class AdminPageController {
     @GetMapping("/articles")
     public String articles(Model model) {
         model.addAttribute("reviewMode", false);
+        model.addAttribute("archiveMode", false);
         return "articles";
     }
 
     @GetMapping("/articles/review")
     public String reviewArticles(Model model) {
         model.addAttribute("reviewMode", true);
+        model.addAttribute("archiveMode", false);
         return "articles";
+    }
+
+    @GetMapping("/articles/archive")
+    public String archivedArticles() {
+        return "archive";
     }
 
     @GetMapping("/articles/{id}")

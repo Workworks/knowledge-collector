@@ -5,15 +5,15 @@
 - 日期：2026-07-17
 - Java：17.0.8
 - 命令：`./mvnw clean verify`
-- 测试套件：16
-- 测试：28
+- 测试套件：18
+- 测试：30
 - 失败：0
 - 错误：0
 - 跳过：0
 
 ## 重点结果
 
-- Flyway V1—V10 从空数据库迁移成功。
+- Flyway V1—V11 从空数据库迁移成功。
 - RSS、Atom、HTML、去重、主题、质量、阅读管理和运维回归通过。
 - RSS 文章详情页正文提取、安全清洗和已有空正文文章回填通过。
 - Windows Surefire XML 中中文超时提示保持正常，不再出现重复解码乱码。
@@ -29,15 +29,17 @@
 - AI 回复以 `AI_GENERATED`、`PENDING_REVIEW` 入库并显示 AI 内容标记。
 - `MANUAL_URL` Provider 注册及单页正文提取通过。
 - 文章 AI 分析结果在 1280px 和 900px 视口下均无横向溢出。
+- AI 采集源候选去重、访问验证和 `VERIFIED` 入库通过。
+- 采集源健康刷新、最近七天任务过滤、归档资料及整理规则通过。
 - CPU 与 NVIDIA GPU 两套 Docker Compose 配置解析通过。
 - Android 离线工程确认不声明网络权限、使用 SQLite，内置 JSON 数据可解析。
 
 ## 发布包验证
 
 - JAR：`knowledge-collector-boot/target/knowledge-collector.jar`
-- 大小：64,998,931 字节
+- 大小：65,033,704 字节
 - 健康状态：UP
-- Flyway：10
+- Flyway：11
 - 首页：HTTP 200
 - 运维页：HTTP 200
 - OpenAPI：HTTP 200
@@ -48,4 +50,4 @@
 
 ## 结论
 
-第一版本核心闭环及 Stage 10—13 通过自动化及发布包验收。Ollama AI、持久化聊天、AI 材料审核入库、可替换 Provider 接口、容器部署配置和移动端离线工程已具备；实际 Docker 镜像构建需先启动 Docker 服务，实际 APK 构建需安装 Android SDK。
+第一版本核心闭环及 Stage 10—14 通过自动化及发布包验收。Ollama AI、持久化聊天、AI 采集源发现、健康检查、任务过滤、规则化归档、容器部署配置和移动端离线工程已具备；实际 Docker 镜像构建需先启动 Docker 服务，实际 APK 构建需安装 Android SDK。

@@ -3,6 +3,7 @@ package com.example.knowledgecollector.application.demo;
 import com.example.knowledgecollector.capability.source.ContentSourceProvider;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
+import org.springframework.core.annotation.Order;
 
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.Map;
 
 @Component
 @Profile("local")
+@Order(0)
 public class LocalFixtureSourceProvider implements ContentSourceProvider {
     @Override
     public boolean supports(String sourceType) {

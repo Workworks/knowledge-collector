@@ -1,0 +1,33 @@
+@baseUrl = http://127.0.0.1:8080
+@sourceId = 1
+@archiveRuleId = 1
+
+### AI 自动发现并导入采集源
+POST {{baseUrl}}/api/v1/sources/discover
+Content-Type: application/json
+
+{"topic":"人工智能","language":"zh-CN","count":10,"quality":"权威"}
+
+### 刷新单个采集源状态
+POST {{baseUrl}}/api/v1/sources/{{sourceId}}/health
+
+### 刷新全部启用采集源状态
+POST {{baseUrl}}/api/v1/sources/health/refresh
+
+### 查询最近七天的成功任务
+GET {{baseUrl}}/api/v1/tasks?status=SUCCESS&from=2026-07-12&to=2026-07-18&page=0&size=20
+
+### 查询归档资料
+GET {{baseUrl}}/api/v1/articles?archived=true&page=0&size=20
+
+### 新增归档整理规则
+POST {{baseUrl}}/api/v1/archive-rules
+Content-Type: application/json
+
+{"name":"AI 高质量资料","keyword":"AI","minQuality":80,"sortOrder":10,"enabled":true}
+
+### 查看整理规则
+GET {{baseUrl}}/api/v1/archive-rules
+
+### 删除整理规则
+DELETE {{baseUrl}}/api/v1/archive-rules/{{archiveRuleId}}

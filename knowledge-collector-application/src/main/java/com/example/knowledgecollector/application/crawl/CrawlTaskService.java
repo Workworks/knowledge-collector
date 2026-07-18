@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.time.OffsetDateTime;
 
 @Service
 public class CrawlTaskService {
@@ -88,6 +89,10 @@ public class CrawlTaskService {
 
     public int testSource(long sourceId) {
         CrawlSource source = sources.get(sourceId);
+        return testCandidate(source);
+    }
+
+    public int testCandidate(CrawlSource source) {
         try {
             return provider(source.type()).fetch(request(source)).items().size();
         } catch (IllegalStateException exception) {
@@ -98,13 +103,33 @@ public class CrawlTaskService {
         }
     }
 
+    public CrawlSource refreshHealth(long sourceId) {
+        try {
+            int count = testSource(sourceId);
+            return sources.updateHealth(sourceId, true, "访问正常，发现 " + count + " 条内容");
+        } catch (Exception exception) {
+            String message = exception.getMessage() == null ? "访问失败" : exception.getMessage();
+            return sources.updateHealth(sourceId, false, message);
+        }
+    }
+
+    public List<CrawlSource> refreshAllHealth() {
+        return sources.findAllEnabled().stream().map(source -> refreshHealth(source.id())).toList();
+    }
+
     private ContentSourceProvider.FetchRequest request(CrawlSource source) {
         Map<String, String> options = source.type() == SourceType.HTML_LIST
-                ? rules.active(source.id()).options() : Map.of();
+                ? source.id() == null ? defaultHtmlOptions() : rules.active(source.id()).options() : Map.of();
         return new ContentSourceProvider.FetchRequest(
                 source.type().name(), source.homeUrl(), source.feedUrl(), source.language(),
                 source.charset(), source.userAgent(), source.timeoutSeconds(),
                 source.fetchFullContent(), source.summaryOnly(), options);
+    }
+
+    private Map<String, String> defaultHtmlOptions() {
+        return Map.of("listSelector", "article, .post, .item, li",
+                "linkSelector", "a[href]", "titleSelector", "h1",
+                "contentSelector", "article, main, .content, .post-content");
     }
 
     private ContentSourceProvider provider(SourceType type) {
@@ -118,7 +143,12 @@ public class CrawlTaskService {
     }
 
     public PageResult<CrawlTaskView> findPage(int page, int size) {
-        return gateway.findPage(page, size);
+        return gateway.findPage(new CrawlTaskSearchCriteria(null, null, null, null,
+                OffsetDateTime.now().minusDays(7), null, page, size));
+    }
+
+    public PageResult<CrawlTaskView> findPage(CrawlTaskSearchCriteria criteria) {
+        return gateway.findPage(criteria);
     }
 
     public List<?> items(long id) {

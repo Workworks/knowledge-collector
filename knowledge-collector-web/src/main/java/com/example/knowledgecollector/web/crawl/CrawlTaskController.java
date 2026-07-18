@@ -1,6 +1,10 @@
 package com.example.knowledgecollector.web.crawl;
 
 import com.example.knowledgecollector.application.crawl.CrawlTaskService;
+import com.example.knowledgecollector.application.crawl.CrawlTaskSearchCriteria;
+import java.time.LocalDate;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import com.example.knowledgecollector.web.api.ApiResponse;
 import com.example.knowledgecollector.web.api.CorrelationIdFilter;
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,8 +22,19 @@ public class CrawlTaskController {
     public CrawlTaskController(CrawlTaskService service){this.service=service;}
     @GetMapping @Operation(summary="分页查询任务")
     public ApiResponse<?> list(@RequestParam(defaultValue="0")@Min(0)int page,
-            @RequestParam(defaultValue="20")@Min(1)@Max(100)int size,HttpServletRequest r){
-        return ApiResponse.success(service.findPage(page,size),cid(r));}
+            @RequestParam(defaultValue="20")@Min(1)@Max(100)int size,
+            @RequestParam(required=false) String keyword,
+            @RequestParam(required=false) Long sourceId,
+            @RequestParam(required=false) String status,
+            @RequestParam(required=false) String triggerType,
+            @RequestParam(required=false) LocalDate from,
+            @RequestParam(required=false) LocalDate to,HttpServletRequest r){
+        ZoneId zone = ZoneId.systemDefault();
+        LocalDate effectiveFrom = from == null ? LocalDate.now(zone).minusDays(6) : from;
+        OffsetDateTime createdFrom = effectiveFrom.atStartOfDay(zone).toOffsetDateTime();
+        OffsetDateTime createdTo = to == null ? null : to.plusDays(1).atStartOfDay(zone).toOffsetDateTime();
+        return ApiResponse.success(service.findPage(new CrawlTaskSearchCriteria(keyword,sourceId,status,
+                triggerType,createdFrom,createdTo,page,size)),cid(r));}
     @GetMapping("/{id}") public ApiResponse<?> get(@PathVariable long id,HttpServletRequest r){
         return ApiResponse.success(service.get(id),cid(r));}
     @GetMapping("/{id}/items") public ApiResponse<?> items(@PathVariable long id,HttpServletRequest r){

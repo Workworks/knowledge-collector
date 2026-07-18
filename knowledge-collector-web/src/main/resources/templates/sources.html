@@ -16,6 +16,18 @@
         <nav class="header-actions"><a class="button button-secondary" href="/">首页</a>
             <a class="button button-secondary" href="/topics">主题</a></nav></header>
     <div id="page-message" class="page-message" hidden></div>
+    <section class="console-panel discovery-panel">
+        <div class="section-heading"><div><p class="eyebrow">AI DISCOVERY</p><h2>AI 自动发现采集源</h2>
+            <p>输入主题、语言和数量；系统只导入实际验证可访问且不重复的公开来源。</p></div></div>
+        <form id="source-discovery-form" class="toolbar">
+            <div class="form-field grow"><label for="discovery-topic">研究主题</label><input id="discovery-topic" required maxlength="128" placeholder="例如：人工智能"></div>
+            <div class="form-field"><label for="discovery-language">资料语言</label><select id="discovery-language"><option value="zh-CN">中文</option><option value="en">英文</option></select></div>
+            <div class="form-field"><label for="discovery-count">期望数量</label><input id="discovery-count" type="number" min="1" max="50" value="10" required></div>
+            <div class="form-field"><label for="discovery-quality">质量等级</label><select id="discovery-quality"><option>推荐</option><option>普通</option><option>权威</option></select></div>
+            <button id="source-discover" class="button button-primary" type="submit">AI 发现并收纳</button>
+        </form>
+        <div id="discovery-result" class="inline-result" hidden></div>
+    </section>
     <section class="console-panel">
         <div class="toolbar">
             <div class="form-field grow"><label for="source-keyword">搜索</label><input id="source-keyword" placeholder="名称或编码"></div>
@@ -25,10 +37,11 @@
             <div class="form-field"><label for="source-enabled-filter">状态</label><select id="source-enabled-filter">
                 <option value="">全部</option><option value="true">启用</option><option value="false">停用</option></select></div>
             <button id="source-search" class="button button-secondary" type="button">查询</button>
+            <button id="source-refresh-all" class="button button-secondary" type="button">刷新全部状态</button>
             <button id="source-new" class="button button-primary" type="button">新建采集源</button>
         </div>
         <div class="table-wrap"><table><caption>采集源列表</caption><thead><tr><th>采集源</th><th>类型</th>
-            <th>主题</th><th>请求策略</th><th>状态</th><th>操作</th></tr></thead><tbody id="source-rows"></tbody></table></div>
+            <th>主题</th><th>请求策略</th><th>运行状态</th><th>最近刷新</th><th>操作</th></tr></thead><tbody id="source-rows"></tbody></table></div>
         <div id="source-empty" class="empty-state" hidden>尚未创建采集源，请点击“新建采集源”。</div>
         <div class="pagination"><button id="source-prev" class="button button-secondary">上一页</button>
             <span id="source-page">第 1 页</span><button id="source-next" class="button button-secondary">下一页</button></div>

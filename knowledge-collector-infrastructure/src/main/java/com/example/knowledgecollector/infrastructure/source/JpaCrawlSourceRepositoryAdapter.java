@@ -64,6 +64,16 @@ public class JpaCrawlSourceRepositoryAdapter implements CrawlSourceRepository {
     }
 
     @Override
+    public List<CrawlSource> findAllEnabled() {
+        return repository.findAllByEnabledTrueOrderByIdAsc().stream().map(this::toDomain).toList();
+    }
+
+    @Override
+    public boolean existsByFeedUrl(String feedUrl) {
+        return repository.existsByFeedUrl(feedUrl);
+    }
+
+    @Override
     public boolean existsByCode(String code, Long excludedId) {
         return excludedId == null ? repository.existsByCode(code)
                 : repository.existsByCodeAndIdNot(code, excludedId);
@@ -92,6 +102,9 @@ public class JpaCrawlSourceRepositoryAdapter implements CrawlSourceRepository {
         entity.lastSuccessAt = source.lastSuccessAt();
         entity.lastFailureAt = source.lastFailureAt();
         entity.consecutiveFailures = source.consecutiveFailures();
+        entity.healthStatus = source.healthStatus();
+        entity.lastHealthCheckedAt = source.lastHealthCheckedAt();
+        entity.lastHealthMessage = source.lastHealthMessage();
         entity.notes = source.notes();
         entity.topics.clear();
         entity.topics.addAll(topicRepository.findAllById(source.topicIds()));
@@ -114,7 +127,8 @@ public class JpaCrawlSourceRepositoryAdapter implements CrawlSourceRepository {
                 entity.timeoutSeconds, entity.maxRetries, entity.requestIntervalMillis,
                 entity.obeyRobots, entity.fetchFullContent, entity.summaryOnly,
                 entity.saveSnapshot, entity.enabled, entity.lastSuccessAt, entity.lastFailureAt,
-                entity.consecutiveFailures, entity.notes,
+                entity.consecutiveFailures, entity.healthStatus, entity.lastHealthCheckedAt,
+                entity.lastHealthMessage, entity.notes,
                 entity.topics.stream().map(topic -> topic.getId()).collect(java.util.stream.Collectors.toSet()),
                 entity.version, entity.createdAt, entity.updatedAt);
     }

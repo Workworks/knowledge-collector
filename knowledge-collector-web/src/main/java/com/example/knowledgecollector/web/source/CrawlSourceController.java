@@ -1,6 +1,7 @@
 package com.example.knowledgecollector.web.source;
 
 import com.example.knowledgecollector.application.source.CrawlSourceService;
+import com.example.knowledgecollector.application.source.AiSourceDiscoveryService;
 import com.example.knowledgecollector.application.crawl.CrawlTaskService;
 import com.example.knowledgecollector.domain.source.SourceType;
 import com.example.knowledgecollector.web.api.ApiResponse;
@@ -34,10 +35,13 @@ public class CrawlSourceController {
 
     private final CrawlSourceService service;
     private final CrawlTaskService crawlTasks;
+    private final AiSourceDiscoveryService discovery;
 
-    public CrawlSourceController(CrawlSourceService service, CrawlTaskService crawlTasks) {
+    public CrawlSourceController(CrawlSourceService service, CrawlTaskService crawlTasks,
+                                 AiSourceDiscoveryService discovery) {
         this.service = service;
         this.crawlTasks = crawlTasks;
+        this.discovery = discovery;
     }
 
     @GetMapping
@@ -83,6 +87,26 @@ public class CrawlSourceController {
     @Operation(summary = "测试采集源", description = "Stage 4 返回 422；Stage 5 接入 Provider")
     public ApiResponse<?> test(@PathVariable long id, HttpServletRequest request) {
         return ApiResponse.success(java.util.Map.of("entryCount", crawlTasks.testSource(id)),
+                correlationId(request));
+    }
+
+    @PostMapping("/{id}/health")
+    @Operation(summary = "刷新单个采集源健康状态")
+    public ApiResponse<?> health(@PathVariable long id, HttpServletRequest request) {
+        return ApiResponse.success(crawlTasks.refreshHealth(id), correlationId(request));
+    }
+
+    @PostMapping("/health/refresh")
+    @Operation(summary = "刷新全部启用采集源健康状态")
+    public ApiResponse<?> refreshAll(HttpServletRequest request) {
+        return ApiResponse.success(crawlTasks.refreshAllHealth(), correlationId(request));
+    }
+
+    @PostMapping("/discover")
+    @Operation(summary = "通过 AI 自动发现、验证并导入采集源")
+    public ApiResponse<?> discover(@Valid @RequestBody SourceDiscoveryRequest body,
+                                   HttpServletRequest request) {
+        return ApiResponse.success(discovery.discover(body.topic(), body.language(), body.count(), body.quality()),
                 correlationId(request));
     }
 

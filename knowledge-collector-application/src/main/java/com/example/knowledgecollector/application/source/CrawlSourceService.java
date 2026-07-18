@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -59,7 +60,32 @@ public class CrawlSourceService {
                 existing.maxRetries(), existing.requestIntervalMillis(), existing.obeyRobots(),
                 existing.fetchFullContent(), existing.summaryOnly(), existing.saveSnapshot(),
                 enabled, existing.lastSuccessAt(), existing.lastFailureAt(),
-                existing.consecutiveFailures(), existing.notes(), existing.topicIds(),
+                existing.consecutiveFailures(), existing.healthStatus(), existing.lastHealthCheckedAt(),
+                existing.lastHealthMessage(), existing.notes(), existing.topicIds(),
+                existing.version(), existing.createdAt(), OffsetDateTime.now()));
+    }
+
+    @Transactional(readOnly = true)
+    public List<CrawlSource> findAllEnabled() {
+        return repository.findAllEnabled();
+    }
+
+    @Transactional(readOnly = true)
+    public boolean existsByFeedUrl(String feedUrl) {
+        return repository.existsByFeedUrl(feedUrl);
+    }
+
+    public CrawlSource updateHealth(long id, boolean healthy, String message) {
+        CrawlSource existing = get(id);
+        String safeMessage = message == null ? null : message.substring(0, Math.min(1000, message.length()));
+        return repository.save(new CrawlSource(existing.id(), existing.code(), existing.name(),
+                existing.type(), existing.homeUrl(), existing.feedUrl(), existing.language(),
+                existing.charset(), existing.userAgent(), existing.timeoutSeconds(),
+                existing.maxRetries(), existing.requestIntervalMillis(), existing.obeyRobots(),
+                existing.fetchFullContent(), existing.summaryOnly(), existing.saveSnapshot(),
+                existing.enabled(), existing.lastSuccessAt(), existing.lastFailureAt(),
+                existing.consecutiveFailures(), healthy ? "VERIFIED" : "UNHEALTHY",
+                OffsetDateTime.now(), safeMessage, existing.notes(), existing.topicIds(),
                 existing.version(), existing.createdAt(), OffsetDateTime.now()));
     }
 
@@ -99,7 +125,10 @@ public class CrawlSourceService {
                 command.saveSnapshot(), command.enabled(),
                 existing == null ? null : existing.lastSuccessAt(),
                 existing == null ? null : existing.lastFailureAt(),
-                existing == null ? 0 : existing.consecutiveFailures(), trimToNull(command.notes()),
+                existing == null ? 0 : existing.consecutiveFailures(),
+                existing == null ? "UNKNOWN" : existing.healthStatus(),
+                existing == null ? null : existing.lastHealthCheckedAt(),
+                existing == null ? null : existing.lastHealthMessage(), trimToNull(command.notes()),
                 command.topicIds() == null ? Set.of() : Set.copyOf(command.topicIds()),
                 version, createdAt, updatedAt);
     }

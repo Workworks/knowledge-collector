@@ -66,6 +66,12 @@ public class CrawlSourceJpaEntity {
     OffsetDateTime lastFailureAt;
     @Column(name = "consecutive_failures", nullable = false)
     int consecutiveFailures;
+    @Column(name = "health_status", nullable = false, length = 16)
+    String healthStatus;
+    @Column(name = "last_health_checked_at")
+    OffsetDateTime lastHealthCheckedAt;
+    @Column(name = "last_health_message", length = 1000)
+    String lastHealthMessage;
     @Column(length = 2000)
     String notes;
     @ManyToMany(fetch = FetchType.EAGER)

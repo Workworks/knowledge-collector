@@ -1,6 +1,6 @@
 # Knowledge Collector
 
-Knowledge Collector 是面向个人和小团队的本地资料采集与阅读管理系统。当前完成至 Stage 13：支持本地 Ollama 内容理解、持久化 AI 对话、容器部署和 Android 离线资料包。
+Knowledge Collector 是面向个人和小团队的本地资料采集与阅读管理系统。当前完成至 Stage 14：支持 AI 自动发现采集源、来源健康检查、任务过滤和规则化归档。
 
 ## 当前可用能力
 
@@ -19,6 +19,10 @@ Knowledge Collector 是面向个人和小团队的本地资料采集与阅读管
 - 资料库支持全文搜索、主题/来源/标签/状态/质量组合筛选
 - AI 研究助手页面：`/ai-chat`，支持多轮会话及历史记录
 - AI 回复可保存到待审核资料库，并明确标注“AI 内容”
+- AI 按主题、语言、数量和质量等级发现、验证并收纳公开采集源
+- 采集员健康状态、最近刷新时间与批量刷新
+- 采集任务默认最近七天并支持多条件过滤
+- 独立归档资料库与可配置整理规则
 - 阅读页支持收藏、已读/未读、归档、忽略、自定义标签和个人笔记
 - Stage 8 完整 IDEA 请求任务：`http/stage-8-end-to-end.http`
 - 调度与运维页面：`/operations`
@@ -26,7 +30,7 @@ Knowledge Collector 是面向个人和小团队的本地资料采集与阅读管
 - 固定周期调度、失败任务重试、待执行任务取消、运行仪表盘和本地备份
 - OpenAPI JSON 与 Swagger UI：`/v3/api-docs`、`/swagger-ui.html`
 - local Profile 测试工具：`/dev/tools`
-- H2 文件数据库与 Flyway V1—V10 迁移
+- H2 文件数据库与 Flyway V1—V11 迁移
 - 任务总请求超时、心跳租约与超时任务自动回收
 - JDK、Windows 系统根证书和可选 PEM CA 的组合 TLS 信任
 - RSS/Atom 支持内嵌全文和文章详情页正文提取、安全清洗及空正文回填

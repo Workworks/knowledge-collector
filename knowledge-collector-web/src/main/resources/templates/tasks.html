@@ -7,6 +7,16 @@
 <h1>采集任务</h1><p class="lead">跟踪每次采集的发现、新增、重复与执行耗时。</p></div>
 <div class="hero-stat"><strong id="task-count">0 个任务</strong><span>历史执行记录</span></div></header>
 <div id="page-message" class="page-message" hidden></div>
+<section class="filter-card"><form id="task-filter" class="library-filters">
+<div class="form-field search-field"><label for="task-keyword">搜索</label><input id="task-keyword" placeholder="任务号或采集员"></div>
+<div class="form-field"><label for="task-source">采集员</label><select id="task-source"><option value="">全部采集员</option></select></div>
+<div class="form-field"><label for="task-status">状态</label><select id="task-status"><option value="">全部状态</option><option>CREATED</option><option>RUNNING</option><option>SUCCESS</option><option>PARTIAL_SUCCESS</option><option>FAILED</option><option>CANCELED</option></select></div>
+<div class="form-field"><label for="task-trigger">触发方式</label><select id="task-trigger"><option value="">全部方式</option><option>MANUAL_SOURCE</option><option>MANUAL_TOPIC</option><option>SCHEDULED</option><option>RETRY</option></select></div>
+<div class="form-field"><label for="task-from">开始日期</label><input id="task-from" type="date"></div>
+<div class="form-field"><label for="task-to">结束日期</label><input id="task-to" type="date"></div>
+<div class="filter-actions"><button id="task-search" class="button button-primary" type="button">查询</button><button id="task-reset" class="button button-secondary" type="button">最近 7 天</button></div>
+</form></section>
 <section class="console-panel"><div class="table-wrap"><table><thead><tr><th>任务号</th><th>采集员</th><th>状态</th>
-<th>触发方式</th><th>新增 / 发现</th><th>重复</th><th>耗时</th><th>操作</th></tr></thead><tbody id="task-rows"></tbody></table></div>
-<div id="task-empty" class="empty-state" hidden>尚无任务，请前往采集员管理页面执行采集。</div></section></main></body></html>
+<th>触发方式</th><th>创建时间</th><th>新增 / 发现</th><th>重复</th><th>耗时</th><th>操作</th></tr></thead><tbody id="task-rows"></tbody></table></div>
+<div id="task-empty" class="empty-state" hidden>当前筛选范围内没有采集任务。</div>
+<div class="pagination"><button id="task-prev" class="button button-secondary">上一页</button><span id="task-page">第 1 页</span><button id="task-next" class="button button-secondary">下一页</button></div></section></main></body></html>

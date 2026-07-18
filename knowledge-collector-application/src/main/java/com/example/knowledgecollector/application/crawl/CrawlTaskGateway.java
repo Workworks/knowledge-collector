@@ -17,7 +17,7 @@ public interface CrawlTaskGateway {
     void failure(long id, String code, String message, long duration);
     boolean requestCancel(long id);
     CrawlTaskView get(long id);
-    PageResult<CrawlTaskView> findPage(int page, int size);
+    PageResult<CrawlTaskView> findPage(CrawlTaskSearchCriteria criteria);
     List<?> findItems(long taskId);
     record SaveResult(boolean created, boolean contentUpdated, Long articleId) {}
 }

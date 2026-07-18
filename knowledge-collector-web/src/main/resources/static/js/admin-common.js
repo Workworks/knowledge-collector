@@ -33,4 +33,10 @@ window.addEventListener("DOMContentLoaded", () => {
         item.textContent = "AI 助手";
         links.appendChild(item);
     }
+    if (links && !links.querySelector('a[href="/articles/archive"]')) {
+        const item = document.createElement("a");
+        item.href = "/articles/archive";
+        item.textContent = "归档库";
+        links.appendChild(item);
+    }
 });

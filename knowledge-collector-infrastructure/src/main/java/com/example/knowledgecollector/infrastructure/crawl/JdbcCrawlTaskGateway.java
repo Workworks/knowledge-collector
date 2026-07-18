@@ -3,6 +3,7 @@ package com.example.knowledgecollector.infrastructure.crawl;
 import com.example.knowledgecollector.application.common.PageResult;
 import com.example.knowledgecollector.application.crawl.CrawlTaskGateway;
 import com.example.knowledgecollector.application.crawl.CrawlTaskView;
+import com.example.knowledgecollector.application.crawl.CrawlTaskSearchCriteria;
 import com.example.knowledgecollector.capability.source.ContentSourceProvider;
 import com.example.knowledgecollector.application.exception.ResourceNotFoundException;
 import com.example.knowledgecollector.application.exception.ConflictException;
@@ -17,6 +18,8 @@ import org.springframework.beans.factory.annotation.Value;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.UUID;
 
 @Repository
@@ -285,14 +288,28 @@ public class JdbcCrawlTaskGateway implements CrawlTaskGateway {
     }
 
     @Override
-    public PageResult<CrawlTaskView> findPage(int page, int size) {
-        long total = jdbc.sql("select count(*) from crawl_task").query(Long.class).single();
-        var items = jdbc.sql(BASE + " order by t.id desc limit :size offset :offset")
-                .param("size", size)
-                .param("offset", page * size)
+    public PageResult<CrawlTaskView> findPage(CrawlTaskSearchCriteria criteria) {
+        StringBuilder where = new StringBuilder(" where 1=1");
+        Map<String, Object> params = new LinkedHashMap<>();
+        if (criteria.keyword() != null && !criteria.keyword().isBlank()) {
+            where.append(" and (lower(t.task_no) like :keyword or lower(s.source_name) like :keyword)");
+            params.put("keyword", "%" + criteria.keyword().trim().toLowerCase() + "%");
+        }
+        if (criteria.sourceId() != null) { where.append(" and t.source_id=:sourceId"); params.put("sourceId", criteria.sourceId()); }
+        if (criteria.status() != null && !criteria.status().isBlank()) { where.append(" and t.status=:status"); params.put("status", criteria.status()); }
+        if (criteria.triggerType() != null && !criteria.triggerType().isBlank()) { where.append(" and t.trigger_type=:triggerType"); params.put("triggerType", criteria.triggerType()); }
+        if (criteria.createdFrom() != null) { where.append(" and t.created_at>=:createdFrom"); params.put("createdFrom", criteria.createdFrom()); }
+        if (criteria.createdTo() != null) { where.append(" and t.created_at<:createdTo"); params.put("createdTo", criteria.createdTo()); }
+        long total = jdbc.sql("select count(*) from crawl_task t join crawl_source s on s.id=t.source_id" + where)
+                .params(params).query(Long.class).single();
+        params.put("size", criteria.size());
+        params.put("offset", criteria.page() * criteria.size());
+        var items = jdbc.sql(BASE + where + " order by t.id desc limit :size offset :offset")
+                .params(params)
                 .query(this::map)
                 .list();
-        return new PageResult<>(items, page, size, total, (int) Math.ceil((double) total / size), "id,desc");
+        return new PageResult<>(items, criteria.page(), criteria.size(), total,
+                (int) Math.ceil((double) total / criteria.size()), "id,desc");
     }
 
     @Override
